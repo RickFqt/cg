@@ -21,6 +21,7 @@ using std::string;
 # include <tuple>
 using std::tuple;
 # include <utility>
+#include "../ext/glm/glm.hpp"
 
 //== Alias to the chosen data structure to implement a dictionary.
 // #define Dictionary std::unordered_map
@@ -33,7 +34,7 @@ namespace rt3 {
 // Alias to a Point3f (simulation)
 using Point3f = std::array<float, 3>;
 // Temporary Vec3, just to compile. TODO: Implement a real one!!!
-using Vector3f = std::array<float, 3>;
+using Vector3f = glm::vec3;
 using Color24 = std::array<uint8_t, 3>;
 using Spectrum = std::array<float, 3>;
 using Normal3f = std::array<float, 3>;
@@ -43,7 +44,7 @@ using Ray = std::array<float, 3>;
 using ListPoint3f = std::vector<Point3f>;
 
 // Temporary Vec3i. TODO: code a real one.
-using Vector3i = std::array<int, 3>;
+using Vector3i = glm::ivec3;
 using Point3i = std::array<int, 3>;
 using Point2i = std::array<int, 2>;
 using Point2f = std::array<float, 2>;
