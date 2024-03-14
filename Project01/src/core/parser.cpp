@@ -186,25 +186,25 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
       parse_single_BASIC_attrib<std::string>(p_element, ps_out, name);
       break;
     case param_type_e::VEC3F:
-      parse_single_COMPOSITE_attrib<real_type, Vector3f>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<real_type, Vector3f>(p_element, ps_out, name);
       break;
     case param_type_e::VEC3I:
-      parse_single_COMPOSITE_attrib<int, Vector3i>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<int, Vector3i>(p_element, ps_out, name);
       break;
     case param_type_e::NORMAL3F:
-      parse_single_COMPOSITE_attrib<real_type, Normal3f>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<real_type, Normal3f>(p_element, ps_out, name);
       break;
     case param_type_e::POINT3F:
-      parse_single_COMPOSITE_attrib<real_type, Point3f>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<real_type, Point3f>(p_element, ps_out, name);
       break;
     // case param_type_e::POINT2I:
     // parse_single_COMPOSITE_attrib<int, Point2i, int(2)>( p_element, ps_out,
     // name ); break;
     case param_type_e::COLOR:
-      parse_single_COMPOSITE_attrib<uint8_t, Color24>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<uint8_t, Color24>(p_element, ps_out, name);
       break;
     case param_type_e::SPECTRUM:
-      parse_single_COMPOSITE_attrib<real_type, Spectrum>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<real_type, Spectrum>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_REAL:
       parse_array_BASIC_attrib<real_type>(p_element, ps_out, name);
@@ -213,7 +213,7 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
       parse_array_BASIC_attrib<int>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_VEC3F:
-      parse_array_COMPOSITE_attrib<real_type, Vector3f>(p_element, ps_out, name);
+      // parse_array_COMPOSITE_attrib<real_type, Vector3f>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_VEC3I:
       parse_array_COMPOSITE_attrib<int, Vector3i>(p_element, ps_out, name);
@@ -244,7 +244,7 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
  * Point3f{1,2,3}.
  */
 template <typename BASIC, typename COMPOSITE>
-bool parse_single_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
+bool parse_single_COMPOSITE_attrib_two(tinyxml2::XMLElement* p_element,
                                    rt3::ParamSet* ps,
                                    string att_key) {
   // Attribute() returns the value of the attribute as a const char *, or
@@ -270,7 +270,64 @@ bool parse_single_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
     COMPOSITE comp;
     if (n_basic == 2) {
       comp = COMPOSITE{ values[0], values[1] };
-    } else if (n_basic == 3) {
+    } else {
+      return false;  // Invalid number of basic components.
+    }
+
+    // Store the vector of composites in the ParamSet object.
+    // Recall that `ps` is a dictionary, that receives a pair { key, value }.
+    (*ps)[att_key] = std::make_shared<Value<COMPOSITE>>(comp);
+    // --------------------------------------------------------------------------
+    // Show message (DEBUG only, remove it or comment it out if code is
+    // working).
+    // --------------------------------------------------------------------------
+    clog << "\tAdded attribute (" << att_key << ": \"";
+    // for (const auto& e : comp) {
+    //   clog << e << " ";
+    // }
+    for(int i{0}; i < (int)n_basic; ++i){
+      clog << comp[i] << " ";
+    }
+    clog << "\")\n";
+    // --------------------------------------------------------------------------
+
+    return true;
+  }
+  return false;
+}
+
+/*!
+ * This function parses a set of 2 or 3 basic values to form a composite
+ * element. For instance, if we have in the scene file points="1 2 3 " and they
+ * represent a Point3f, this function will store in the ParamSet a
+ * Point3f{1,2,3}.
+ */
+template <typename BASIC, typename COMPOSITE>
+bool parse_single_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
+                                   rt3::ParamSet* ps,
+                                   string att_key) {
+  // Attribute() returns the value of the attribute as a const char *, or
+  // nullptr if such attribute does not exist.
+  const char* att_value_cstr = p_element->Attribute(att_key.c_str());
+  // Test whether the att_key exists.
+  if (att_value_cstr) {
+    // Create a temporary array to store all the BASIC data. (e.g. BASIC =
+    // float) This read all the BASIC values into a single array.
+    auto result = read_array<BASIC>(p_element, att_key);
+    // Error check
+    if (not result.has_value()) {
+      RT3_ERROR(string{ "parse_single_COMPOSITE_attrib(): could not read values "
+                        "for attribute \""
+                        + att_key + "\"!" });
+    }
+
+    // Values ok, get the value inside optional.
+    vector<BASIC> values{ result.value() };
+    // Get array length
+    auto n_basic{ values.size() };  // How many?
+    // Create the COMPOSITE value.
+    COMPOSITE comp;
+    if (n_basic == 3) {
       comp = COMPOSITE{ values[0], values[1], values[2] };
     } else {
       return false;  // Invalid number of basic components.
@@ -284,8 +341,11 @@ bool parse_single_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
     // working).
     // --------------------------------------------------------------------------
     clog << "\tAdded attribute (" << att_key << ": \"";
-    for (const auto& e : comp) {
-      clog << e << " ";
+    // for (const auto& e : comp) {
+    //   clog << e << " ";
+    // }
+    for(int i{0}; i < (int)n_basic; ++i){
+      clog << comp[i] << " ";
     }
     clog << "\")\n";
     // --------------------------------------------------------------------------

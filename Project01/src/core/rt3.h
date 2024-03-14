@@ -44,7 +44,7 @@ using Ray = std::array<float, 3>;
 using ListPoint3f = std::vector<Point3f>;
 
 // Temporary Vec3i. TODO: code a real one.
-using Vector3i = glm::ivec3;
+using Vector3i = std::array<int, 3>;
 using Point3i = std::array<int, 3>;
 using Point2i = std::array<int, 2>;
 using Point2f = std::array<float, 2>;

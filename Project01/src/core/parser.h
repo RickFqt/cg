@@ -7,7 +7,7 @@
  */
 
 #include <iostream>
-#include <tinyxml2.h>
+#include "../ext/tinyxml2.h"
 using std::boolalpha;
 using std::cerr;
 using std::clog;
@@ -50,9 +50,16 @@ std::optional<T> read_single_value(tinyxml2::XMLElement* p_element, const string
 
 /// Extracts a single COMPOSITE element.
 template <typename BASIC, typename COMPOSITE>
-bool parse_single_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
+bool parse_single_COMPOSITE_attrib_two(tinyxml2::XMLElement* p_element,
                                    rt3::ParamSet* ps,
                                    string att_key);
+
+/// Extracts a single COMPOSITE element.
+template <typename BASIC, typename COMPOSITE>
+bool parse_single_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
+                                   rt3::ParamSet* ps,
+                                   string att_key);
+
 /// Extracts an array of COMPOSITE elements.
 template <typename BASIC, typename COMPOSITE, int SIZE = 3>
 bool parse_array_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
