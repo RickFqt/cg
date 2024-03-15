@@ -22,6 +22,7 @@ using std::string;
 using std::tuple;
 # include <utility>
 #include "../ext/glm/glm.hpp"
+#include "image_io.h"
 
 //== Alias to the chosen data structure to implement a dictionary.
 // #define Dictionary std::unordered_map

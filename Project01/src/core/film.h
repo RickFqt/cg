@@ -27,7 +27,7 @@ public:
   const Point2i m_full_resolution;  //!< The image's full resolution values.
   std::string m_filename;           //!< Full path file name + extension.
   image_type_e m_image_type;        //!< Image type, PNG, PPM3, PPM6.
-  // TODO: Create the matrix (or vector) that will hold the image data.
+  std::vector<std::vector<Color24>> m_color_matrix; //!< Matrix that will hold the image data.
   // std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the
   // color buffer (image) object.
 };

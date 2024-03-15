@@ -12,7 +12,6 @@ namespace rt3 {
  * \return The interpolated color.
  */
 Color24 Background::sampleXYZ(const Point2f& pixel_ndc) const {
-  // TODO
   return Color24{ 0, 0, 0 };
 }
 
