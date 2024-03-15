@@ -32,22 +32,22 @@ namespace rt3 {
 /// ATENTION: This is just to compile the project. You need to implement
 /// Point3f!!!!
 // Alias to a Point3f (simulation)
-using Point3f = std::array<float, 3>;
+using Point3f = glm::vec3;
 // Temporary Vec3, just to compile. TODO: Implement a real one!!!
 using Vector3f = glm::vec3;
 using Color24 = std::array<uint8_t, 3>;
 using Spectrum = std::array<float, 3>;
-using Normal3f = std::array<float, 3>;
+using Normal3f = glm::vec3;
 using Ray = std::array<float, 3>;
 
 // List of points
 using ListPoint3f = std::vector<Point3f>;
 
 // Temporary Vec3i. TODO: code a real one.
-using Vector3i = std::array<int, 3>;
-using Point3i = std::array<int, 3>;
-using Point2i = std::array<int, 2>;
-using Point2f = std::array<float, 2>;
+using Vector3i = glm::ivec3;
+using Point3i = glm::ivec3;
+using Point2i = glm::ivec2;
+using Point2f = glm::vec2;
 
 template <typename T, size_t S>
 std::ostream& operator<<(std::ostream& os, const std::array<T, S>& v) {

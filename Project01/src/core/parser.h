@@ -61,8 +61,14 @@ bool parse_single_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
                                    string att_key);
 
 /// Extracts an array of COMPOSITE elements.
+template <typename BASIC, typename COMPOSITE, int SIZE = 2>
+bool parse_array_COMPOSITE_attrib_two(tinyxml2::XMLElement* p_element,
+                                  rt3::ParamSet* ps,
+                                  string att_key);
+
+/// Extracts an array of COMPOSITE elements.
 template <typename BASIC, typename COMPOSITE, int SIZE = 3>
-bool parse_array_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
+bool parse_array_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
                                   rt3::ParamSet* ps,
                                   string att_key);
 

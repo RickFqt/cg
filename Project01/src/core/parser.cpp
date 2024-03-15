@@ -213,19 +213,19 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
       parse_array_BASIC_attrib<int>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_VEC3F:
-      // parse_array_COMPOSITE_attrib<real_type, Vector3f>(p_element, ps_out, name);
+      parse_array_COMPOSITE_attrib_three<real_type, Vector3f>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_VEC3I:
-      parse_array_COMPOSITE_attrib<int, Vector3i>(p_element, ps_out, name);
+      parse_array_COMPOSITE_attrib_three<int, Vector3i>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_NORMAL3F:
-      parse_array_COMPOSITE_attrib<real_type, Normal3f>(p_element, ps_out, name);
+      parse_array_COMPOSITE_attrib_three<real_type, Normal3f>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_POINT3F:
-      parse_array_COMPOSITE_attrib<real_type, Point3f>(p_element, ps_out, name);
+      parse_array_COMPOSITE_attrib_three<real_type, Point3f>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_COLOR:
-      parse_array_COMPOSITE_attrib<uint8_t, Color24>(p_element, ps_out, name);
+      parse_array_COMPOSITE_attrib_three<uint8_t, Color24>(p_element, ps_out, name);
       break;
     default:
       RT3_WARNING(string{ "parse_params(): unkonwn param type received!" });
@@ -360,6 +360,95 @@ bool parse_single_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
  * composite type.
  *
  * Retrieves from the XML element an array of BASIC type elements (usually
+ * floats), convert it into a COMPOSITE type with 2 fields (typically Point2f or
+ * Vector2f), and store it in the ParamSet object.
+ *
+ * For instance, if we have in the scene file points="1 2 4 2 0 1" and
+ * they represent a list of Point2f, this function will store in the ParamSet
+ * this vector: { {Point2f{1,2}, Point2f{4,2}, Point2f{0,1} }
+ *
+ * \t_param T_BASIC The basic type of the array elements we want to convert from.
+ *
+ * \t_param T_COMPOSITE The composite type of the single element we want to convert to.
+ * \t_param T_COMPOSITE_SIZE Number of dimensions of the composite type. Default is 2.
+ *
+ * \param p_element The pointer to the XML Element node.
+ * \param ps The output `ParamSet` object we need to fill in.
+ * \param att_key The id of the attribute we want to read from.
+ *
+ * \return `true` if the parsing goes smoothly, `false` otherwise.
+ */
+template <typename BASIC, typename COMPOSITE, int COMPOSITE_SIZE>
+bool parse_array_COMPOSITE_attrib_two(tinyxml2::XMLElement* p_element,
+                                  rt3::ParamSet* ps,
+                                  string att_key) {
+  // Attribute() returns the value of the attribute as a const char *, or
+  // nullptr if such attribute does not exist.
+  const char* att_value_cstr = p_element->Attribute(att_key.c_str());
+  // Test whether the att_key exists.
+  if (att_value_cstr) {
+    // [1]
+    // Create a temporary array to store all the BASIC data. (e.g. BASIC =
+    // float) This read all the BASIC values into a single array. The next step
+    // is to break it into COMPOSITE units. (e.g. COMPOSITE = Point3f)
+    auto result = read_array<BASIC>(p_element, att_key);
+    // Error check
+    if (not result.has_value()) {
+      RT3_ERROR(string{ "parse_array_COMPOSITE_attrib(): could not read values "
+                        "for attribute \""
+                        + att_key + "\"!" });
+    }
+
+    // Values ok, get the value inside optional.
+    vector<BASIC> values{ result.value() };
+    // Get array length
+    auto n_basic{ values.size() };  // How many?
+    // Create the vector that will hold the COMPOSITE values.
+    vector<COMPOSITE> composit_list;
+
+    // [2]
+    // Fill in `composit_list` with `COMPOSITE`: every COMPOSITE_SIZE values we
+    // have a 2D or 3D coordinate. For example, if we have values = { 1, 1, 1,
+    // 2, 2, 2, 4, 4, 4, 8, 8, 8} and COMPOSITE = Vector3f, we must extract 4
+    // Vector3f: Vector3f{1,1,1}, {2,2,2}, ..., {8,8,8}.
+    for (auto i{ 0U }; i < n_basic / COMPOSITE_SIZE; i++) {
+      std::cout << "COMPOSITE_SIZE = " << COMPOSITE_SIZE << '\n';
+      // Call the proper constructor, as in Vector3f{x,y,z} or Vector2f{x,y}.
+      // If, say, COMPOSITE = Vector3f, this will call the constructor
+      // Vector3f{x,y,z}.
+      if (COMPOSITE_SIZE == 2) {
+        composit_list.push_back(COMPOSITE{ values[2 * i + 0], values[2 * i + 1] });
+      }
+    }
+
+    // [3]
+    // Store the vector of composites in the ParamSet object.
+    // Recall that `ps` is a dictionary, that receives a pair { key, value }.
+    (*ps)[att_key] = std::make_shared<Value<vector<COMPOSITE>>>(composit_list);
+    // --------------------------------------------------------------------------
+    // Show message (DEBUG only, remove it or comment it out if code is
+    // working).
+    // --------------------------------------------------------------------------
+    clog << "\tAdded attribute (" << att_key << ": \"";
+    for (const auto& e : composit_list) {
+      for(int i{0}; i < (int)n_basic; ++i){
+        clog << e[i] << " ";
+      }
+    }
+    
+    clog << "\")\n";
+    // --------------------------------------------------------------------------
+
+    return true;
+  }
+  return false;
+}
+
+/*!
+ * \brief Retrieves from the XML tree an array of basics elements into a
+ * composite type.
+ *
+ * Retrieves from the XML element an array of BASIC type elements (usually
  * floats), convert it into a COMPOSITE type with 3 fields (typically Point3f or
  * Vector3f), and store it in the ParamSet object.
  *
@@ -379,7 +468,7 @@ bool parse_single_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
  * \return `true` if the parsing goes smoothly, `false` otherwise.
  */
 template <typename BASIC, typename COMPOSITE, int COMPOSITE_SIZE>
-bool parse_array_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
+bool parse_array_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
                                   rt3::ParamSet* ps,
                                   string att_key) {
   // Attribute() returns the value of the attribute as a const char *, or
@@ -419,8 +508,6 @@ bool parse_array_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
       if (COMPOSITE_SIZE == 3) {
         composit_list.push_back(
           COMPOSITE{ values[3 * i + 0], values[3 * i + 1], values[3 * i + 2] });
-      } else {  // COMPOSITE_SIZE == 2
-        composit_list.push_back(COMPOSITE{ values[2 * i + 0], values[2 * i + 1] });
       }
     }
 
@@ -434,8 +521,8 @@ bool parse_array_COMPOSITE_attrib(tinyxml2::XMLElement* p_element,
     // --------------------------------------------------------------------------
     clog << "\tAdded attribute (" << att_key << ": \"";
     for (const auto& e : composit_list) {
-      for (const auto& x : e) {
-        clog << x << " ";
+      for(int i{0}; i < (int)n_basic; ++i){
+        clog << e[i] << " ";
       }
     }
     clog << "\")\n";
