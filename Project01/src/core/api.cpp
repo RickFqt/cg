@@ -6,12 +6,31 @@
 
 namespace rt3 {
 
-void render() {}
+void API::render() { 
+  // Perform objects initialization here.
+    // The Film object holds the memory for the image.
+    // ...
+    auto res = m_the_film->get_resolution(); // Retrieve the image dimensions in pixels.
+    size_t w = res[0];
+    size_t h = res[1];
+    // Traverse all pixels to shoot rays from.
+    for ( size_t j = 0 ; j < h ; j++ ) {
+        for( size_t i = 0 ; i < w ; i++ ) {
+            // Not shooting rays just yet; so let us sample the background.
+            auto color = m_the_background->sampleXYZ( Point2f{float(i)/float(w), float(j)/float(h)} ); // get background color.
+            m_the_film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
+        }
+    }
+    // send image color buffer to the output file.
+    m_the_film->write_image();
+}
 
 //=== API's static members declaration and initialization.
 API::APIState API::curr_state = APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
+std::unique_ptr<Background> API::m_the_background;
+std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
@@ -87,18 +106,19 @@ void API::world_end() {
 
   // At this point, we have the background as a solitary pointer here.
   // In the future, the background will be parte of the scene object.
-  std::unique_ptr<Background> the_background{ make_background(render_opt->bkg_type,
-                                                              render_opt->bkg_ps) };
+  m_the_background = std::unique_ptr<Background>( make_background(render_opt->bkg_type,
+                                                              render_opt->bkg_ps) );
   // Same with the film, that later on will belong to a camera object.
-  std::unique_ptr<Film> the_film{ make_film(render_opt->film_type, render_opt->film_ps) };
+  m_the_film = std::unique_ptr<Film>( make_film(render_opt->film_type, render_opt->film_ps) );
+  // animal=std::unique_ptr<A>(new A(a));
 
   // Run only if we got film and background.
-  if (the_film and the_background) {
+  if (m_the_film and m_the_background) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
     // Structure biding, c++17.
-    auto res = the_film->get_resolution();
+    auto res = m_the_film->get_resolution();
     size_t w = res[0];
     size_t h = res[1];
     RT3_MESSAGE("    Image dimensions in pixels (W x H): " + std::to_string(w) + " x "
