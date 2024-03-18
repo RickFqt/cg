@@ -69,7 +69,7 @@ T retrieve(const ParamSet& ps, const std::string& key, const T& default_value = 
     Value<T>* rval4 = (Value<T>*)(sptr.get()); */
 
     std::cout << "--> ParamSet: Found [\"" << key << "\"]\n";
-    // std::cout << rval<< ".\n";
+    // std::cout << *sptr<< ".\n";
     /* std::cout << rval2.value()  << ".\n";
     std::cout << rval3->value() << ".\n";
     std::cout << rval4->value() << ".\n"; */

@@ -39,6 +39,9 @@ Color24 BackgroundColor::lerp_colors( const Color24 &A, const Color24 &B, float 
  * \return The interpolated color.
  */
 Color24 BackgroundColor::sampleXYZ(const Point2f& pixel_ndc) const {
+  // std::cout << pixel_ndc[0] << " " <<pixel_ndc[1] << "\n";
+  // std::cout <<corners[tl][0] << " " << corners[tl][1] << " " << corners[tl][2] << std::endl;
+  
   Color24 color_top = lerp_colors(corners[tl], corners[tr], pixel_ndc[0]);
   Color24 color_bottom = lerp_colors(corners[bl], corners[br], pixel_ndc[0]);
   return lerp_colors(color_top, color_bottom, pixel_ndc[1]);
@@ -47,6 +50,7 @@ Color24 BackgroundColor::sampleXYZ(const Point2f& pixel_ndc) const {
 BackgroundColor* create_color_background(const ParamSet& ps) {
   Color24 color = retrieve(ps, "color", Color24{255, 255, 255});
   std::vector<Color24> bkg_corners;
+  // std::cout <<"Cor -------> "<<color[0] << " " << color[1] << " " << color[2] << std::endl;
 
   // If there exists a "color" keyword, we use its value
   if(ps.count("color") >= 1){

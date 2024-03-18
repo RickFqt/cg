@@ -52,6 +52,8 @@ void Film::write_image() const {
   else{
     save_png(byte_vector, m_full_resolution[0], m_full_resolution[1], 4, m_filename);
   }
+
+
 }
 
 // Factory function pattern.

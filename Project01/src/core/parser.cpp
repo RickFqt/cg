@@ -313,8 +313,8 @@ bool parse_single_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
   if (att_value_cstr) {
     // Create a temporary array to store all the BASIC data. (e.g. BASIC =
     // float) This read all the BASIC values into a single array.
-    auto result = read_array<BASIC>(p_element, att_key);
     // Error check
+    auto result = read_array<BASIC>(p_element, att_key);
     if (not result.has_value()) {
       RT3_ERROR(string{ "parse_single_COMPOSITE_attrib(): could not read values "
                         "for attribute \""

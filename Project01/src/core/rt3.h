@@ -36,7 +36,7 @@ namespace rt3 {
 using Point3f = glm::vec3;
 // Temporary Vec3, just to compile. TODO: Implement a real one!!!
 using Vector3f = glm::vec3;
-using Color24 = std::array<uint8_t, 3>;
+using Color24 = glm::vec3;
 using Spectrum = std::array<float, 3>;
 using Normal3f = glm::vec3;
 using Ray = std::array<float, 3>;
