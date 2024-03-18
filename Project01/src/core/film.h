@@ -20,7 +20,7 @@ public:
   /// Retrieve original Film resolution.
   [[nodiscard]] Point2i get_resolution() const { return m_full_resolution; };
   /// Takes a sample `p` and its radiance `L` and updates the image.
-  void add_sample(const Point2f&, const Color24&);
+  void add_sample(const Point2i&, const Color24&);
   void write_image() const;
 
   //=== Film Public Data

@@ -19,7 +19,7 @@ Film::Film(const Point2i& resolution, const std::string& filename, image_type_e 
 Film::~Film() = default;
 
 /// Add the color to image.
-void Film::add_sample(const Point2f& pixel_coord, const Color24& pixel_color) {
+void Film::add_sample(const Point2i& pixel_coord, const Color24& pixel_color) {
   m_color_matrix[pixel_coord[0]][pixel_coord[1]] = pixel_color;
 }
 
@@ -30,12 +30,12 @@ void Film::write_image() const {
   // Vector that will store the full image. Each pixel is defined by its RGB, and an Alpha parameter in hte case of PNG
   unsigned char* byte_vector = new unsigned char[m_full_resolution[0] * m_full_resolution[1] * 4];
   int pixel = 0;
-  for(int i{0}; i < m_full_resolution[0]; ++i){
-    for(int j{0}; j < m_full_resolution[1]; ++j){
-
-      byte_vector[pixel++] = m_color_matrix[i][j][0]; // R
-      byte_vector[pixel++] = m_color_matrix[i][j][1]; // G
-      byte_vector[pixel++] = m_color_matrix[i][j][2]; // B
+  for(int h{0}; h < m_full_resolution[1]; ++h){
+    for(int w{0}; w < m_full_resolution[0]; ++w){
+    
+      byte_vector[pixel++] = m_color_matrix[w][h][0]; // R
+      byte_vector[pixel++] = m_color_matrix[w][h][1]; // G
+      byte_vector[pixel++] = m_color_matrix[w][h][2]; // B
 
       if(m_image_type == Film::image_type_e::PNG){
         byte_vector[pixel++] = 255;                     // Alpha

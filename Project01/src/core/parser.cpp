@@ -201,7 +201,7 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
     // parse_single_COMPOSITE_attrib<int, Point2i, int(2)>( p_element, ps_out,
     // name ); break;
     case param_type_e::COLOR:
-      parse_single_COMPOSITE_attrib_three<uint8_t, Color24>(p_element, ps_out, name);
+      parse_single_COMPOSITE_attrib_three<int, Color24>(p_element, ps_out, name);
       break;
     case param_type_e::SPECTRUM:
       parse_single_COMPOSITE_attrib_three<real_type, Spectrum>(p_element, ps_out, name);
