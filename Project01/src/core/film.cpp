@@ -8,8 +8,8 @@
 namespace rt3 {
 
 //=== Film Method Definitions
-Film::Film(const Point2i& resolution, const std::string& filename, image_type_e imgt)
-    : m_full_resolution{ resolution }, m_filename{ filename }, m_image_type{ imgt } {
+Film::Film(const Point2i& resolution, const std::string& filename, image_type_e imgt, const std::vector<real_type>& vcrop)
+    : m_full_resolution{ resolution }, m_filename{ filename }, m_image_type{ imgt }, m_vcrop{ vcrop } {
     
   // Update the size of the matrix, filling it with {0, 0, 0} color
   m_color_matrix = std::vector<std::vector<Color24>>(resolution[0], std::vector<Color24>(resolution[1],{0, 0, 0}));
@@ -119,6 +119,6 @@ Film* create_film(const ParamSet& ps) {
     img_type_e = Film::image_type_e::PNG;
   }
   // Note that the image type is fixed here. Must be read from ParamSet, though.
-  return new Film(Point2i{ xres, yres }, filename, img_type_e);
+  return new Film(Point2i{ xres, yres }, filename, img_type_e, cw);
 }
 }  // namespace rt3

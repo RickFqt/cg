@@ -13,8 +13,9 @@ public:
   /// List of support image file formats.
   enum class image_type_e : int { PNG = 0, PPM3, PPM6 };
 
+
   //=== Film Public Methods
-  Film(const Point2i& resolution, const std::string& filename, image_type_e imgt);
+  Film(const Point2i& resolution, const std::string& filename, image_type_e imgt, const std::vector<real_type>& vcrop);
   virtual ~Film();
 
   /// Retrieve original Film resolution.
@@ -27,6 +28,7 @@ public:
   const Point2i m_full_resolution;  //!< The image's full resolution values.
   std::string m_filename;           //!< Full path file name + extension.
   image_type_e m_image_type;        //!< Image type, PNG, PPM3, PPM6.
+  std::vector<real_type> m_vcrop;    //!< Crop's flag vector 
   std::vector<std::vector<Color24>> m_color_matrix; //!< Matrix that will hold the image data.
   // std::unique_ptr< ColorBuffer > m_color_buffer_ptr; //!< Reference to the
   // color buffer (image) object.
