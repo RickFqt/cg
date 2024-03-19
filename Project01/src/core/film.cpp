@@ -119,6 +119,6 @@ Film* create_film(const ParamSet& ps) {
     img_type_e = Film::image_type_e::PNG;
   }
   // Note that the image type is fixed here. Must be read from ParamSet, though.
-  return new Film(Point2i{ xres, yres }, filename, img_type_e, cw);
+  return new Film(Point2i{ xres, yres }, filename, img_type_e, std::vector<real_type>{ 0, 1, 0, 1 });
 }
 }  // namespace rt3

@@ -11,16 +11,17 @@ void API::render() {
     // The Film object holds the memory for the image.
     // ...
     auto res = m_the_film->get_resolution(); // Retrieve the image dimensions in pixels.
-    real_type x0 = m_the_film->m_vcrop[0];
-    real_type x1 = m_the_film->m_vcrop[1];
-    real_type y0 = m_the_film->m_vcrop[2];
-    real_type y1 = m_the_film->m_vcrop[3];
+    real_type x0 = curr_run_opt.crop_window[0][0];
+    real_type x1 = curr_run_opt.crop_window[0][1];
+    real_type y0 = curr_run_opt.crop_window[1][0];
+    real_type y1 = curr_run_opt.crop_window[1][1];
     size_t w_init = round(res[0]*(x0));
     size_t h_init = round(res[1]*(y0));
-    size_t w_final = round(res[0]*(x1-x0));
-    size_t h_final = round(res[1]*(y1-y0));
+    size_t w_final = round(res[0]*(x1));
+    size_t h_final = round(res[1]*(y1));
     size_t w_full = res[0];
     size_t h_full = res[1];
+    std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
     // std::cout << "largura: " << w << " altura: " << h << std::endl;
     // Traverse all pixels to shoot rays from.
     for ( size_t j = h_init ; j < h_final ; j++ ) {
