@@ -1,0 +1,3 @@
+/home/danteaugusto/UFRN/2024.1/CG/cg/Project01/build/CMakeFiles/basic_rt3.dir
+/home/danteaugusto/UFRN/2024.1/CG/cg/Project01/build/CMakeFiles/edit_cache.dir
+/home/danteaugusto/UFRN/2024.1/CG/cg/Project01/build/CMakeFiles/rebuild_cache.dir
