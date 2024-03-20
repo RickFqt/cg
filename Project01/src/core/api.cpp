@@ -21,7 +21,7 @@ void API::render() {
     size_t h_final = round(res[1]*(y1));
     size_t w_full = res[0];
     size_t h_full = res[1];
-    std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
+    // std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
     // std::cout << "largura: " << w << " altura: " << h << std::endl;
     // Traverse all pixels to shoot rays from.
     for ( size_t j = h_init ; j < h_final ; j++ ) {

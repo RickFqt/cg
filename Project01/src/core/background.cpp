@@ -41,7 +41,9 @@ Color24 BackgroundColor::lerp_colors( const Color24 &A, const Color24 &B, float 
 Color24 BackgroundColor::sampleXYZ(const Point2f& pixel_ndc) const {
   // std::cout << pixel_ndc[0] << " " <<pixel_ndc[1] << "\n";
   // std::cout <<corners[tl][0] << " " << corners[tl][1] << " " << corners[tl][2] << std::endl;
-  
+  if(corners[tl] == corners[tr] && corners[tr] == corners[br] && corners[br] == corners[bl]){
+    return corners[tl];
+  }
   Color24 color_top = lerp_colors(corners[tl], corners[tr], pixel_ndc[0]);
   Color24 color_bottom = lerp_colors(corners[bl], corners[br], pixel_ndc[0]);
   return lerp_colors(color_top, color_bottom, pixel_ndc[1]);

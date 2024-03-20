@@ -201,7 +201,7 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
     // parse_single_COMPOSITE_attrib<int, Point2i, int(2)>( p_element, ps_out,
     // name ); break;
     case param_type_e::COLOR:
-      parse_single_COMPOSITE_attrib_three<int, Color24>(p_element, ps_out, name);
+      ask_color(p_element, ps_out, name);      
       break;
     case param_type_e::SPECTRUM:
       parse_single_COMPOSITE_attrib_three<real_type, Spectrum>(p_element, ps_out, name);
@@ -296,6 +296,53 @@ bool parse_single_COMPOSITE_attrib_two(tinyxml2::XMLElement* p_element,
   return false;
 }
 
+void ask_color(tinyxml2::XMLElement* p_element,
+                                   rt3::ParamSet* ps,
+                                   string att_key){
+    const char* att_value_cstr = p_element->Attribute(att_key.c_str());
+    // Test whether the att_key exists.
+    if (att_value_cstr){
+      auto result = read_array<std::string>(p_element, att_key);
+      if (not result.has_value()) {
+        std::cout << "batata crua \n";
+        RT3_ERROR(string{ "parse_single_COMPOSITE_attrib(): could not read values "
+                          "for attribute \""
+                          + att_key + "\"!" });
+      }else{
+        // std::cout << "batata assada \n";
+        int sz = result.value()[0].size();
+        bool isInt = true;
+        for(int i = 0; i < sz; i++){
+          if(result.value()[0][i]=='.'){
+            isInt = false;break;
+          }
+        }
+        Color24 comp;
+        // Create the COMPOSITE value.
+        if(isInt){
+          comp = Color24{ std::stoi(result.value()[0]), std::stoi(result.value()[1]), std::stoi(result.value()[2]) };
+        }else{
+          // Store the vector of composites in the ParamSet object.
+          // Recall that `ps` is a dictionary, that receives a pair { key, value }.
+          comp = Color24{ (int)(std::stof(result.value()[0])*255), (int)(std::stof(result.value()[1])*255), (int)(std::stof(result.value()[2])*255) };
+        }
+        (*ps)[att_key] = std::make_shared<Value<Color24>>(comp);
+        // --------------------------------------------------------------------------
+        // Show message (DEBUG only, remove it or comment it out if code is
+        // working).
+        // --------------------------------------------------------------------------
+        clog << "\tAdded attribute (" << att_key << ": \"";
+        // for (const auto& e : comp) {
+        //   clog << e << " ";
+        // }
+        for(int i{0}; i < 3; ++i){
+          clog << comp[i] << " ";
+        }
+        clog << "\")\n";
+        // --------------------------------------------------------------------------
+      }
+    }
+}
 /*!
  * This function parses a set of 2 or 3 basic values to form a composite
  * element. For instance, if we have in the scene file points="1 2 3 " and they
