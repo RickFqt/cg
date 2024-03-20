@@ -35,7 +35,7 @@ public:
 };
 
 // Factory pattern. It's not part of this class.
-Film* create_film(const ParamSet& ps);
+Film* create_film(const ParamSet& ps, std::vector<real_type> defult);
 }  // namespace rt3
 
 #endif  // FILM_H

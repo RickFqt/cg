@@ -11,10 +11,10 @@ void API::render() {
     // The Film object holds the memory for the image.
     // ...
     auto res = m_the_film->get_resolution(); // Retrieve the image dimensions in pixels.
-    real_type x0 = curr_run_opt.crop_window[0][0];
-    real_type x1 = curr_run_opt.crop_window[0][1];
-    real_type y0 = curr_run_opt.crop_window[1][0];
-    real_type y1 = curr_run_opt.crop_window[1][1];
+    real_type x0 = m_the_film->m_vcrop[0];
+    real_type x1 = m_the_film->m_vcrop[1];
+    real_type y0 = m_the_film->m_vcrop[2];
+    real_type y1 = m_the_film->m_vcrop[3];
     size_t w_init = round(res[0]*(x0));
     size_t h_init = round(res[1]*(y0));
     size_t w_final = round(res[0]*(x1));
@@ -50,7 +50,8 @@ std::unique_ptr<Film> API::m_the_film;
 Film* API::make_film(const std::string& name, const ParamSet& ps) {
   std::cout << ">>> Inside API::make_film()\n";
   Film* film{ nullptr };
-  film = create_film(ps);
+  std::vector<real_type> defult ={curr_run_opt.crop_window[0][0], curr_run_opt.crop_window[0][1], curr_run_opt.crop_window[1][0], curr_run_opt.crop_window[1][1]};
+  film = create_film(ps, defult);
 
   // Return the newly created film.
   return film;

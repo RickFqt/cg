@@ -30,8 +30,18 @@ void Film::write_image() const {
   // Vector that will store the full image. Each pixel is defined by its RGB, and an Alpha parameter in hte case of PNG
   unsigned char* byte_vector = new unsigned char[m_full_resolution[0] * m_full_resolution[1] * 4];
   int pixel = 0;
-  for(int h{0}; h < m_full_resolution[1]; ++h){
-    for(int w{0}; w < m_full_resolution[0]; ++w){
+  int w_init  = (int)((float)m_full_resolution[0] *m_vcrop[0]);
+  int w_final  = (int)((float)m_full_resolution[0] *m_vcrop[1]);
+  int h_init = (int)((float)m_full_resolution[1] *m_vcrop[2]);
+  int h_final = (int)((float)m_full_resolution[1] *m_vcrop[3]);
+  
+  // 0 0 0 0 0
+  // 0 0 0 0 0
+  // 0 0 0 0 0
+  // 0 0 0 0 0
+  // 0 0 0 0 0
+  for(int h{h_init}; h < h_final; ++h){
+    for(int w{w_init}; w < w_final; ++w){
     
       byte_vector[pixel++] = m_color_matrix[w][h][0]; // R
       byte_vector[pixel++] = m_color_matrix[w][h][1]; // G
@@ -44,13 +54,13 @@ void Film::write_image() const {
   }
 
   if(m_image_type == Film::image_type_e::PPM3){
-    save_ppm3(byte_vector, m_full_resolution[0], m_full_resolution[1], 3, m_filename);
+    save_ppm3(byte_vector, w_final - w_init, h_final - h_init, 3, m_filename);
   }
   else if(m_image_type == Film::image_type_e::PPM6){
-    save_ppm6(byte_vector, m_full_resolution[0], m_full_resolution[1], 3, m_filename);
+    save_ppm6(byte_vector, w_final - w_init, h_final - h_init, 3, m_filename);
   }
   else{
-    save_png(byte_vector, m_full_resolution[0], m_full_resolution[1], 4, m_filename);
+    save_png(byte_vector, w_final - w_init, h_final - h_init, 4, m_filename);
   }
 
 
@@ -59,7 +69,7 @@ void Film::write_image() const {
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Film object.
-Film* create_film(const ParamSet& ps) {
+Film* create_film(const ParamSet& ps, std::vector<real_type> defult) {
   std::cout << ">>> Inside create_film()\n";
   std::string filename;
   // Let us check whether user has provided an output file name via
@@ -95,7 +105,7 @@ Film* create_film(const ParamSet& ps) {
 
   // TODO
   // Read crop window information.
-  std::vector<real_type> cw = retrieve(ps, "crop_window", std::vector<real_type>{ 0, 1, 0, 1 });
+  std::vector<real_type> cw = retrieve(ps, "crop_window", defult);
   std::cout << "Crop window ";
   for (const auto& e : cw) {
     std::cout << e << " ";
@@ -119,6 +129,6 @@ Film* create_film(const ParamSet& ps) {
     img_type_e = Film::image_type_e::PNG;
   }
   // Note that the image type is fixed here. Must be read from ParamSet, though.
-  return new Film(Point2i{ xres, yres }, filename, img_type_e, std::vector<real_type>{ 0, 1, 0, 1 });
+  return new Film(Point2i{ xres, yres }, filename, img_type_e, cw);
 }
 }  // namespace rt3
