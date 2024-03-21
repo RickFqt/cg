@@ -312,9 +312,11 @@ void ask_color(tinyxml2::XMLElement* p_element,
         // std::cout << "batata assada \n";
         int sz = result.value()[0].size();
         bool isInt = true;
-        for(int i = 0; i < sz; i++){
-          if(result.value()[0][i]=='.'){
-            isInt = false;break;
+        for(int j = 0; j < 3; j++){
+          for(int i = 0; i < result.value()[j].size(); i++){
+            if(result.value()[0][i]=='.'){
+              isInt = false;break;
+            }
           }
         }
         Color24 comp;
