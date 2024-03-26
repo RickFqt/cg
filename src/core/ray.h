@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-#define PARSER_H 1
+#ifndef RAY_H
+#define RAY_H 1
 
 #include "./rt3.h"
 
