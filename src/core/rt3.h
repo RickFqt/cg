@@ -39,7 +39,6 @@ using Vector3f = glm::vec3;
 using Color24 = std::array<int, 3>;
 using Spectrum = std::array<float, 3>;
 using Normal3f = glm::vec3;
-using Ray = std::array<float, 3>;
 
 // List of points
 using ListPoint3f = std::vector<Point3f>;
