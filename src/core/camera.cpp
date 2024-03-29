@@ -4,6 +4,9 @@ namespace rt3{
 
 using rt3::Vector3f;
 
+/**
+ * @brief Generates a ray for a pixel (x, y) on the raster image.
+ */
 Ray Camera::generate_ray(int x, int y){
     return Ray{Vector3f{0,0,0},Vector3f{0,0,0}};
 }
