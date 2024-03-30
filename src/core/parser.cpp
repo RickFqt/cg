@@ -309,11 +309,9 @@ void ask_color(tinyxml2::XMLElement* p_element,
                           "for attribute \""
                           + att_key + "\"!" });
       }else{
-        // std::cout << "batata assada \n";
-        int sz = result.value()[0].size();
         bool isInt = true;
         for(int j = 0; j < 3; j++){
-          for(int i = 0; i < result.value()[j].size(); i++){
+          for(long unsigned int i = 0; i < result.value()[j].size(); i++){
             if(result.value()[0][i]=='.'){
               isInt = false;break;
             }
