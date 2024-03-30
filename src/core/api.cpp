@@ -59,12 +59,29 @@ Film* API::make_film(const std::string& name, const ParamSet& ps) {
 }
 
 Background* API::make_background(const std::string& name, const ParamSet& ps) {
-  std::cout << ">>> Inside API::background()\n";
+  std::cout << ">>> Inside API::make_background()\n";
   Background* bkg{ nullptr };
   bkg = create_color_background(ps);
 
   // Return the newly created background.
   return bkg;
+}
+
+Camera* make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
+  std::cout << ">>> Inside API::make_camera()\n";
+  Camera* camera{ nullptr };
+
+  std::string type = retrieve(cps, "type", string{ "orthographic" });
+
+  if(type == "orthographic"){
+    camera = create_orthographic_camera(cps, lps, std::move(fml));
+  }
+  else{
+    camera = create_perspective_camera(cps, lps, std::move(fml));
+  }
+
+  // Return the newly created camera.
+  return camera;
 }
 
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ

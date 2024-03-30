@@ -81,7 +81,7 @@ private:
    */
   /// Unique infrastructure to render a scene (camera, integrator, etc.).
   static std::unique_ptr<RenderOptions> render_opt;
-  static std::unique_ptr<Film> m_the_camera;
+  static std::unique_ptr<Camera> m_the_camera;
   static std::unique_ptr<Film> m_the_film; // TODO: Move this to camera!!!
   static std::unique_ptr<Background> m_the_background;
   // [NO NECESSARY IN THIS PROJECT]
