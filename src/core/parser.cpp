@@ -90,7 +90,7 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
 
       parse_parameters(p_element, param_list, /* out */ &ps);
 
-      // API::camera(ps);
+      API::camera(ps);
     } else if (tag_name == "background") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{
@@ -127,7 +127,7 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
                                                           { param_type_e::VEC3F, "up" } };
 
       parse_parameters(p_element, param_list, /* out */ &ps);
-      // API::look_at(ps);
+      API::look_at(ps);
     } else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<
       // std::endl;

@@ -41,6 +41,7 @@ API::APIState API::curr_state = APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
+static std::unique_ptr<Film> m_the_camera;
 std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
 
@@ -174,6 +175,25 @@ void API::background(const ParamSet& ps) {
   render_opt->bkg_type = type;
   // Store current background object.
   render_opt->bkg_ps = ps;
+}
+
+void API::camera(const ParamSet& ps) {
+  std::cout << ">>> Inside API::camera()\n";
+  VERIFY_WORLD_BLOCK("API::camera");
+
+  // retrieve type from ps.
+  std::string type = retrieve(ps, "type", string{ "unknown" });
+  render_opt->camera_type = type;
+  // Store current camera object.
+  render_opt->camera_ps = ps;
+}
+
+void API::look_at(const ParamSet& ps) {
+  std::cout << ">>> Inside API::look_at()\n";
+  VERIFY_WORLD_BLOCK("API::look_at");
+
+  // Store current look_at object.
+  render_opt->look_at_ps = ps;
 }
 
 void API::film(const ParamSet& ps) {
