@@ -26,7 +26,11 @@ void API::render() {
     // Traverse all pixels to shoot rays from.
     for ( size_t j = h_init ; j < h_final ; j++ ) {
         for( size_t i = w_init ; i < w_final ; i++ ) {
-            // Not shooting rays just yet; so let us sample the background.
+            // Generate ray with the Shirley method.
+            Ray r2 = m_the_camera->generate_ray( i, j );
+            // Print out the ray.
+            std::cout << "Ray2: " << r2 << std::endl;
+            // Rays are not hitting the scene just yet; so let us sample the background.
             auto color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); // get background color.
             // std::cout <<color[0] << " " << color[1] << " " << color[2] << std::endl;
             m_the_camera->film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
