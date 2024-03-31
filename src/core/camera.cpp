@@ -8,7 +8,7 @@ using rt3::Vector3f;
  * @brief Generates a ray for a pixel (x, y) on the raster image.
  */
 Ray Camera::generate_ray(int x, int y){
-    return Ray{Vector3f{0,0,0},Vector3f{0,0,0}};
+    return Ray{Point3f{0,0,0},Vector3f{0,0,0}};
 }
 
 Ray PerspectiveCamera::generate_ray(int x, int y){
@@ -44,8 +44,8 @@ Ray OrthographicCamera::generate_ray(int x, int y){
 PerspectiveCamera* create_perspective_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
     // Retrieve look_up parameters
     Point3f look_from = retrieve(lps, "look_from", Point3f{0,0,0});
-    Point3f look_at = retrieve(lps, "look_at", Point3f{0,0,0});
-    Vector3f up = retrieve(lps, "up", Vector3f{0,0,0});
+    Point3f look_at = retrieve(lps, "look_at", Point3f{0,1,0});
+    Vector3f up = retrieve(lps, "up", Vector3f{0,1,0});
     
     vector<real_type> screen_window;
 
@@ -94,9 +94,9 @@ PerspectiveCamera* create_perspective_camera(const ParamSet &cps, const ParamSet
 OrthographicCamera* create_orthographic_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
 
     // Retrieve look_up parameters
-    Point3f look_from = retrieve(lps, "look_from", Point3f{0,0,0});
-    Point3f look_at = retrieve(lps, "look_at", Point3f{0,0,0});
-    Vector3f up = retrieve(lps, "up", Vector3f{0,0,0});
+    Point3f look_from = retrieve(lps, "look_from", Point3f{0,0,1});
+    Point3f look_at = retrieve(lps, "look_at", Point3f{0,1,0});
+    Vector3f up = retrieve(lps, "up", Vector3f{1,0,0});
     vector<real_type> screen_window;
 
     if(cps.count("screen_window") >= 1){

@@ -14,13 +14,20 @@ class Ray {
             real_type start=0, real_type end=INFINITY) : o{o}, d{d},
             t_min{start}, t_max{end} {/*empty*/}
         Ray() : t_min{0.f}, t_max{INFINITY}{/*empty*/}
+    
+    friend std::ostream & operator<<( std::ostream & os_, const Ray & r_ ) {
+        os_ << "o:[" << r_.o.x << " " << r_.o.y << " " << r_.o.z << "] ";
+        os_ << "d:[" << r_.d.x << " " << r_.d.y << " " << r_.d.z << "]";
+        return os_;
+    }
+    Point3f operator()(real_type t) const { return o + d * t; }
+
     private:
         Point3f o; //!< origin
         Vector3f d; //!< direction
         mutable real_type t_min, t_max; //!< parameters
         // ... the methods goes here
         Vector3f normalize(const Point3f& v) const;
-        Point3f operator()(real_type t) const { return o + d * t; }
 };
 
 //Example uses of Ray
