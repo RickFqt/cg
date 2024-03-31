@@ -50,7 +50,7 @@ PerspectiveCamera* create_perspective_camera(const ParamSet &cps, const ParamSet
     vector<real_type> screen_window;
 
     if(cps.count("fovy") >= 1){
-        real_type fovy = retrieve(cps, "fovy", 30);
+        real_type fovy = retrieve(cps, "fovy", 30.F);
         fovy = rt3::Radians(fovy);
 
         real_type H = tan(fovy/2);

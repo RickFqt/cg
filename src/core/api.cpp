@@ -10,11 +10,11 @@ void API::render() {
   // Perform objects initialization here.
     // The Film object holds the memory for the image.
     // ...
-    auto res = m_the_film->get_resolution(); // Retrieve the image dimensions in pixels.
-    real_type x0 = m_the_film->m_vcrop[0];
-    real_type x1 = m_the_film->m_vcrop[1];
-    real_type y0 = m_the_film->m_vcrop[2];
-    real_type y1 = m_the_film->m_vcrop[3];
+    auto res = m_the_camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
+    real_type x0 = m_the_camera->film->m_vcrop[0];
+    real_type x1 = m_the_camera->film->m_vcrop[1];
+    real_type y0 = m_the_camera->film->m_vcrop[2];
+    real_type y1 = m_the_camera->film->m_vcrop[3];
     size_t w_init = round(res[0]*(x0));
     size_t h_init = round(res[1]*(y0));
     size_t w_final = round(res[0]*(x1));
@@ -29,11 +29,11 @@ void API::render() {
             // Not shooting rays just yet; so let us sample the background.
             auto color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); // get background color.
             // std::cout <<color[0] << " " << color[1] << " " << color[2] << std::endl;
-            m_the_film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
+            m_the_camera->film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
         }
     }
     // send image color buffer to the output file.
-    m_the_film->write_image();
+    m_the_camera->film->write_image();
 }
 
 //=== API's static members declaration and initialization.
@@ -41,8 +41,8 @@ API::APIState API::curr_state = APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
-static std::unique_ptr<Film> m_the_camera;
-std::unique_ptr<Film> API::m_the_film;
+std::unique_ptr<Camera> API::m_the_camera;
+// std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
@@ -67,7 +67,7 @@ Background* API::make_background(const std::string& name, const ParamSet& ps) {
   return bkg;
 }
 
-Camera* make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
+Camera* API::make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
   std::cout << ">>> Inside API::make_camera()\n";
   Camera* camera{ nullptr };
 
@@ -139,16 +139,19 @@ void API::world_end() {
   m_the_background = std::unique_ptr<Background>( make_background(render_opt->bkg_type,
                                                               render_opt->bkg_ps) );
   // Same with the film, that later on will belong to a camera object.
-  m_the_film = std::unique_ptr<Film>( make_film(render_opt->film_type, render_opt->film_ps) );
-  // animal=std::unique_ptr<A>(new A(a));
+  std::unique_ptr<Film> m_the_film = std::unique_ptr<Film>( make_film(render_opt->film_type, render_opt->film_ps) );
+
+  // Initialize camera
+  m_the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_type, render_opt->camera_ps, 
+                                                    render_opt->look_at_ps, std::move(m_the_film)) );
 
   // Run only if we got film and background.
-  if (m_the_film and m_the_background) {
+  if (m_the_camera and m_the_background) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
     // Structure biding, c++17.
-    auto res = m_the_film->get_resolution();
+    auto res = m_the_camera->film->get_resolution();
     size_t w = res[0];
     size_t h = res[1];
     RT3_MESSAGE("    Image dimensions in pixels (W x H): " + std::to_string(w) + " x "
@@ -196,7 +199,7 @@ void API::background(const ParamSet& ps) {
 
 void API::camera(const ParamSet& ps) {
   std::cout << ">>> Inside API::camera()\n";
-  VERIFY_WORLD_BLOCK("API::camera");
+  VERIFY_SETUP_BLOCK("API::camera");
 
   // retrieve type from ps.
   std::string type = retrieve(ps, "type", string{ "unknown" });
@@ -207,7 +210,7 @@ void API::camera(const ParamSet& ps) {
 
 void API::look_at(const ParamSet& ps) {
   std::cout << ">>> Inside API::look_at()\n";
-  VERIFY_WORLD_BLOCK("API::look_at");
+  VERIFY_SETUP_BLOCK("API::look_at");
 
   // Store current look_at object.
   render_opt->look_at_ps = ps;
