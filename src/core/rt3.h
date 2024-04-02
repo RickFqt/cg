@@ -22,6 +22,7 @@ using std::string;
 using std::tuple;
 # include <utility>
 #include "../ext/glm/glm.hpp"
+#define GLM_FORCE_LEFT_HANDED
 #include "image_io.h"
 
 //== Alias to the chosen data structure to implement a dictionary.
@@ -39,7 +40,6 @@ using Vector3f = glm::vec3;
 using Color24 = std::array<int, 3>;
 using Spectrum = std::array<float, 3>;
 using Normal3f = glm::vec3;
-using Ray = std::array<float, 3>;
 
 // List of points
 using ListPoint3f = std::vector<Point3f>;

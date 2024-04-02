@@ -2,10 +2,6 @@
 
 This is the basic architecture for the Ray Tracing Teaching Tool (RT3) Project.
 
-Most of the class are incomplete. For instance, there is no `Vector3f` class.
-There is only an alias `using Vector3f = std::array<float,3>;` just to compile the project.
-Replace that with your own math library.
-
 # Processing flow
 
 The `main.cpp` calls the `api.cpp`, which, in turn, calls various API functions that create the objects, such as camera, integrator, scene, film.
@@ -24,6 +20,6 @@ cmake --build build
 
 # TODO
 
-- [ ] Cameras
+- [X] Cameras
 - [ ] Integrators
-- [ ] Math class (vector and Ray)
+- [X] Math class (vector and Ray)

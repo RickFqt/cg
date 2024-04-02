@@ -90,7 +90,7 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
 
       parse_parameters(p_element, param_list, /* out */ &ps);
 
-      // API::camera(ps);
+      API::camera(ps);
     } else if (tag_name == "background") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{
@@ -127,7 +127,7 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
                                                           { param_type_e::VEC3F, "up" } };
 
       parse_parameters(p_element, param_list, /* out */ &ps);
-      // API::look_at(ps);
+      API::look_at(ps);
     } else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<
       // std::endl;
@@ -309,11 +309,9 @@ void ask_color(tinyxml2::XMLElement* p_element,
                           "for attribute \""
                           + att_key + "\"!" });
       }else{
-        // std::cout << "batata assada \n";
-        int sz = result.value()[0].size();
         bool isInt = true;
         for(int j = 0; j < 3; j++){
-          for(int i = 0; i < result.value()[j].size(); i++){
+          for(long unsigned int i = 0; i < result.value()[j].size(); i++){
             if(result.value()[0][i]=='.'){
               isInt = false;break;
             }

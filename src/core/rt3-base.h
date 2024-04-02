@@ -4,6 +4,8 @@
 #include "../ext/lodepng.h"
 #include "error.h"
 #include "film.h"
+#include "background.h"
+#include "camera.h"
 #include "image_io.h"
 #include "paramset.h"
 #include "parser.h"

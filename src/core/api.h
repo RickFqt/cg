@@ -45,6 +45,8 @@ struct RenderOptions {
   /// the Camera
   string camera_type{"perspective"};
   ParamSet camera_ps;
+  /// the look_at
+  ParamSet look_at_ps;
   /// the Bakcground
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
@@ -79,7 +81,7 @@ private:
    */
   /// Unique infrastructure to render a scene (camera, integrator, etc.).
   static std::unique_ptr<RenderOptions> render_opt;
-  static std::unique_ptr<Film> m_the_film;
+  static std::unique_ptr<Camera> m_the_camera;
   static std::unique_ptr<Background> m_the_background;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
@@ -93,7 +95,7 @@ private:
   ///
   static Film *make_film(const string &name, const ParamSet &ps);
   static Background *make_background(const string &name, const ParamSet &ps);
-  static Camera *make_camera(const string &name, const ParamSet &ps);
+  static Camera *make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
 
 public:
   //=== API function begins here.
@@ -104,6 +106,7 @@ public:
 
   static void film(const ParamSet &ps);
   static void camera(const ParamSet &ps);
+  static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
   static void world_begin();
   static void world_end();
