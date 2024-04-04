@@ -9,12 +9,12 @@ using rt3::Point3f;
 using rt3::Vector3f;
 
 class Ray {
-    public:
-        Ray (const Point3f& o, const Vector3f& d,
-            real_type start=0, real_type end=INFINITY) : o{o}, d{d},
-            t_min{start}, t_max{end} {/*empty*/}
-        Ray() : t_min{0.f}, t_max{INFINITY}{/*empty*/}
-    
+public:
+    Ray (const Point3f& o, const Vector3f& d,
+        real_type start=0, real_type end=INFINITY) : o{o}, d{d},
+        t_min{start}, t_max{end} {/*empty*/}
+    Ray() : t_min{0.f}, t_max{INFINITY}{/*empty*/}
+
     friend std::ostream & operator<<( std::ostream & os_, const Ray & r_ ) {
         os_ << "o:[" << r_.o.x << " " << r_.o.y << " " << r_.o.z << "] ";
         os_ << "d:[" << r_.d.x << " " << r_.d.y << " " << r_.d.z << "]";
@@ -22,12 +22,21 @@ class Ray {
     }
     Point3f operator()(real_type t) const { return o + d * t; }
 
-    private:
-        Point3f o; //!< origin
-        Vector3f d; //!< direction
-        mutable real_type t_min, t_max; //!< parameters
-        // ... the methods goes here
-        Vector3f normalize(const Point3f& v) const;
+    Point3f get_origin()const{return o;}
+    Vector3f get_direction()const{return d;}
+
+    real_type get_t_max()const{return t_max;}
+    real_type get_t_min()const{return t_min;}
+
+    void set_t_min(const real_type& t)const{t_min = t;}
+    void set_t_max(const real_type& t)const{t_max = t;}
+
+private:
+    Point3f o; //!< origin
+    Vector3f d; //!< direction
+    mutable real_type t_min, t_max; //!< parameters
+    // ... the methods goes here
+    Vector3f normalize(const Point3f& v) const;
 };
 
 //Example uses of Ray

@@ -14,7 +14,8 @@ namespace rt3{
 */
 class Primitive {
 	public:
-		virtual ~Primitive();
+        Primitive(){ /* empty */ }
+		virtual ~Primitive(){ /* empty */ };
 		virtual bool intersect( const Ray& r, Surfel *sf ) const = 0;
 		// Simpler & faster version of intersection that only return true/false.
 		// It does not compute the hit point information.
