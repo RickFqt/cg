@@ -1,0 +1,41 @@
+#include "sphere.h"
+
+namespace rt3 {
+
+bool Sphere::intersect_p( const Ray& r ) const{
+
+    Vector3f d = r.get_direction();
+    Vector3f oc = r.get_origin() - center;
+    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
+
+    if(delta >= 0){
+        real_type t = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d);
+
+        if(t < r.get_t_max()){
+            r.set_t_max(t);
+        }
+    }
+
+    return delta >= 0;
+}
+
+bool Sphere::intersect( const Ray& r, Surfel *sf ) const{
+    // TODO: Update surfel
+    Vector3f d = r.get_direction();
+    Vector3f oc = r.get_origin() - center;
+    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
+
+    if(delta >= 0){
+        real_type t = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d);
+
+        if(t < r.get_t_max()){
+            r.set_t_max(t);
+        }
+    }
+
+    return delta >= 0;
+
+}
+
+
+}  // namespace rt3
