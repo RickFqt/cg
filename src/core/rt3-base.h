@@ -11,5 +11,6 @@
 #include "parser.h"
 #include "primitive.h"
 #include "surfel.h"
+#include "sphere.h"
 
 #endif  // RT3-BASE_H

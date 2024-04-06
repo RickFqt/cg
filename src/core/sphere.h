@@ -5,6 +5,7 @@
 #include "ray.h"
 #include "primitive.h"
 #include "surfel.h"
+#include "paramset.h"
 
 namespace rt3{
 
@@ -29,6 +30,8 @@ public:
 };
 
 //-------------------------------------------------------------------------------
+// Factory pattern. It's not part of this class.
+Sphere* create_sphere(const ParamSet &ps);
 } // namespace rt3
 
 #endif

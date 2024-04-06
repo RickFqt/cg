@@ -62,6 +62,21 @@ Film* API::make_film(const std::string& name, const ParamSet& ps) {
   return film;
 }
 
+Primitive* API::make_object(const ParamSet& ps) {
+
+  std::cout << ">>> Inside API::make_object()\n";
+  Primitive* obj{ nullptr };
+
+  std::string type = retrieve(ps, "type", string{ "sphere" });
+
+  if(type == "sphere"){
+    obj = create_sphere(ps);
+  }
+  // TODO: Add new types here!
+
+  return obj;
+}
+
 Background* API::make_background(const std::string& name, const ParamSet& ps) {
   std::cout << ">>> Inside API::make_background()\n";
   Background* bkg{ nullptr };
@@ -199,6 +214,14 @@ void API::background(const ParamSet& ps) {
   render_opt->bkg_type = type;
   // Store current background object.
   render_opt->bkg_ps = ps;
+}
+
+void API::object(const ParamSet& ps) {
+  std::cout << ">>> Inside API::object()\n";
+  VERIFY_WORLD_BLOCK("API::object");
+
+  // Store current object into the list of objects.
+  render_opt->list_objects_ps.push_back(ps);
 }
 
 void API::camera(const ParamSet& ps) {
