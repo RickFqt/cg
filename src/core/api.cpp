@@ -201,6 +201,14 @@ void API::background(const ParamSet& ps) {
   render_opt->bkg_ps = ps;
 }
 
+void API::object(const ParamSet& ps) {
+  std::cout << ">>> Inside API::object()\n";
+  VERIFY_WORLD_BLOCK("API::object");
+
+  // Store current object into the list of objects.
+  render_opt->list_objects_ps.push_back(ps);
+}
+
 void API::camera(const ParamSet& ps) {
   std::cout << ">>> Inside API::camera()\n";
   VERIFY_SETUP_BLOCK("API::camera");

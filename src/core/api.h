@@ -50,6 +50,8 @@ struct RenderOptions {
   /// the Bakcground
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
+  /// the Objects
+  std::vector<ParamSet> list_objects_ps;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -108,6 +110,7 @@ public:
   static void camera(const ParamSet &ps);
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
+  static void object(const ParamSet &ps);
   static void world_begin();
   static void world_end();
   static void render();
