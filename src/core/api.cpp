@@ -62,6 +62,21 @@ Film* API::make_film(const std::string& name, const ParamSet& ps) {
   return film;
 }
 
+Primitive* API::make_object(const ParamSet& ps) {
+
+  std::cout << ">>> Inside API::make_object()\n";
+  Primitive* obj{ nullptr };
+
+  std::string type = retrieve(ps, "type", string{ "sphere" });
+
+  if(type == "sphere"){
+    obj = create_sphere(ps);
+  }
+  // TODO: Add new types here!
+
+  return obj;
+}
+
 Background* API::make_background(const std::string& name, const ParamSet& ps) {
   std::cout << ">>> Inside API::make_background()\n";
   Background* bkg{ nullptr };

@@ -10,9 +10,6 @@ namespace rt3{
 using rt3::Point3f;
 using rt3::Vector3f;
 
-// Forward declaration
-class Primitive;
-
 /* 
  Represents the geometry of a particular point on a surface, often a position found by 
  intersecting a ray against the surface. 
