@@ -28,8 +28,8 @@ void API::render() {
       for( size_t i = w_init ; i < w_final ; i++ ) {
           // Generate ray with the Shirley method.
           Ray r2 = m_the_camera->generate_ray( i, j );
-          // Print out the ray.
-          std::cout << "Ray2: " << r2 << std::endl;
+          // Print out the ray, only for debug purposes.
+          // std::cout << "Ray2: " << r2 << std::endl;
           Color24 color{0,0,0};
           // Get background color.
           color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); 
