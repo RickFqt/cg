@@ -31,7 +31,7 @@ class Camera{
     {
         Vector3f gaze = look_at - look_from; w = glm::normalize(gaze); // left-hand orientation
         u = glm::normalize( glm::cross( up, w ) ); // The order inside cross matters.
-        v = glm::normalize( glm::cross ( w, u ) );
+        v = glm::normalize( glm::cross ( u, w ) );
         e = look_from;
     }
     virtual ~Camera(){ /* empty */ };

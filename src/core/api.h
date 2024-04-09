@@ -85,6 +85,7 @@ private:
   static std::unique_ptr<RenderOptions> render_opt;
   static std::unique_ptr<Camera> m_the_camera;
   static std::unique_ptr<Background> m_the_background;
+  static std::vector<std::unique_ptr<Primitive>> m_object_list;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;

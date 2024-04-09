@@ -8,36 +8,43 @@ namespace rt3 {
 
 void API::render() { 
   // Perform objects initialization here.
-    // The Film object holds the memory for the image.
-    // ...
-    auto res = m_the_camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
-    real_type x0 = m_the_camera->film->m_vcrop[0];
-    real_type x1 = m_the_camera->film->m_vcrop[1];
-    real_type y0 = m_the_camera->film->m_vcrop[2];
-    real_type y1 = m_the_camera->film->m_vcrop[3];
-    size_t w_init = round(res[0]*(x0));
-    size_t h_init = round(res[1]*(y0));
-    size_t w_final = round(res[0]*(x1));
-    size_t h_final = round(res[1]*(y1));
-    size_t w_full = res[0];
-    size_t h_full = res[1];
-    // std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
-    // std::cout << "largura: " << w << " altura: " << h << std::endl;
-    // Traverse all pixels to shoot rays from.
-    for ( size_t j = h_init ; j < h_final ; j++ ) {
-        for( size_t i = w_init ; i < w_final ; i++ ) {
-            // Generate ray with the Shirley method.
-            Ray r2 = m_the_camera->generate_ray( i, j );
-            // Print out the ray.
-            std::cout << "Ray2: " << r2 << std::endl;
-            // Rays are not hitting the scene just yet; so let us sample the background.
-            auto color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); // get background color.
-            // std::cout <<color[0] << " " << color[1] << " " << color[2] << std::endl;
-            m_the_camera->film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
-        }
-    }
-    // send image color buffer to the output file.
-    m_the_camera->film->write_image();
+  // The Film object holds the memory for the image.
+  // ...
+  auto res = m_the_camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
+  real_type x0 = m_the_camera->film->m_vcrop[0];
+  real_type x1 = m_the_camera->film->m_vcrop[1];
+  real_type y0 = m_the_camera->film->m_vcrop[2];
+  real_type y1 = m_the_camera->film->m_vcrop[3];
+  size_t w_init = round(res[0]*(x0));
+  size_t h_init = round(res[1]*(y0));
+  size_t w_final = round(res[0]*(x1));
+  size_t h_final = round(res[1]*(y1));
+  size_t w_full = res[0];
+  size_t h_full = res[1];
+  // std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
+  // std::cout << "largura: " << w << " altura: " << h << std::endl;
+  // Traverse all pixels to shoot rays from.
+  for ( size_t j = h_init ; j < h_final ; j++ ) {
+      for( size_t i = w_init ; i < w_final ; i++ ) {
+          // Generate ray with the Shirley method.
+          Ray r2 = m_the_camera->generate_ray( i, j );
+          // Print out the ray, only for debug purposes.
+          // std::cout << "Ray2: " << r2 << std::endl;
+          Color24 color{0,0,0};
+          // Get background color.
+          color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); 
+          // Traverse each object of the scene.
+          for ( size_t k{0}; k < m_object_list.size(); ++k ) {
+              auto obj = m_object_list[k].get();
+              // Each time the ray hits something, max_t parameter of the ray must be updated.
+              if ( obj->intersect_p( r2 ) ) // Does the ray hit any sphere in the scene?
+                  color = Color24{255,0,0};  // Just paint it red.
+          }
+          m_the_camera->film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
+      }
+  }
+  // send image color buffer to the output file.
+  m_the_camera->film->write_image();
 }
 
 //=== API's static members declaration and initialization.
@@ -46,6 +53,7 @@ RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
 std::unique_ptr<Camera> API::m_the_camera;
+std::vector<std::unique_ptr<Primitive>> API::m_object_list;
 // std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
 
@@ -164,7 +172,11 @@ void API::world_end() {
   m_the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_type, render_opt->camera_ps, 
                                                     render_opt->look_at_ps, std::move(m_the_film)) );
 
-  // Run only if we got film and background.
+  for(ParamSet ps : render_opt->list_objects_ps){
+    m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
+  }
+
+  // Run only if we got camera and background.
   if (m_the_camera and m_the_background) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
