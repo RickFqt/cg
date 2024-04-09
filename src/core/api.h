@@ -50,6 +50,8 @@ struct RenderOptions {
   /// the Bakcground
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
+  /// the Objects
+  std::vector<ParamSet> list_objects_ps;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -83,6 +85,7 @@ private:
   static std::unique_ptr<RenderOptions> render_opt;
   static std::unique_ptr<Camera> m_the_camera;
   static std::unique_ptr<Background> m_the_background;
+  static std::vector<std::unique_ptr<Primitive>> m_object_list;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
@@ -96,6 +99,7 @@ private:
   static Film *make_film(const string &name, const ParamSet &ps);
   static Background *make_background(const string &name, const ParamSet &ps);
   static Camera *make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
+  static Primitive *make_object(const ParamSet &ps);
 
 public:
   //=== API function begins here.
@@ -108,6 +112,7 @@ public:
   static void camera(const ParamSet &ps);
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
+  static void object(const ParamSet &ps);
   static void world_begin();
   static void world_end();
   static void render();

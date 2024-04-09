@@ -128,6 +128,32 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
 
       parse_parameters(p_element, param_list, /* out */ &ps);
       API::look_at(ps);
+    } else if (tag_name == "integrator") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "type" }
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      //TODO
+      // API::integrator(ps);
+    } else if (tag_name == "material") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "type" },
+        { param_type_e::COLOR, "color" }      // Single color for the material.
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      //TODO
+      // API::material(ps);
+    } else if (tag_name == "object") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "type" },
+        { param_type_e::REAL, "radius" },  // Radius of an object (like a sphere).
+        { param_type_e::VEC3F, "center" },   // Center of an object.
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::object(ps);
     } else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<
       // std::endl;
