@@ -12,5 +12,6 @@
 #include "primitive.h"
 #include "surfel.h"
 #include "sphere.h"
+#include "material.h"
 
 #endif  // RT3-BASE_H
