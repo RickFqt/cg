@@ -7,6 +7,7 @@
 namespace rt3 {
 
 void API::render() { 
+  /*
   // Perform objects initialization here.
   // The Film object holds the memory for the image.
   // ...
@@ -45,6 +46,7 @@ void API::render() {
   }
   // send image color buffer to the output file.
   m_the_camera->film->write_image();
+  */
 }
 
 //=== API's static members declaration and initialization.
@@ -53,7 +55,7 @@ RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
 std::unique_ptr<Camera> API::m_the_camera;
-std::vector<std::unique_ptr<Primitive>> API::m_object_list;
+// std::vector<std::unique_ptr<Primitive>> API::m_object_list;
 // std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
 
@@ -70,6 +72,7 @@ Film* API::make_film(const std::string& name, const ParamSet& ps) {
   return film;
 }
 
+/*
 Primitive* API::make_object(const ParamSet& ps) {
 
   std::cout << ">>> Inside API::make_object()\n";
@@ -84,6 +87,7 @@ Primitive* API::make_object(const ParamSet& ps) {
 
   return obj;
 }
+*/
 
 Background* API::make_background(const std::string& name, const ParamSet& ps) {
   std::cout << ">>> Inside API::make_background()\n";
@@ -172,9 +176,11 @@ void API::world_end() {
   m_the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_type, render_opt->camera_ps, 
                                                     render_opt->look_at_ps, std::move(m_the_film)) );
 
+  /*
   for(ParamSet ps : render_opt->list_objects_ps){
     m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
   }
+  */
 
   // Run only if we got camera and background.
   if (m_the_camera and m_the_background) {

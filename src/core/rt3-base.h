@@ -13,5 +13,6 @@
 #include "surfel.h"
 #include "sphere.h"
 #include "material.h"
+#include "shape.h"
 
 #endif  // RT3-BASE_H

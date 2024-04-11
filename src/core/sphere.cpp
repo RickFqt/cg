@@ -19,8 +19,8 @@ bool Sphere::intersect_p( const Ray& r ) const{
     return delta >= 0;
 }
 
-bool Sphere::intersect( const Ray& r, Surfel *sf ) const{
-    // TODO: Update surfel
+bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
+    // TODO: Update surfel and t_hit
     Vector3f d = r.get_direction();
     Vector3f oc = r.get_origin() - center;
     float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
@@ -37,6 +37,7 @@ bool Sphere::intersect( const Ray& r, Surfel *sf ) const{
 
 }
 
+/*
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Sphere object.
@@ -47,6 +48,7 @@ Sphere* create_sphere(const ParamSet &ps){
 
     return new Sphere(radius, center);
 }
+*/
 
 
 }  // namespace rt3
