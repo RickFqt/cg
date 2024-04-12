@@ -14,5 +14,6 @@
 #include "sphere.h"
 #include "material.h"
 #include "shape.h"
+#include "primlist.h"
 
 #endif  // RT3-BASE_H

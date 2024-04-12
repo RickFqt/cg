@@ -33,6 +33,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
                          ${RT3_SOURCE_DIR}/core/sphere.cpp
                          ${RT3_SOURCE_DIR}/core/primitive.cpp
+                         ${RT3_SOURCE_DIR}/core/primlist.cpp
                          ${RT3_SOURCE_DIR}/ext/lodepng.cpp
                          ${RT3_SOURCE_DIR}/ext/tinyxml2.cpp
                          ${RT3_SOURCE_DIR}/main/rt3.cpp
