@@ -6,6 +6,7 @@
 #include "surfel.h"
 #include "material.h"
 #include "shape.h"
+#include "error.h"
 
 namespace rt3{
 
@@ -61,7 +62,7 @@ public:
 	
 	std::shared_ptr<Material> get_material() const
 	{
-		// TODO: Error message here
+		RT3_ERROR("An aggregate must not have a material associated with!\n");
 		return nullptr;
 	};
 };
