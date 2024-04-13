@@ -19,7 +19,7 @@ using rt3::Vector3f;
 class Surfel{
 	public:
 		Surfel( const Point3f&p,const Vector3f&n, const Vector3f&wo, float time,
-			const Point2f& uv, const std::shared_ptr<Primitive> pri )
+			const Point2f& uv, const Primitive *pri )
 			: p{p}, n{n}, wo{wo}, time{time}, uv{uv}, primitive{pri}
             {/* empty */};
 
@@ -28,7 +28,7 @@ class Surfel{
 		Vector3f wo;      //!< Outgoing direction of light, which is -ray.
         float time;
 		Point2f uv;     //!< Parametric coordinate (u,v) of the hit surface.
-		std::shared_ptr<Primitive> primitive=nullptr; //!< Pointer to the primitive.
+		const Primitive *primitive=nullptr; //!< Pointer to the primitive.
 };
 
 //-------------------------------------------------------------------------------

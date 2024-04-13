@@ -9,13 +9,15 @@ bool GeometricPrimitive::intersect_p( const Ray& r ) const{
 
 bool GeometricPrimitive::intersect( const Ray& r, Surfel *sf ) const{
 
-    bool has_intersected = false;
-    float t_hit = r.get_t_max();
-    has_intersected = shape->intersect(r, &t_hit, sf);
-    r.set_t_max(t_hit);
-    //TODO: Update Surfel Here?
+    real_type t_hit{ 0 };
+    // Test if I got a hit from this shape
+    if (not shape->intersect(r, &t_hit, sf)) {
+        return false;
+    }
 
-    return has_intersected;
+    r.set_t_max(t_hit);
+    sf->primitive = this;
+    return true;
 }
 
 // TODO: Bounds3f PrimList::world_bounds(){}

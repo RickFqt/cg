@@ -8,19 +8,6 @@ bool Sphere::intersect_p( const Ray& r ) const{
     Vector3f oc = r.get_origin() - center;
     float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
 
-    if(delta >= 0){
-        real_type t1 = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d); // First root
-        real_type t2 = (-(glm::dot(oc, d)) + sqrt(delta)) / glm::dot(d,d); // Second root
-
-        // Check if t1 or t2 are between the range
-        if(r.get_t_min() < t1 && t1 < r.get_t_max()){
-            r.set_t_max(t1);
-        }
-        else if(r.get_t_min() < t2 && t2 < r.get_t_max()){
-            r.set_t_max(t2);
-        }
-    }
-
     return delta >= 0;
 }
 
@@ -37,14 +24,16 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
         if(r.get_t_min() < t1 && t1 < r.get_t_max()){
             *t_hit = t1;
             // TODO: Update Surfel here?
+            return true;
         }
         else if(r.get_t_min() < t2 && t2 < r.get_t_max()){
             *t_hit = t2;
             // TODO: Update Surfel here?
+            return true;
         }
     }
 
-    return delta >= 0;
+    return false;
 
 }
 
