@@ -15,5 +15,6 @@
 #include "material.h"
 #include "shape.h"
 #include "primlist.h"
+#include "scene.h"
 
 #endif  // RT3-BASE_H
