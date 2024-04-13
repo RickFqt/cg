@@ -8,35 +8,36 @@ bool Sphere::intersect_p( const Ray& r ) const{
     Vector3f oc = r.get_origin() - center;
     float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
 
-    if(delta >= 0){
-        real_type t = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d);
-
-        if(t < r.get_t_max()){
-            r.set_t_max(t);
-        }
-    }
-
     return delta >= 0;
 }
 
-bool Sphere::intersect( const Ray& r, Surfel *sf ) const{
-    // TODO: Update surfel
+bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
     Vector3f d = r.get_direction();
     Vector3f oc = r.get_origin() - center;
     float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
 
     if(delta >= 0){
-        real_type t = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d);
+        real_type t1 = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d); // First root
+        real_type t2 = (-(glm::dot(oc, d)) + sqrt(delta)) / glm::dot(d,d); // Second root
 
-        if(t < r.get_t_max()){
-            r.set_t_max(t);
+        // Check if t1 or t2 are between the range
+        if(r.get_t_min() < t1 && t1 < r.get_t_max()){
+            *t_hit = t1;
+            // TODO: Update Surfel here?
+            return true;
+        }
+        else if(r.get_t_min() < t2 && t2 < r.get_t_max()){
+            *t_hit = t2;
+            // TODO: Update Surfel here?
+            return true;
         }
     }
 
-    return delta >= 0;
+    return false;
 
 }
 
+/*
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Sphere object.
@@ -47,6 +48,7 @@ Sphere* create_sphere(const ParamSet &ps){
 
     return new Sphere(radius, center);
 }
+*/
 
 
 }  // namespace rt3

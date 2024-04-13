@@ -6,6 +6,7 @@
 #include "primitive.h"
 #include "surfel.h"
 #include "paramset.h"
+#include "shape.h"
 
 namespace rt3{
 
@@ -15,15 +16,17 @@ using rt3::Vector3f;
 /*
     This is a sphere :D (it has a center and radius)
 */
-class Sphere : public Primitive{
+class Sphere : public Shape{
 private:
     float radius;
     Point3f center;
 public:
-    Sphere(const float& r, const Point3f& c):radius{r}, center{c}{ /* empty */ }
+    Sphere(const bool& flip_n, const float& r, const Point3f& c):
+    Shape(flip_n), radius{r}, center{c}{ /* empty */ }
+    // Bounds3f world_bounds TODO
 
     bool intersect_p( const Ray& r ) const;
-    bool intersect( const Ray& r, Surfel *sf ) const;
+    bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;
 
     virtual ~Sphere(){};
 
