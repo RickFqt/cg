@@ -7,7 +7,7 @@
 namespace rt3 {
 
 void API::render() { 
-  /*
+  
   // Perform objects initialization here.
   // The Film object holds the memory for the image.
   // ...
@@ -46,7 +46,7 @@ void API::render() {
   }
   // send image color buffer to the output file.
   m_the_camera->film->write_image();
-  */
+  
 }
 
 //=== API's static members declaration and initialization.

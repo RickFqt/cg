@@ -5,6 +5,7 @@
 #include "surfel.h"
 #include "rt3.h"
 #include "scene.h"
+#include "camera.h"
 
 namespace rt3{
 
