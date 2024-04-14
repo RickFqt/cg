@@ -7,11 +7,11 @@ using rt3::Vector3f;
 /**
  * @brief Generates a ray for a pixel (x, y) on the raster image.
  */
-Ray Camera::generate_ray(int x, int y){
+Ray Camera::generate_ray(int x, int y) const{
     return Ray{Point3f{0,0,0},Vector3f{0,0,0}};
 }
 
-Ray PerspectiveCamera::generate_ray(int x, int y){
+Ray PerspectiveCamera::generate_ray(int x, int y)const{
 
     // Converts the (x,y) pixel coordinate to (i,j) coordinate in screen space
     real_type i = screen_window[Borders_e::l] + (screen_window[Borders_e::r] - screen_window[Borders_e::l])*(x + 0.5)/film->m_full_resolution[0];
@@ -25,7 +25,7 @@ Ray PerspectiveCamera::generate_ray(int x, int y){
     return Ray{ray_origin,ray_direction};
 }
 
-Ray OrthographicCamera::generate_ray(int x, int y){
+Ray OrthographicCamera::generate_ray(int x, int y)const{
 
     // Converts the (x,y) pixel coordinate to (i,j) coordinate in screen space
     real_type i = screen_window[Borders_e::l] + (screen_window[Borders_e::r] - screen_window[Borders_e::l])*(x + 0.5)/film->m_full_resolution[0];

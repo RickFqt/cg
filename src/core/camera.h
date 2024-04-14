@@ -36,14 +36,14 @@ class Camera{
     }
     virtual ~Camera(){ /* empty */ };
 
-    virtual Ray generate_ray(int x, int y);
+    virtual Ray generate_ray(int x, int y)const;
 };
 
 // The Perspective Camera shoots rays from a single point to every pixel area into the scene.
 class PerspectiveCamera : public Camera {
 
     public:
-	Ray generate_ray(int x, int y);
+	Ray generate_ray(int x, int y)const;
 
     PerspectiveCamera(Point3f look_from, Point3f look_at, Vector3f up, std::unique_ptr<Film>&& film, vector<real_type> screen_window):
     Camera(look_from, look_at, up, std::move(film), screen_window)
@@ -55,7 +55,7 @@ class PerspectiveCamera : public Camera {
 class OrthographicCamera : public Camera {
 
     public:
-	Ray generate_ray(int x, int y);
+	Ray generate_ray(int x, int y)const;
 
     OrthographicCamera(Point3f look_from, Point3f look_at, Vector3f up, std::unique_ptr<Film>&& film, vector<real_type> screen_window):
     Camera(look_from, look_at, up, std::move(film), screen_window)
