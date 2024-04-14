@@ -22,12 +22,22 @@ class SamplerIntegrator : public Integrator {
 		virtual ~SamplerIntegrator();
 		SamplerIntegrator( std::shared_ptr<const Camera> cam ) : camera{cam}{/* empty */};
 
-		virtual Color24 Li( const Ray& ray, const Scene& scene ) const = 0;
+		virtual std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const = 0;
 		virtual void render( const Scene& scene );
 		virtual void preprocess( const Scene& scene );
 
 	protected:
 		std::shared_ptr<const Camera> camera;
+};
+
+class FlatIntegrator : public SamplerIntegrator {
+
+	//=== Public interface
+	public:
+		virtual ~FlatIntegrator();
+		FlatIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */};
+
+		std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
 };
 
 } // namespace rt3
