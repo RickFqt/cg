@@ -5,6 +5,7 @@
 
 #include "paramset.h"
 #include "rt3.h"
+#include "integrator.h"
 
 //=== API Macro definitions
 
@@ -52,6 +53,8 @@ struct RenderOptions {
   ParamSet bkg_ps;
   /// the Objects
   std::vector<ParamSet> list_objects_ps;
+  /// the Integrator
+  ParamSet integrator_ps;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -86,6 +89,7 @@ private:
   static std::unique_ptr<Camera> m_the_camera;
   static std::unique_ptr<Background> m_the_background;
   static std::vector<std::unique_ptr<Primitive>> m_object_list;
+  static std::unique_ptr<Integrator> m_the_integrator;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
@@ -113,6 +117,7 @@ public:
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
   static void object(const ParamSet &ps);
+  static void integrator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
   static void render();

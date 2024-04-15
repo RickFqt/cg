@@ -135,7 +135,7 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       //TODO
-      // API::integrator(ps);
+      API::integrator(ps);
     } else if (tag_name == "material") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{

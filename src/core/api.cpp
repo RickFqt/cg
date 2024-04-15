@@ -55,6 +55,7 @@ RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
 std::unique_ptr<Camera> API::m_the_camera;
+std::unique_ptr<Integrator> API::m_the_integrator;
 // std::vector<std::unique_ptr<Primitive>> API::m_object_list;
 // std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
@@ -269,6 +270,12 @@ void API::film(const ParamSet& ps) {
   std::string type = retrieve(ps, "type", string{ "unknown" });
   render_opt->film_type = type;
   render_opt->film_ps = ps;
+}
+
+void API::integrator(const ParamSet &ps) {
+  std::cout << ">>> Inside API::integrator()\n";
+  VERIFY_SETUP_BLOCK("API::integrator");
+  render_opt->integrator_ps = ps;
 }
 
 }  // namespace rt3
