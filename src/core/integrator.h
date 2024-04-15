@@ -1,11 +1,14 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H 1
 
+#include "primitive.h"
 #include "ray.h"
-#include "surfel.h"
 #include "rt3.h"
 #include "scene.h"
 #include "camera.h"
+#include "background.h"
+#include "material.h"
+#include <optional>
 
 namespace rt3{
 

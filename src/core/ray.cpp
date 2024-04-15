@@ -1,5 +1,4 @@
 #include "ray.h"
-#include "rt3.h"
 
 namespace rt3 {
 

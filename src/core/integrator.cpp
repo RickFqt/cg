@@ -1,5 +1,4 @@
 #include "integrator.h"
-#include <any>
 
 namespace rt3 {
 
@@ -20,8 +19,6 @@ void SamplerIntegrator::render(const Scene& scene) {
     size_t h_init = round(img_dim[1]*(y0));
     size_t w_final = round(img_dim[0]*(x1));
     size_t h_final = round(img_dim[1]*(y1));
-    size_t w_full = img_dim[0];
-    size_t h_full = img_dim[1];
 
     // This might just be a tile (part) of an image, rendered in parallel.
     for ( size_t y = h_init ; y < h_final ; y++ ) {
@@ -42,7 +39,7 @@ void SamplerIntegrator::render(const Scene& scene) {
 
 // This method must be overridden by all classes derived from SamplerIntegrator.
 /// Determines a color for the incoming ray.
-std::optional<Color24> FlatIntegrator::Li(const Ray& ray, const Scene& scene)
+std::optional<Color24> FlatIntegrator::Li(const Ray& ray, const Scene& scene) const
 {
     Color24 L{0,0,0}; // The radiance
     // Find closest ray intersection or return background radiance.
@@ -52,9 +49,9 @@ std::optional<Color24> FlatIntegrator::Li(const Ray& ray, const Scene& scene)
     }
     // Some form of determining the incoming radiance at the ray's origin.
     // Polymorphism in action.
-    FlatMaterial *fm = dynamic_cast< FlatMaterial *>( iscet.primitive->get_material() );
+    FlatMaterial * fm = dynamic_cast< FlatMaterial *>( isect.primitive->get_material() );
     // Assign diffuse color to L.
-    L = fm->kd(); // Call a method present only in FlatMaterial.
+    L = fm->get_kd(); // Call a method present only in FlatMaterial.
     return L;
 }
 

@@ -1,7 +1,7 @@
 #ifndef RAY_H
 #define RAY_H 1
 
-#include "./rt3.h"
+#include "rt3.h"
 
 namespace rt3{
 

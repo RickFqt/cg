@@ -14,7 +14,7 @@ public:
     Material(){ /* empty */ };
     virtual ~Material(){ /* empty */ };
 
-    virtual void scatter(Surfel *isect, Ray *r);
+    virtual void scatter(Surfel *isect, Ray *r)=0;
 };
 
 // This concrete Material has only one information: a color.
@@ -29,9 +29,9 @@ public:
     virtual ~FlatMaterial(){ /* empty */ };
 
     // Returns the color
-    Color24 get_kd() const { return kd; };
+    Color24 get_kd() const{return kd;}
 
-    void scatter(Surfel *isect, Ray *r);
+    void scatter(Surfel *isect, Ray *r){/* empty */};
 
 };
 

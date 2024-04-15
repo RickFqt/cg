@@ -1,9 +1,8 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H 1
 
-#include "./rt3.h"
+// #include "./rt3.h"
 #include "ray.h"
-#include "surfel.h"
 #include "material.h"
 #include "shape.h"
 #include "error.h"
@@ -25,7 +24,7 @@ class Primitive {
 		virtual bool intersect_p( const Ray& r ) const = 0;
 		// TODO: virtual Bounds3f world_bounds() = 0;
 
-		virtual std::shared_ptr<Material> get_material() const = 0;
+		virtual Material * get_material() const = 0;
 };
 
 class GeometricPrimitive : public Primitive {
@@ -42,7 +41,7 @@ public:
 
 	bool intersect_p( const Ray& r ) const;
     bool intersect( const Ray& r, Surfel *sf ) const;
-	std::shared_ptr<Material> get_material() const {return material;};
+	Material * get_material() const {return material.get();};
 	void set_material(std::shared_ptr<Material> m) {material = m;};
 
 };
@@ -60,11 +59,11 @@ public:
 	virtual bool intersect_p( const Ray& r ) const = 0;
 	// TODO: virtual Bounds3f world_bounds() = 0;
 	
-	std::shared_ptr<Material> get_material() const
+	Material * get_material() const
 	{
 		RT3_ERROR("An aggregate must not have a material associated with!\n");
 		return nullptr;
-	};
+	}
 };
 
 //-------------------------------------------------------------------------------
