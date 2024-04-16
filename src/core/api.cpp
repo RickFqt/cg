@@ -222,7 +222,7 @@ void API::world_end() {
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
     // Structure biding, c++17.
-    auto res = m_the_camera->film->get_resolution();
+    auto res = the_camera->film->get_resolution();
     size_t w = res[0];
     size_t h = res[1];
     RT3_MESSAGE("    Image dimensions in pixels (W x H): " + std::to_string(w) + " x "
@@ -313,7 +313,7 @@ void API::film(const ParamSet& ps) {
 
 void API::make_named_material(const ParamSet &ps){
   std::cout << ">>> Inside API::make_named_material()\n";
-  VERIFY_SETUP_BLOCK("API::make_named_material");
+  VERIFY_WORLD_BLOCK("API::make_named_material");
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
@@ -323,7 +323,7 @@ void API::make_named_material(const ParamSet &ps){
 
 void API::named_material(const ParamSet &ps){
   std::cout << ">>> Inside API::named_material()\n";
-  VERIFY_SETUP_BLOCK("API::named_material");
+  VERIFY_WORLD_BLOCK("API::named_material");
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
@@ -341,7 +341,7 @@ void API::named_material(const ParamSet &ps){
 
 void API::material(const ParamSet &ps){
   std::cout << ">>> Inside API::material()\n";
-  VERIFY_SETUP_BLOCK("API::material");
+  VERIFY_WORLD_BLOCK("API::material");
 
   // Set the current material to the one specified (anonymous)
   curr_material = std::shared_ptr<Material>(make_material(ps));
