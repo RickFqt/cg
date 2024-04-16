@@ -2,6 +2,7 @@
 #define API_H 1
 
 #include <string>
+#include <map>
 
 #include "paramset.h"
 #include "rt3.h"
@@ -51,8 +52,8 @@ struct RenderOptions {
   /// the Bakcground
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
-  /// the Objects
-  std::vector<ParamSet> list_objects_ps;
+  /// the Objects with its associated materials
+  std::vector<std::pair<ParamSet, std::shared_ptr<Material>>> list_objects_with_materials;
   /// the Integrator
   ParamSet integrator_ps;
 };
@@ -90,6 +91,10 @@ private:
   static std::unique_ptr<Background> m_the_background;
   static std::vector<std::unique_ptr<Primitive>> m_object_list;
   static std::unique_ptr<Integrator> m_the_integrator;
+  /// the library of Materials
+  static std::map<string, std::shared_ptr<Material>> material_library;
+  /// the current Material
+  static std::shared_ptr<Material> curr_material;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
@@ -104,6 +109,7 @@ private:
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
   static Primitive *make_object(const ParamSet &ps);
+  static Material *make_material(const ParamSet &ps);
   static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
 
 public:
@@ -118,6 +124,9 @@ public:
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
   static void object(const ParamSet &ps);
+  static void make_named_material(const ParamSet &ps);
+  static void named_material(const ParamSet &ps);
+  static void material(const ParamSet &ps);
   static void integrator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
