@@ -53,9 +53,13 @@ struct RenderOptions {
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
   /// the Objects with its associated materials
-  std::vector<std::pair<ParamSet, std::shared_ptr<Material>>> list_objects_with_materials;
+  std::vector<std::pair<ParamSet, ParamSet>> list_objects_with_materials;
   /// the Integrator
   ParamSet integrator_ps;
+  /// the library of Materials
+  std::map<string, ParamSet> material_library;
+  /// the current Material
+  ParamSet curr_material;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -91,10 +95,6 @@ private:
   static std::unique_ptr<Background> m_the_background;
   static std::vector<std::unique_ptr<Primitive>> m_object_list;
   static std::unique_ptr<Integrator> m_the_integrator;
-  /// the library of Materials
-  static std::map<string, std::shared_ptr<Material>> material_library;
-  /// the current Material
-  static std::shared_ptr<Material> curr_material;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
