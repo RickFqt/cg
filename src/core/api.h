@@ -104,7 +104,7 @@ private:
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
   static Primitive *make_object(const ParamSet &ps);
-  // static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
+  static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
 
 public:
   //=== API function begins here.

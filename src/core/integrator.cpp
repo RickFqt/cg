@@ -57,9 +57,7 @@ std::optional<Color24> FlatIntegrator::Li(const Ray& ray, const Scene& scene) co
 
 FlatIntegrator* create_flat_integrator(std::shared_ptr<const Camera> cam){
 
-    auto a = new FlatIntegrator(cam);
-
-    //return new FlatIntegrator(cam);
+    return new rt3::FlatIntegrator(cam);
 }
 
 }   // namespace rt3

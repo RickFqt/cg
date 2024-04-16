@@ -117,18 +117,18 @@ Camera* API::make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_p
   return camera;
 }
 
-// Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camera> camera) {
-//   std::cout << ">>> Inside API::make_integrator()\n";
-//   Integrator* integrator{ nullptr };
+Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camera> camera) {
+  std::cout << ">>> Inside API::make_integrator()\n";
+  Integrator* integrator{ nullptr };
 
-//   std::string type = retrieve(ps, "type", string{ "flat" });
+  std::string type = retrieve(ps, "type", string{ "flat" });
 
-//   if(type == "flat"){
-//     integrator = create_flat_integrator(camera);
-//   }
+  if(type == "flat"){
+    integrator = create_flat_integrator(camera);
+  }
 
-//   return integrator;
-// }
+  return integrator;
+}
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 // END OF THE AUXILIARY FUNCTIONS
 // =========================================================================
@@ -190,13 +190,12 @@ void API::world_end() {
                                                     render_opt->look_at_ps, std::move(the_film)) );
   
   // Initialize integrator
-  // m_the_integrator = std::unique_ptr<Integrator>(make_integrator(render_opt->integrator_ps, the_camera));
+  m_the_integrator = std::unique_ptr<Integrator>(make_integrator(render_opt->integrator_ps, the_camera));
 
-  /*
-  for(ParamSet ps : render_opt->list_objects_ps){
-    m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
-  }
-  */
+  
+  //for(ParamSet ps : render_opt->list_objects_ps){
+  //  m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
+  //}
 
   // Run only if we got camera and background.
   if (m_the_integrator and m_the_background) {

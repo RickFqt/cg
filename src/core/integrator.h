@@ -15,20 +15,20 @@ namespace rt3{
 
 class Integrator {
 	public:
-		Integrator(){}
-		virtual ~Integrator();
+		Integrator() = default;
+		virtual ~Integrator(){};
 		virtual void render( const Scene& scene ) =0;
 };
 
 class SamplerIntegrator : public Integrator {
 	//=== Public interface
 	public:
-		virtual ~SamplerIntegrator();
-		SamplerIntegrator( std::shared_ptr<const Camera> cam ) : camera{cam}{/* empty */};
+		virtual ~SamplerIntegrator(){};
+		SamplerIntegrator( std::shared_ptr<const Camera> cam ) : camera{cam}{};
 
 		virtual std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const = 0;
 		virtual void render( const Scene& scene );
-		virtual void preprocess( const Scene& scene );
+		virtual void preprocess( const Scene& scene ){};
 
 	protected:
 		std::shared_ptr<const Camera> camera;
@@ -38,7 +38,7 @@ class FlatIntegrator : public SamplerIntegrator {
 
 	//=== Public interface
 	public:
-		virtual ~FlatIntegrator();
+		virtual ~FlatIntegrator(){};
 		FlatIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */}
 
 		std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
