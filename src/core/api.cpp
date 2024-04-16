@@ -286,6 +286,44 @@ void API::film(const ParamSet& ps) {
   render_opt->film_ps = ps;
 }
 
+void API::make_named_material(const ParamSet &ps){
+  std::cout << ">>> Inside API::make_named_material()\n";
+  VERIFY_SETUP_BLOCK("API::make_named_material");
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+  std::string type = retrieve(ps, "type", string{ "flat" });
+  Color24 color = retrieve(ps, "color", Color24{ 255,0,0 });
+
+  // Add the new named material into the library
+  render_opt->material_library[name] = {type, color};
+}
+
+void API::named_material(const ParamSet &ps){
+  std::cout << ">>> Inside API::named_material()\n";
+  VERIFY_SETUP_BLOCK("API::named_material");
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  // If there is no already created material, we create one
+  if(render_opt->material_library.count(name) < 1){
+    render_opt->material_library[name] = {"flat", Color24{255,0,0}};
+  }
+
+  // Set the current material to the one specified (named)
+  render_opt->curr_material = render_opt->material_library[name];
+}
+
+void API::material(const ParamSet &ps){
+  std::cout << ">>> Inside API::material()\n";
+  VERIFY_SETUP_BLOCK("API::material");
+
+  std::string type = retrieve(ps, "type", string{ "flat" });
+  Color24 color = retrieve(ps, "color", Color24{ 255,0,0 });
+
+  // Set the current material to the one specified (anonymous)
+  render_opt->curr_material = {type, color};
+}
+
 void API::integrator(const ParamSet &ps) {
   std::cout << ">>> Inside API::integrator()\n";
   VERIFY_SETUP_BLOCK("API::integrator");

@@ -136,6 +136,24 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       parse_parameters(p_element, param_list, /* out */ &ps);
       //TODO
       API::integrator(ps);
+    } else if (tag_name == "make_named_material") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "type" },
+        { param_type_e::COLOR, "color" },      // Single color for the material.
+        { param_type_e::STRING, "name" }        // Name of the material.
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+
+      API::make_named_material(ps);
+    } else if (tag_name == "named_material") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "name" }     // Name of the material.
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+
+      API::named_material(ps);
     } else if (tag_name == "material") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{
@@ -143,8 +161,8 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::COLOR, "color" }      // Single color for the material.
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
-      //TODO
-      // API::material(ps);
+      
+      API::material(ps);
     } else if (tag_name == "object") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{

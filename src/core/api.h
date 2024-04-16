@@ -2,6 +2,7 @@
 #define API_H 1
 
 #include <string>
+#include <map>
 
 #include "paramset.h"
 #include "rt3.h"
@@ -55,6 +56,11 @@ struct RenderOptions {
   std::vector<ParamSet> list_objects_ps;
   /// the Integrator
   ParamSet integrator_ps;
+  /// the library of Materials
+  // Name of material -> (type of material, color of material)
+  std::map<string, std::pair<string, Color24>> material_library;
+  /// the current Material
+  std::pair<string, Color24> curr_material {"flat", {255,0,0}};
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -118,6 +124,9 @@ public:
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
   static void object(const ParamSet &ps);
+  static void make_named_material(const ParamSet &ps);
+  static void named_material(const ParamSet &ps);
+  static void material(const ParamSet &ps);
   static void integrator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
