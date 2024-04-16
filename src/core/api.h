@@ -52,15 +52,10 @@ struct RenderOptions {
   /// the Bakcground
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
-  /// the Objects
-  std::vector<ParamSet> list_objects_ps;
+  /// the Objects with its associated materials
+  std::vector<std::pair<ParamSet, std::shared_ptr<Material>>> list_objects_with_materials;
   /// the Integrator
   ParamSet integrator_ps;
-  /// the library of Materials
-  // Name of material -> (type of material, color of material)
-  std::map<string, std::pair<string, Color24>> material_library;
-  /// the current Material
-  std::pair<string, Color24> curr_material {"flat", {255,0,0}};
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -96,6 +91,10 @@ private:
   static std::unique_ptr<Background> m_the_background;
   static std::vector<std::unique_ptr<Primitive>> m_object_list;
   static std::unique_ptr<Integrator> m_the_integrator;
+  /// the library of Materials
+  static std::map<string, std::shared_ptr<Material>> material_library;
+  /// the current Material
+  static std::shared_ptr<Material> curr_material;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
@@ -110,6 +109,7 @@ private:
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
   static Primitive *make_object(const ParamSet &ps);
+  static Material *make_material(const ParamSet &ps);
   static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
 
 public:

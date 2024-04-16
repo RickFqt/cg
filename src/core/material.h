@@ -4,6 +4,7 @@
 #include "rt3.h"
 #include "surfel.h"
 #include "ray.h"
+#include "paramset.h"
 
 namespace rt3 {
 
@@ -34,6 +35,9 @@ public:
     void scatter(Surfel *isect, Ray *r){/* empty */};
 
 };
+
+// factory pattern functions.
+FlatMaterial* create_flat_material(const ParamSet& ps);
 
 }  // namespace rt3
 
