@@ -57,10 +57,6 @@ std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
 std::unique_ptr<Camera> API::m_the_camera;
 std::unique_ptr<Integrator> API::m_the_integrator;
-/// the library of Materials
-std::map<string, std::shared_ptr<Material>> API::material_library;
-/// the current Material
-std::shared_ptr<Material> API::curr_material;
 // std::vector<std::unique_ptr<Primitive>> API::m_object_list;
 // std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
@@ -272,14 +268,8 @@ void API::object(const ParamSet& ps) {
   std::cout << ">>> Inside API::object()\n";
   VERIFY_WORLD_BLOCK("API::object");
 
-  // TODO: Check if this works
-  // If there is no material currently set, we use a default one
-  if(!curr_material){
-    curr_material = std::make_shared<FlatMaterial>(Color24{255,0,0});
-  }
-
   // Store current object into the list of objects.
-  render_opt->list_objects_with_materials.push_back({ps, curr_material});
+  render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
 }
 
 void API::camera(const ParamSet& ps) {
@@ -318,7 +308,7 @@ void API::make_named_material(const ParamSet &ps){
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
   // Add the new named material into the library
-  material_library[name] = std::shared_ptr<Material>(make_material(ps));
+  render_opt->material_library[name] = ps;
 }
 
 void API::named_material(const ParamSet &ps){
@@ -328,13 +318,14 @@ void API::named_material(const ParamSet &ps){
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
   // If there is no already created material, we create one
-  if(material_library.count(name) < 1){
+  if(render_opt->material_library.count(name) < 1){
     std::cout << "Named material not found! Using default material...\n";
-    curr_material = std::make_shared<FlatMaterial>(Color24{255,0,0});
+    // TODO: Check if this works
+    render_opt->curr_material = ParamSet();
   }
   else{
     // Set the current material to the one specified (named)
-    curr_material = material_library[name];
+    render_opt->curr_material = render_opt->material_library[name];
   }
 
 }
@@ -344,7 +335,7 @@ void API::material(const ParamSet &ps){
   VERIFY_WORLD_BLOCK("API::material");
 
   // Set the current material to the one specified (anonymous)
-  curr_material = std::shared_ptr<Material>(make_material(ps));
+  render_opt->curr_material = ps;
 }
 
 void API::integrator(const ParamSet &ps) {
