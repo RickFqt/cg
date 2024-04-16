@@ -2,7 +2,7 @@
 #define SCENE_H 1
 
 #include "ray.h"
-#include "surfel.h"
+#include "primitive.h"
 
 namespace rt3{
 

@@ -1,9 +1,11 @@
 #ifndef SURFEL_H
 #define SURFEL_H 1
 
-#include "./rt3.h"
+#include "rt3.h"
 #include "ray.h"
 #include "primitive.h"
+
+
 
 namespace rt3{
 
@@ -22,6 +24,7 @@ class Surfel{
 			const Point2f& uv, const Primitive *pri )
 			: p{p}, n{n}, wo{wo}, time{time}, uv{uv}, primitive{pri}
             {/* empty */};
+		Surfel(){/* empty */}
 
 		Point3f p;        //!< Contact point.
 		Vector3f n;       //!< The surface normal.

@@ -1,5 +1,6 @@
 #include "api.h"
 #include "background.h"
+#include "parser.h"
 
 #include <chrono>
 #include <memory>
@@ -55,6 +56,7 @@ RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Background> API::m_the_background;
 std::unique_ptr<Camera> API::m_the_camera;
+std::unique_ptr<Integrator> API::m_the_integrator;
 // std::vector<std::unique_ptr<Primitive>> API::m_object_list;
 // std::unique_ptr<Film> API::m_the_film;
 // GraphicsState API::curr_GS;
@@ -62,7 +64,7 @@ std::unique_ptr<Camera> API::m_the_camera;
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
 // ˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇ
 
-Film* API::make_film(const std::string& name, const ParamSet& ps) {
+Film* API::make_film(const ParamSet& ps) {
   std::cout << ">>> Inside API::make_film()\n";
   Film* film{ nullptr };
   std::vector<real_type> defult ={curr_run_opt.crop_window[0][0], curr_run_opt.crop_window[0][1], curr_run_opt.crop_window[1][0], curr_run_opt.crop_window[1][1]};
@@ -89,7 +91,7 @@ Primitive* API::make_object(const ParamSet& ps) {
 }
 */
 
-Background* API::make_background(const std::string& name, const ParamSet& ps) {
+Background* API::make_background(const ParamSet& ps) {
   std::cout << ">>> Inside API::make_background()\n";
   Background* bkg{ nullptr };
   bkg = create_color_background(ps);
@@ -98,7 +100,7 @@ Background* API::make_background(const std::string& name, const ParamSet& ps) {
   return bkg;
 }
 
-Camera* API::make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
+Camera* API::make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
   std::cout << ">>> Inside API::make_camera()\n";
   Camera* camera{ nullptr };
 
@@ -115,6 +117,18 @@ Camera* API::make_camera(const string &name, const ParamSet &cps, const ParamSet
   return camera;
 }
 
+Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camera> camera) {
+  std::cout << ">>> Inside API::make_integrator()\n";
+  Integrator* integrator{ nullptr };
+
+  std::string type = retrieve(ps, "type", string{ "flat" });
+
+  if(type == "flat"){
+    integrator = create_flat_integrator(camera);
+  }
+
+  return integrator;
+}
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 // END OF THE AUXILIARY FUNCTIONS
 // =========================================================================
@@ -167,23 +181,24 @@ void API::world_end() {
 
   // At this point, we have the background as a solitary pointer here.
   // In the future, the background will be parte of the scene object.
-  m_the_background = std::unique_ptr<Background>( make_background(render_opt->bkg_type,
-                                                              render_opt->bkg_ps) );
+  m_the_background = std::unique_ptr<Background>( make_background(render_opt->bkg_ps) );
   // Same with the film, that later on will belong to a camera object.
-  std::unique_ptr<Film> m_the_film = std::unique_ptr<Film>( make_film(render_opt->film_type, render_opt->film_ps) );
+  std::unique_ptr<Film> the_film = std::unique_ptr<Film>( make_film(render_opt->film_ps) );
 
   // Initialize camera
-  m_the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_type, render_opt->camera_ps, 
-                                                    render_opt->look_at_ps, std::move(m_the_film)) );
+  std::shared_ptr<const Camera> the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_ps, 
+                                                    render_opt->look_at_ps, std::move(the_film)) );
+  
+  // Initialize integrator
+  m_the_integrator = std::unique_ptr<Integrator>(make_integrator(render_opt->integrator_ps, the_camera));
 
-  /*
-  for(ParamSet ps : render_opt->list_objects_ps){
-    m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
-  }
-  */
+  
+  //for(ParamSet ps : render_opt->list_objects_ps){
+  //  m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
+  //}
 
   // Run only if we got camera and background.
-  if (m_the_camera and m_the_background) {
+  if (m_the_integrator and m_the_background) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
@@ -269,6 +284,12 @@ void API::film(const ParamSet& ps) {
   std::string type = retrieve(ps, "type", string{ "unknown" });
   render_opt->film_type = type;
   render_opt->film_ps = ps;
+}
+
+void API::integrator(const ParamSet &ps) {
+  std::cout << ">>> Inside API::integrator()\n";
+  VERIFY_SETUP_BLOCK("API::integrator");
+  render_opt->integrator_ps = ps;
 }
 
 }  // namespace rt3

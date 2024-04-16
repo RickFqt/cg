@@ -30,6 +30,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
                          ${RT3_SOURCE_DIR}/core/image_io.cpp
                          ${RT3_SOURCE_DIR}/core/parser.cpp
                          ${RT3_SOURCE_DIR}/core/camera.cpp
+                         ${RT3_SOURCE_DIR}/core/integrator.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
                          ${RT3_SOURCE_DIR}/core/sphere.cpp
                          ${RT3_SOURCE_DIR}/core/primitive.cpp

@@ -5,6 +5,7 @@
 
 #include "paramset.h"
 #include "rt3.h"
+#include "integrator.h"
 
 //=== API Macro definitions
 
@@ -52,6 +53,8 @@ struct RenderOptions {
   ParamSet bkg_ps;
   /// the Objects
   std::vector<ParamSet> list_objects_ps;
+  /// the Integrator
+  ParamSet integrator_ps;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -86,6 +89,7 @@ private:
   static std::unique_ptr<Camera> m_the_camera;
   static std::unique_ptr<Background> m_the_background;
   static std::vector<std::unique_ptr<Primitive>> m_object_list;
+  static std::unique_ptr<Integrator> m_the_integrator;
   // [NO NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
@@ -96,10 +100,11 @@ private:
 
   // === Helper functions.
   ///
-  static Film *make_film(const string &name, const ParamSet &ps);
-  static Background *make_background(const string &name, const ParamSet &ps);
-  static Camera *make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
+  static Film *make_film(const ParamSet &ps);
+  static Background *make_background(const ParamSet &ps);
+  static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
   static Primitive *make_object(const ParamSet &ps);
+  static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
 
 public:
   //=== API function begins here.
@@ -113,6 +118,7 @@ public:
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
   static void object(const ParamSet &ps);
+  static void integrator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
   static void render();

@@ -1,12 +1,9 @@
 #ifndef SPHERE_H
 #define SPHERE_H 1
 
-#include "./rt3.h"
-#include "ray.h"
+#include "rt3.h"
 #include "primitive.h"
-#include "surfel.h"
 #include "paramset.h"
-#include "shape.h"
 
 namespace rt3{
 

@@ -2,8 +2,6 @@
 #define PRIMLIST_H 1
 
 #include "primitive.h"
-#include "ray.h"
-#include "surfel.h"
 
 namespace rt3 {
 
