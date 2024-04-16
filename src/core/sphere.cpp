@@ -37,7 +37,6 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
 }
 
-/*
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Sphere object.
@@ -46,9 +45,9 @@ Sphere* create_sphere(const ParamSet &ps){
     real_type radius = retrieve(ps, "radius", real_type{0.5});
     Point3f center = retrieve(ps, "center", Point3f{0,0,0});
 
-    return new Sphere(radius, center);
+    // TODO: Add flip_normals
+    return new Sphere(false, radius, center);
 }
-*/
 
 
 }  // namespace rt3

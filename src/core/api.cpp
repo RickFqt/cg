@@ -7,58 +7,12 @@
 
 namespace rt3 {
 
-void API::render() { 
-  /*
-  // Perform objects initialization here.
-  // The Film object holds the memory for the image.
-  // ...
-  auto res = m_the_camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
-  real_type x0 = m_the_camera->film->m_vcrop[0];
-  real_type x1 = m_the_camera->film->m_vcrop[1];
-  real_type y0 = m_the_camera->film->m_vcrop[2];
-  real_type y1 = m_the_camera->film->m_vcrop[3];
-  size_t w_init = round(res[0]*(x0));
-  size_t h_init = round(res[1]*(y0));
-  size_t w_final = round(res[0]*(x1));
-  size_t h_final = round(res[1]*(y1));
-  size_t w_full = res[0];
-  size_t h_full = res[1];
-  // std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
-  // std::cout << "largura: " << w << " altura: " << h << std::endl;
-  // Traverse all pixels to shoot rays from.
-  for ( size_t j = h_init ; j < h_final ; j++ ) {
-      for( size_t i = w_init ; i < w_final ; i++ ) {
-          // Generate ray with the Shirley method.
-          Ray r2 = m_the_camera->generate_ray( i, j );
-          // Print out the ray, only for debug purposes.
-          // std::cout << "Ray2: " << r2 << std::endl;
-          Color24 color{0,0,0};
-          // Get background color.
-          color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); 
-          // Traverse each object of the scene.
-          for ( size_t k{0}; k < m_object_list.size(); ++k ) {
-              auto obj = m_object_list[k].get();
-              // Each time the ray hits something, max_t parameter of the ray must be updated.
-              if ( obj->intersect_p( r2 ) ) // Does the ray hit any sphere in the scene?
-                  color = Color24{255,0,0};  // Just paint it red.
-          }
-          m_the_camera->film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
-      }
-  }
-  // send image color buffer to the output file.
-  m_the_camera->film->write_image();
-  */
-}
-
 //=== API's static members declaration and initialization.
 API::APIState API::curr_state = APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
-std::unique_ptr<Background> API::m_the_background;
-std::unique_ptr<Camera> API::m_the_camera;
 std::unique_ptr<Integrator> API::m_the_integrator;
-// std::vector<std::unique_ptr<Primitive>> API::m_object_list;
-// std::unique_ptr<Film> API::m_the_film;
+std::unique_ptr<Scene> API::m_the_scene;
 // GraphicsState API::curr_GS;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
@@ -89,22 +43,46 @@ Material* API::make_material(const ParamSet& ps) {
   return material;
 }
 
-/*
-Primitive* API::make_object(const ParamSet& ps) {
+Shape* API::make_shape(const ParamSet &ps) {
 
-  std::cout << ">>> Inside API::make_object()\n";
-  Primitive* obj{ nullptr };
+  std::cout << ">>> Inside API::make_shape()\n";
+  Shape* shape{ nullptr };
 
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
   if(type == "sphere"){
-    obj = create_sphere(ps);
+    shape = create_sphere(ps);
   }
   // TODO: Add new types here!
 
-  return obj;
+  return shape;
 }
-*/
+
+Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+
+  std::cout << ">>> Inside API::make_object()\n";
+
+  std::shared_ptr<Shape> shape{make_shape(ps_obj)};
+  std::shared_ptr<Material> material{make_material(ps_mat)};
+
+
+  return new GeometricPrimitive(shape, material);
+}
+
+Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat){
+
+  std::cout << ">>> Inside API::make_aggregate()\n";
+  
+  std::vector<std::shared_ptr<Primitive>> primitives;
+  std::shared_ptr<Primitive> prim;
+
+  for(auto pair_ps : vet_ps_obj_mat){
+    prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
+    primitives.push_back(prim);
+  }
+
+  return new PrimList(primitives);
+}
 
 Background* API::make_background(const ParamSet& ps) {
   std::cout << ">>> Inside API::make_background()\n";
@@ -143,6 +121,11 @@ Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camer
   }
 
   return integrator;
+}
+
+Scene* API::make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg) {
+
+  return new Scene(agg, bkg);
 }
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 // END OF THE AUXILIARY FUNCTIONS
@@ -196,7 +179,10 @@ void API::world_end() {
 
   // At this point, we have the background as a solitary pointer here.
   // In the future, the background will be parte of the scene object.
-  m_the_background = std::unique_ptr<Background>( make_background(render_opt->bkg_ps) );
+  std::shared_ptr<Background> the_background{ make_background(render_opt->bkg_ps) };
+
+  std::shared_ptr<Primitive> aggregate{ make_aggregate(render_opt->list_objects_with_materials)};
+
   // Same with the film, that later on will belong to a camera object.
   std::unique_ptr<Film> the_film = std::unique_ptr<Film>( make_film(render_opt->film_ps) );
 
@@ -207,13 +193,11 @@ void API::world_end() {
   // Initialize integrator
   m_the_integrator = std::unique_ptr<Integrator>(make_integrator(render_opt->integrator_ps, the_camera));
 
-  
-  //for(ParamSet ps : render_opt->list_objects_ps){
-  //  m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
-  //}
+  // Initialize scene
+  m_the_scene = std::unique_ptr<Scene>(make_scene(the_background, aggregate));
 
   // Run only if we got camera and background.
-  if (m_the_integrator and m_the_background) {
+  if (m_the_integrator and m_the_scene) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
@@ -227,7 +211,7 @@ void API::world_end() {
 
     //================================================================================
     auto start = std::chrono::steady_clock::now();
-    render();  // TODO: This is the ray tracer's  main loop.
+    m_the_integrator->render( *m_the_scene );
     auto end = std::chrono::steady_clock::now();
     //================================================================================
     auto diff = end - start;  // Store the time difference between start and end
