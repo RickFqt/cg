@@ -119,6 +119,9 @@ Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camer
   if(type == "flat"){
     integrator = create_flat_integrator(camera);
   }
+  if(type == "normal_map"){
+    integrator = create_normal_map_integrator(camera);
+  }
 
   return integrator;
 }

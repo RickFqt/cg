@@ -27,7 +27,7 @@ class Surfel{
 		Surfel(){/* empty */}
 
 		Point3f p;        //!< Contact point.
-		Vector3f n;       //!< The surface normal.
+		Vector3f n;       //!< The surface normal (normally normalized).
 		Vector3f wo;      //!< Outgoing direction of light, which is -ray.
         float time;
 		Point2f uv;     //!< Parametric coordinate (u,v) of the hit surface.
