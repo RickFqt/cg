@@ -27,6 +27,8 @@ class Scene {
          */
         bool intersect_p( const Ray& r ) const
         {return aggregate->intersect_p(r);};
+
+        std::shared_ptr<Primitive> get_aggregate() const {return aggregate;}
 };
 
 } // namespace rt3

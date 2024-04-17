@@ -58,7 +58,9 @@ class DepthMapIntegrator : public SamplerIntegrator {
 private:
 	// TODO: Put z_min, z_max, near_color & max_color here
 	real_type z_min, z_max;
+	real_type z_buffer_min, z_buffer_max;
 	Color24 near_color, far_color;
+	std::vector<std::vector<real_type>> z_buffer;
 
 //=== Public interface
 public:
