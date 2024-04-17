@@ -56,7 +56,6 @@ public:
 
 class DepthMapIntegrator : public SamplerIntegrator {
 private:
-	// TODO: Put z_min, z_max, near_color & max_color here
 	real_type z_min, z_max;
 	real_type z_buffer_min, z_buffer_max;
 	Color24 near_color, far_color;
@@ -65,7 +64,6 @@ private:
 //=== Public interface
 public:
 	virtual ~DepthMapIntegrator(){};
-	// TODO: Change ctro so it contains z_min, zmax etc
 	DepthMapIntegrator( std::shared_ptr<const Camera> cam, const real_type& zmin, const real_type& zmax, const Color24& nearcolor, 
 						const Color24& maxcolor):
 		SamplerIntegrator(cam), z_min{zmin}, z_max{zmax}, near_color{nearcolor}, far_color{maxcolor}{/* empty */}

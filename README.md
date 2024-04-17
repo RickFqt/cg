@@ -20,6 +20,4 @@ cmake --build build
 
 # TODO
 
-- [X] Cameras
-- [ ] Integrators
-- [X] Math class (vector and Ray)
+- [ ] Rendering multiple files at once

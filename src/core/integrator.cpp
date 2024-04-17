@@ -149,7 +149,6 @@ DepthMapIntegrator* create_depth_map_integrator(const ParamSet& ps, std::shared_
     Color24 near_color = retrieve(ps, "near_color", Color24{0,0,0});
     Color24 far_color = retrieve(ps, "far_color", Color24{255,255,255});
 
-    // TODO: Change when new ctro is ready
     return new rt3::DepthMapIntegrator(cam, z_min, z_max, near_color, far_color);
 }
 
