@@ -23,12 +23,20 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
         // Check if t1 or t2 are between the range
         if(r.get_t_min() < t1 && t1 < r.get_t_max()){
             *t_hit = t1;
-            // TODO: Update Surfel here?
+
+            // Update the contact point
+            sf->p = r(t1);
+            // Update the surface normal (which is normally normalized)
+            sf->n = glm::normalize(r(t1) - center);
             return true;
         }
         else if(r.get_t_min() < t2 && t2 < r.get_t_max()){
             *t_hit = t2;
-            // TODO: Update Surfel here?
+
+            // Update the contact point
+            sf->p = r(t2);
+            // Update the surface normal (which is normally normalized)
+            sf->n = glm::normalize(r(t2) - center);
             return true;
         }
     }

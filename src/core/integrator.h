@@ -43,8 +43,20 @@ class FlatIntegrator : public SamplerIntegrator {
 
 		std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
 };
+
+class NormalMapIntegrator : public SamplerIntegrator {
+
+	//=== Public interface
+	public:
+		virtual ~NormalMapIntegrator(){};
+		NormalMapIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */}
+
+		std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
+};
 // factory pattern functions.
 FlatIntegrator* create_flat_integrator(std::shared_ptr<const Camera> cam);
+
+NormalMapIntegrator* create_normal_map_integrator(std::shared_ptr<const Camera> cam);
 
 } // namespace rt3
 

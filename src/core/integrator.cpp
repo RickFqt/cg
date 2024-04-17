@@ -55,9 +55,36 @@ std::optional<Color24> FlatIntegrator::Li(const Ray& ray, const Scene& scene) co
     return L;
 }
 
+// This method must be overridden by all classes derived from SamplerIntegrator.
+/// Determines a color for the incoming ray.
+std::optional<Color24> NormalMapIntegrator::Li(const Ray& ray, const Scene& scene) const
+{
+    Color24 L{0,0,0}; // The radiance
+    // Find closest ray intersection or return background radiance.
+    Surfel isect; // Intersection information.
+    if (!scene.intersect(ray, &isect)) {
+        return {}; // empty object.
+    }
+    
+    // Get the surface normal (normally normalized)
+    Point3f normal = glm::normalize(isect.n);
+
+    // Treat the coordinates as RGB color, where values in [-1,1]↦[0,255].
+    L[0] = (normal[0] + 1) * ((float)255/(float)2);
+    L[1] = (normal[1] + 1) * ((float)255/(float)2);
+    L[2] = (normal[2] + 1) * ((float)255/(float)2);
+    
+    return L;
+}
+
 FlatIntegrator* create_flat_integrator(std::shared_ptr<const Camera> cam){
 
     return new rt3::FlatIntegrator(cam);
+}
+
+NormalMapIntegrator* create_normal_map_integrator(std::shared_ptr<const Camera> cam){
+
+    return new rt3::NormalMapIntegrator(cam);
 }
 
 }   // namespace rt3
