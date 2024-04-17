@@ -24,7 +24,7 @@ void SamplerIntegrator::render(const Scene& scene) {
     for ( size_t y = h_init ; y < h_final ; y++ ) {
         for( size_t x = w_init ; x < w_final ; x++ ) {
             // Determine the ray for the current camera type.
-            Point2i screen_coord{ float(x)/float(img_dim.x), float(y)/float(img_dim.y) };
+            Point2f screen_coord{ float(x)/float(img_dim.x), float(y)/float(img_dim.y) };
             Ray ray = camera->generate_ray( x, y ); // Generate the ray from (x,y)
             // Determine the incoming light.
             auto temp_L =  Li( ray, scene );
