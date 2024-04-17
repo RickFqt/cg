@@ -125,7 +125,7 @@ void DepthMapIntegrator::preprocess(const Scene& scene){
             if (scene.intersect(ray, &isect)) {
                 z_buffer[y-h_init][x-w_init] = ray.get_t_max();
                 if(z_buffer[y-h_init][x-w_init] < z_buffer_min) z_buffer_min = z_buffer[y-h_init][x-w_init];
-                if(z_buffer[y-h_init][x-w_init] < z_buffer_min) z_buffer_min = z_buffer[y-h_init][x-w_init];
+                if(z_buffer[y-h_init][x-w_init] > z_buffer_max) z_buffer_max = z_buffer[y-h_init][x-w_init];
             }
         }
     }

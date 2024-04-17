@@ -2,7 +2,7 @@
     <lookat look_from="0 10 5 " look_at="0 0 5" up="0 0 1" />
     <camera type="orthographic" screen_window="-8 8 -6 6" />
     <integrator type="normal_map"/>
-    <film type="image" x_res="800" y_res="600" filename="images/flat_spheres_ortho.png" img_type="png" />
+    <film type="image" x_res="800" y_res="600" filename="images/flat_spheres_ortho_10.png" img_type="png" />
 
     <!-- The Scene -->
     <world_begin/>
