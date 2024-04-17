@@ -87,4 +87,16 @@ NormalMapIntegrator* create_normal_map_integrator(std::shared_ptr<const Camera> 
     return new rt3::NormalMapIntegrator(cam);
 }
 
+DepthMapIntegrator* create_depth_map_integrator(const ParamSet& ps, std::shared_ptr<const Camera> cam){
+
+    real_type z_min = retrieve(ps, "z_min", 0.F);
+    real_type z_max = retrieve(ps, "z_max", 1.F);
+
+    Color24 near_color = retrieve(ps, "near_color", Color24{0,0,0});
+    Color24 far_color = retrieve(ps, "far_color", Color24{255,255,255});
+
+    // TODO: Change when new ctro is ready
+    return new rt3::DepthMapIntegrator(cam);
+}
+
 }   // namespace rt3
