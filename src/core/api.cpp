@@ -122,6 +122,9 @@ Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camer
   if(type == "normal_map"){
     integrator = create_normal_map_integrator(camera);
   }
+  if(type == "depth_map"){
+    integrator = create_depth_map_integrator(ps, camera);
+  }
 
   return integrator;
 }

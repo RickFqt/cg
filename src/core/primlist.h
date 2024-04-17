@@ -17,6 +17,7 @@ public:
 	// It does not compute the hit point information.
 	bool intersect_p( const Ray& r ) const;
 	// TODO: Bounds3f world_bounds();
+    std::vector<std::shared_ptr<Primitive>> get_primitives() const {return primitives;};
 
 };
 

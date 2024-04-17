@@ -131,10 +131,14 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
     } else if (tag_name == "integrator") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{
-        { param_type_e::STRING, "type" }
+        { param_type_e::STRING, "type" },
+        { param_type_e::REAL, "zmin" },
+        { param_type_e::REAL, "zmax" },
+        { param_type_e::COLOR, "near_color" },
+        { param_type_e::COLOR, "far_color" }
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
-      //TODO
+
       API::integrator(ps);
     } else if (tag_name == "make_named_material") {
       ParamSet ps;

@@ -14,49 +14,72 @@ namespace rt3{
 
 
 class Integrator {
-	public:
-		Integrator() = default;
-		virtual ~Integrator(){};
-		virtual void render( const Scene& scene ) =0;
+public:
+	Integrator() = default;
+	virtual ~Integrator(){};
+	virtual void render( const Scene& scene ) =0;
 };
 
 class SamplerIntegrator : public Integrator {
-	//=== Public interface
-	public:
-		virtual ~SamplerIntegrator(){};
-		SamplerIntegrator( std::shared_ptr<const Camera> cam ) : camera{cam}{};
+//=== Public interface
+public:
+	virtual ~SamplerIntegrator(){};
+	SamplerIntegrator( std::shared_ptr<const Camera> cam ) : camera{cam}{};
 
-		virtual std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const = 0;
-		virtual void render( const Scene& scene );
-		virtual void preprocess( const Scene& scene ){};
+	virtual std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const = 0;
+	virtual void render( const Scene& scene );
+	virtual void preprocess( const Scene& scene ){};
 
-	protected:
-		std::shared_ptr<const Camera> camera;
+protected:
+	std::shared_ptr<const Camera> camera;
 };
 
 class FlatIntegrator : public SamplerIntegrator {
 
-	//=== Public interface
-	public:
-		virtual ~FlatIntegrator(){};
-		FlatIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */}
+//=== Public interface
+public:
+	virtual ~FlatIntegrator(){};
+	FlatIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */}
 
-		std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
+	std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
 };
 
 class NormalMapIntegrator : public SamplerIntegrator {
 
-	//=== Public interface
-	public:
-		virtual ~NormalMapIntegrator(){};
-		NormalMapIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */}
+//=== Public interface
+public:
+	virtual ~NormalMapIntegrator(){};
+	NormalMapIntegrator( std::shared_ptr<const Camera> cam): SamplerIntegrator(cam){/* empty */}
 
-		std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
+	std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
+};
+
+class DepthMapIntegrator : public SamplerIntegrator {
+private:
+	// TODO: Put z_min, z_max, near_color & max_color here
+	real_type z_min, z_max;
+	real_type z_buffer_min, z_buffer_max;
+	Color24 near_color, far_color;
+	std::vector<std::vector<real_type>> z_buffer;
+
+//=== Public interface
+public:
+	virtual ~DepthMapIntegrator(){};
+	// TODO: Change ctro so it contains z_min, zmax etc
+	DepthMapIntegrator( std::shared_ptr<const Camera> cam, const real_type& zmin, const real_type& zmax, const Color24& nearcolor, 
+						const Color24& maxcolor):
+		SamplerIntegrator(cam), z_min{zmin}, z_max{zmax}, near_color{nearcolor}, far_color{maxcolor}{/* empty */}
+
+	std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
+	
+	void preprocess( const Scene& scene );
 };
 // factory pattern functions.
 FlatIntegrator* create_flat_integrator(std::shared_ptr<const Camera> cam);
 
 NormalMapIntegrator* create_normal_map_integrator(std::shared_ptr<const Camera> cam);
+
+DepthMapIntegrator* create_depth_map_integrator(const ParamSet& ps, std::shared_ptr<const Camera> cam);
 
 } // namespace rt3
 

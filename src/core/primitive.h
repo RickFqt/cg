@@ -43,6 +43,7 @@ public:
     bool intersect( const Ray& r, Surfel *sf ) const;
 	Material * get_material() const {return material.get();};
 	void set_material(std::shared_ptr<Material> m) {material = m;};
+	std::shared_ptr<Shape> get_shape() const {return shape;}
 
 };
 
