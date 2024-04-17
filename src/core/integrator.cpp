@@ -77,6 +77,22 @@ std::optional<Color24> NormalMapIntegrator::Li(const Ray& ray, const Scene& scen
     return L;
 }
 
+std::optional<Color24> DepthMapIntegrator::Li(const Ray& ray, const Scene& scene) const
+{
+    Color24 L{0,0,0}; // The radiance
+    // Find closest ray intersection or return background radiance.
+    Surfel isect; // Intersection information.
+    if (!scene.intersect(ray, &isect)) {
+        return far_color; // empty far color.
+    }
+    
+    
+    return L;
+}
+
+void DepthMapIntegrator::preprocess(const Scene& scene){
+}
+
 FlatIntegrator* create_flat_integrator(std::shared_ptr<const Camera> cam){
 
     return new rt3::FlatIntegrator(cam);
@@ -96,7 +112,7 @@ DepthMapIntegrator* create_depth_map_integrator(const ParamSet& ps, std::shared_
     Color24 far_color = retrieve(ps, "far_color", Color24{255,255,255});
 
     // TODO: Change when new ctro is ready
-    return new rt3::DepthMapIntegrator(cam);
+    return new rt3::DepthMapIntegrator(cam, z_min, z_max, near_color, far_color);
 }
 
 }   // namespace rt3
