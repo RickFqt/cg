@@ -1,66 +1,24 @@
 #include "api.h"
 #include "background.h"
+#include "parser.h"
 
 #include <chrono>
 #include <memory>
 
 namespace rt3 {
 
-void API::render() { 
-  // Perform objects initialization here.
-  // The Film object holds the memory for the image.
-  // ...
-  auto res = m_the_camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
-  real_type x0 = m_the_camera->film->m_vcrop[0];
-  real_type x1 = m_the_camera->film->m_vcrop[1];
-  real_type y0 = m_the_camera->film->m_vcrop[2];
-  real_type y1 = m_the_camera->film->m_vcrop[3];
-  size_t w_init = round(res[0]*(x0));
-  size_t h_init = round(res[1]*(y0));
-  size_t w_final = round(res[0]*(x1));
-  size_t h_final = round(res[1]*(y1));
-  size_t w_full = res[0];
-  size_t h_full = res[1];
-  // std:: cout << w_init <<" "<< w_final <<" "<< h_init <<" "<< h_final <<" "<< w_full <<" "<< h_full <<" "<< std::endl;
-  // std::cout << "largura: " << w << " altura: " << h << std::endl;
-  // Traverse all pixels to shoot rays from.
-  for ( size_t j = h_init ; j < h_final ; j++ ) {
-      for( size_t i = w_init ; i < w_final ; i++ ) {
-          // Generate ray with the Shirley method.
-          Ray r2 = m_the_camera->generate_ray( i, j );
-          // Print out the ray, only for debug purposes.
-          // std::cout << "Ray2: " << r2 << std::endl;
-          Color24 color{0,0,0};
-          // Get background color.
-          color = m_the_background->sampleXYZ( Point2f{float(i)/float(w_full), float(j)/float(h_full)} ); 
-          // Traverse each object of the scene.
-          for ( size_t k{0}; k < m_object_list.size(); ++k ) {
-              auto obj = m_object_list[k].get();
-              // Each time the ray hits something, max_t parameter of the ray must be updated.
-              if ( obj->intersect_p( r2 ) ) // Does the ray hit any sphere in the scene?
-                  color = Color24{255,0,0};  // Just paint it red.
-          }
-          m_the_camera->film->add_sample( Point2f{i,j}, color ); // set image buffer at position (i,j), accordingly.
-      }
-  }
-  // send image color buffer to the output file.
-  m_the_camera->film->write_image();
-}
-
 //=== API's static members declaration and initialization.
 API::APIState API::curr_state = APIState::Uninitialized;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
-std::unique_ptr<Background> API::m_the_background;
-std::unique_ptr<Camera> API::m_the_camera;
-std::vector<std::unique_ptr<Primitive>> API::m_object_list;
-// std::unique_ptr<Film> API::m_the_film;
+std::unique_ptr<Integrator> API::m_the_integrator;
+std::unique_ptr<Scene> API::m_the_scene;
 // GraphicsState API::curr_GS;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
 // ˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇ
 
-Film* API::make_film(const std::string& name, const ParamSet& ps) {
+Film* API::make_film(const ParamSet& ps) {
   std::cout << ">>> Inside API::make_film()\n";
   Film* film{ nullptr };
   std::vector<real_type> defult ={curr_run_opt.crop_window[0][0], curr_run_opt.crop_window[0][1], curr_run_opt.crop_window[1][0], curr_run_opt.crop_window[1][1]};
@@ -70,22 +28,63 @@ Film* API::make_film(const std::string& name, const ParamSet& ps) {
   return film;
 }
 
-Primitive* API::make_object(const ParamSet& ps) {
+Material* API::make_material(const ParamSet& ps) {
+  std::cout << ">>> Inside API::make_material()\n";
+  Material* material{ nullptr };
 
-  std::cout << ">>> Inside API::make_object()\n";
-  Primitive* obj{ nullptr };
+  std::string type = retrieve(ps, "type", string{ "flat" });
+
+  if(type == "flat"){
+    material = create_flat_material(ps);
+  }
+  // TODO: Add new materials here!
+
+  // Return the newly created material.
+  return material;
+}
+
+Shape* API::make_shape(const ParamSet &ps) {
+
+  std::cout << ">>> Inside API::make_shape()\n";
+  Shape* shape{ nullptr };
 
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
   if(type == "sphere"){
-    obj = create_sphere(ps);
+    shape = create_sphere(ps);
   }
   // TODO: Add new types here!
 
-  return obj;
+  return shape;
 }
 
-Background* API::make_background(const std::string& name, const ParamSet& ps) {
+Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+
+  std::cout << ">>> Inside API::make_object()\n";
+
+  std::shared_ptr<Shape> shape{make_shape(ps_obj)};
+  std::shared_ptr<Material> material{make_material(ps_mat)};
+
+
+  return new GeometricPrimitive(shape, material);
+}
+
+Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat){
+
+  std::cout << ">>> Inside API::make_aggregate()\n";
+  
+  std::vector<std::shared_ptr<Primitive>> primitives;
+  std::shared_ptr<Primitive> prim;
+
+  for(auto pair_ps : vet_ps_obj_mat){
+    prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
+    primitives.push_back(prim);
+  }
+
+  return new PrimList(primitives);
+}
+
+Background* API::make_background(const ParamSet& ps) {
   std::cout << ">>> Inside API::make_background()\n";
   Background* bkg{ nullptr };
   bkg = create_color_background(ps);
@@ -94,7 +93,7 @@ Background* API::make_background(const std::string& name, const ParamSet& ps) {
   return bkg;
 }
 
-Camera* API::make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
+Camera* API::make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml){
   std::cout << ">>> Inside API::make_camera()\n";
   Camera* camera{ nullptr };
 
@@ -111,6 +110,29 @@ Camera* API::make_camera(const string &name, const ParamSet &cps, const ParamSet
   return camera;
 }
 
+Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camera> camera) {
+  std::cout << ">>> Inside API::make_integrator()\n";
+  Integrator* integrator{ nullptr };
+
+  std::string type = retrieve(ps, "type", string{ "flat" });
+
+  if(type == "flat"){
+    integrator = create_flat_integrator(camera);
+  }
+  if(type == "normal_map"){
+    integrator = create_normal_map_integrator(camera);
+  }
+  if(type == "depth_map"){
+    integrator = create_depth_map_integrator(ps, camera);
+  }
+
+  return integrator;
+}
+
+Scene* API::make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg) {
+
+  return new Scene(agg, bkg);
+}
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 // END OF THE AUXILIARY FUNCTIONS
 // =========================================================================
@@ -163,26 +185,30 @@ void API::world_end() {
 
   // At this point, we have the background as a solitary pointer here.
   // In the future, the background will be parte of the scene object.
-  m_the_background = std::unique_ptr<Background>( make_background(render_opt->bkg_type,
-                                                              render_opt->bkg_ps) );
+  std::shared_ptr<Background> the_background{ make_background(render_opt->bkg_ps) };
+
+  std::shared_ptr<Primitive> aggregate{ make_aggregate(render_opt->list_objects_with_materials)};
+
   // Same with the film, that later on will belong to a camera object.
-  std::unique_ptr<Film> m_the_film = std::unique_ptr<Film>( make_film(render_opt->film_type, render_opt->film_ps) );
+  std::unique_ptr<Film> the_film = std::unique_ptr<Film>( make_film(render_opt->film_ps) );
 
   // Initialize camera
-  m_the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_type, render_opt->camera_ps, 
-                                                    render_opt->look_at_ps, std::move(m_the_film)) );
+  std::shared_ptr<const Camera> the_camera = std::unique_ptr<Camera>( make_camera(render_opt->camera_ps, 
+                                                    render_opt->look_at_ps, std::move(the_film)) );
+  
+  // Initialize integrator
+  m_the_integrator = std::unique_ptr<Integrator>(make_integrator(render_opt->integrator_ps, the_camera));
 
-  for(ParamSet ps : render_opt->list_objects_ps){
-    m_object_list.push_back(std::unique_ptr<Primitive>(make_object(ps)));
-  }
+  // Initialize scene
+  m_the_scene = std::unique_ptr<Scene>(make_scene(the_background, aggregate));
 
   // Run only if we got camera and background.
-  if (m_the_camera and m_the_background) {
+  if (m_the_integrator and m_the_scene) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
     RT3_MESSAGE("[2] Starting ray tracing progress.\n");
 
     // Structure biding, c++17.
-    auto res = m_the_camera->film->get_resolution();
+    auto res = the_camera->film->get_resolution();
     size_t w = res[0];
     size_t h = res[1];
     RT3_MESSAGE("    Image dimensions in pixels (W x H): " + std::to_string(w) + " x "
@@ -191,7 +217,7 @@ void API::world_end() {
 
     //================================================================================
     auto start = std::chrono::steady_clock::now();
-    render();  // TODO: This is the ray tracer's  main loop.
+    m_the_integrator->render( *m_the_scene );
     auto end = std::chrono::steady_clock::now();
     //================================================================================
     auto diff = end - start;  // Store the time difference between start and end
@@ -233,7 +259,7 @@ void API::object(const ParamSet& ps) {
   VERIFY_WORLD_BLOCK("API::object");
 
   // Store current object into the list of objects.
-  render_opt->list_objects_ps.push_back(ps);
+  render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
 }
 
 void API::camera(const ParamSet& ps) {
@@ -263,6 +289,49 @@ void API::film(const ParamSet& ps) {
   std::string type = retrieve(ps, "type", string{ "unknown" });
   render_opt->film_type = type;
   render_opt->film_ps = ps;
+}
+
+void API::make_named_material(const ParamSet &ps){
+  std::cout << ">>> Inside API::make_named_material()\n";
+  VERIFY_WORLD_BLOCK("API::make_named_material");
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  // Add the new named material into the library
+  render_opt->material_library[name] = ps;
+}
+
+void API::named_material(const ParamSet &ps){
+  std::cout << ">>> Inside API::named_material()\n";
+  VERIFY_WORLD_BLOCK("API::named_material");
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  // If there is no already created material, we create one
+  if(render_opt->material_library.count(name) < 1){
+    std::cout << "Named material not found! Using default material...\n";
+    // TODO: Check if this works
+    render_opt->curr_material = ParamSet();
+  }
+  else{
+    // Set the current material to the one specified (named)
+    render_opt->curr_material = render_opt->material_library[name];
+  }
+
+}
+
+void API::material(const ParamSet &ps){
+  std::cout << ">>> Inside API::material()\n";
+  VERIFY_WORLD_BLOCK("API::material");
+
+  // Set the current material to the one specified (anonymous)
+  render_opt->curr_material = ps;
+}
+
+void API::integrator(const ParamSet &ps) {
+  std::cout << ">>> Inside API::integrator()\n";
+  VERIFY_SETUP_BLOCK("API::integrator");
+  render_opt->integrator_ps = ps;
 }
 
 }  // namespace rt3

@@ -66,6 +66,8 @@ class Background;
 class BackgroundColor;
 class Camera;
 class Primitive;
+class Material;
+class Surfel;
 
 //=== aliases
 using real_type = float;

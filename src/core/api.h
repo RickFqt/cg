@@ -2,9 +2,13 @@
 #define API_H 1
 
 #include <string>
+#include <map>
 
 #include "paramset.h"
 #include "rt3.h"
+#include "integrator.h"
+#include "sphere.h"
+#include "primlist.h"
 
 //=== API Macro definitions
 
@@ -50,8 +54,14 @@ struct RenderOptions {
   /// the Bakcground
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
-  /// the Objects
-  std::vector<ParamSet> list_objects_ps;
+  /// the Objects with its associated materials
+  std::vector<std::pair<ParamSet, ParamSet>> list_objects_with_materials;
+  /// the Integrator
+  ParamSet integrator_ps;
+  /// the library of Materials
+  std::map<string, ParamSet> material_library;
+  /// the current Material
+  ParamSet curr_material;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -83,23 +93,25 @@ private:
    */
   /// Unique infrastructure to render a scene (camera, integrator, etc.).
   static std::unique_ptr<RenderOptions> render_opt;
-  static std::unique_ptr<Camera> m_the_camera;
-  static std::unique_ptr<Background> m_the_background;
-  static std::vector<std::unique_ptr<Primitive>> m_object_list;
-  // [NO NECESSARY IN THIS PROJECT]
+  static std::unique_ptr<Integrator> m_the_integrator;
+  // [NOT NECESSARY IN THIS PROJECT]
   // /// The current GraphicsState
   // static GraphicsState curr_GS;
-  // [NOT NECESSARY IN THIS PROJECT]
-  // /// Pointer to the scene. We keep it as parte of the API because it may be
-  // reused later [1] Create the integrator. static unique_ptr< Scene >
-  // the_scene;
+  /// Pointer to the scene. We keep it as parte of the API because it may be
+  // reused later [1] Create the integrator.
+  static std::unique_ptr< Scene > m_the_scene;
 
   // === Helper functions.
   ///
-  static Film *make_film(const string &name, const ParamSet &ps);
-  static Background *make_background(const string &name, const ParamSet &ps);
-  static Camera *make_camera(const string &name, const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
-  static Primitive *make_object(const ParamSet &ps);
+  static Film *make_film(const ParamSet &ps);
+  static Background *make_background(const ParamSet &ps);
+  static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
+  static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat);
+  static Shape *make_shape(const ParamSet &ps);
+  static Material *make_material(const ParamSet &ps);
+  static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat);
+  static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
+  static Scene *make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg);
 
 public:
   //=== API function begins here.
@@ -113,9 +125,12 @@ public:
   static void look_at(const ParamSet &ps);
   static void background(const ParamSet &ps);
   static void object(const ParamSet &ps);
+  static void make_named_material(const ParamSet &ps);
+  static void named_material(const ParamSet &ps);
+  static void material(const ParamSet &ps);
+  static void integrator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
-  static void render();
 };
 } // namespace rt3
 

@@ -12,5 +12,10 @@
 #include "primitive.h"
 #include "surfel.h"
 #include "sphere.h"
+#include "material.h"
+#include "shape.h"
+#include "primlist.h"
+#include "scene.h"
+#include "integrator.h"
 
 #endif  // RT3-BASE_H
