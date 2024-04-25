@@ -5,7 +5,7 @@
 #include "ray.h"
 #include "rt3.h"
 #include "scene.h"
-#include "camera.h"
+#include "../cameras/camera.h"
 #include "background.h"
 #include "material.h"
 #include <optional>

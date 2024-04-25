@@ -26,10 +26,10 @@ set( RT3_SOURCE_DIR "src" )
 add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
                          ${RT3_SOURCE_DIR}/core/background.cpp
                          ${RT3_SOURCE_DIR}/core/error.cpp
-                         ${RT3_SOURCE_DIR}/core/film.cpp
+                         ${RT3_SOURCE_DIR}/cameras/film.cpp
                          ${RT3_SOURCE_DIR}/core/image_io.cpp
                          ${RT3_SOURCE_DIR}/core/parser.cpp
-                         ${RT3_SOURCE_DIR}/core/camera.cpp
+                         ${RT3_SOURCE_DIR}/cameras/camera.cpp
                          ${RT3_SOURCE_DIR}/core/integrator.cpp
                          ${RT3_SOURCE_DIR}/core/material.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
