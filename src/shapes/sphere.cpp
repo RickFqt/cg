@@ -28,6 +28,7 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
             sf->p = r(t1);
             // Update the surface normal (which is normally normalized)
             sf->n = glm::normalize(r(t1) - center);
+            sf->wo = glm::normalize(-r.get_direction());
             return true;
         }
         else if(r.get_t_min() < t2 && t2 < r.get_t_max()){
@@ -35,6 +36,7 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
             // Update the contact point
             sf->p = r(t2);
+            sf->wo = glm::normalize(-r.get_direction());
             // Update the surface normal (which is normally normalized)
             sf->n = glm::normalize(r(t2) - center);
             return true;
