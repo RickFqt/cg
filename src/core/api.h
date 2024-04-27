@@ -6,9 +6,9 @@
 
 #include "paramset.h"
 #include "rt3.h"
-#include "integrator.h"
-#include "sphere.h"
-#include "primlist.h"
+#include "../integrators/integrator.h"
+#include "../shapes/sphere.h"
+#include "../primitives/primlist.h"
 
 //=== API Macro definitions
 

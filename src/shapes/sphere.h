@@ -1,9 +1,9 @@
 #ifndef SPHERE_H
 #define SPHERE_H 1
 
-#include "rt3.h"
-#include "primitive.h"
-#include "paramset.h"
+#include "../core/rt3.h"
+#include "../primitives/primitive.h"
+#include "../core/paramset.h"
 
 namespace rt3{
 

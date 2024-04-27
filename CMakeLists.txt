@@ -14,7 +14,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 # Set "manually" paths that need to be considered while compiling/linking
 include_directories( cameras
                      integrators
+                     backgrounds
                      core
+                     materials
+                     shapes
+                     primitives
                      ext )
 
 #=== SETTING VARIABLES ===#
@@ -24,18 +28,18 @@ set( RT3_SOURCE_DIR "src" )
 
 #=== main  target ===
 add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
-                         ${RT3_SOURCE_DIR}/core/background.cpp
+                         ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/core/error.cpp
-                         ${RT3_SOURCE_DIR}/core/film.cpp
+                         ${RT3_SOURCE_DIR}/cameras/film.cpp
                          ${RT3_SOURCE_DIR}/core/image_io.cpp
                          ${RT3_SOURCE_DIR}/core/parser.cpp
-                         ${RT3_SOURCE_DIR}/core/camera.cpp
-                         ${RT3_SOURCE_DIR}/core/integrator.cpp
-                         ${RT3_SOURCE_DIR}/core/material.cpp
+                         ${RT3_SOURCE_DIR}/cameras/camera.cpp
+                         ${RT3_SOURCE_DIR}/integrators/integrator.cpp
+                         ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
-                         ${RT3_SOURCE_DIR}/core/sphere.cpp
-                         ${RT3_SOURCE_DIR}/core/primitive.cpp
-                         ${RT3_SOURCE_DIR}/core/primlist.cpp
+                         ${RT3_SOURCE_DIR}/shapes/sphere.cpp
+                         ${RT3_SOURCE_DIR}/primitives/primitive.cpp
+                         ${RT3_SOURCE_DIR}/primitives/primlist.cpp
                          ${RT3_SOURCE_DIR}/ext/lodepng.cpp
                          ${RT3_SOURCE_DIR}/ext/tinyxml2.cpp
                          ${RT3_SOURCE_DIR}/main/rt3.cpp

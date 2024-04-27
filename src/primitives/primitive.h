@@ -2,10 +2,10 @@
 #define PRIMITIVE_H 1
 
 // #include "./rt3.h"
-#include "ray.h"
-#include "material.h"
-#include "shape.h"
-#include "error.h"
+#include "../core/ray.h"
+#include "../materials/material.h"
+#include "../shapes/shape.h"
+#include "../core/error.h"
 
 namespace rt3{
 

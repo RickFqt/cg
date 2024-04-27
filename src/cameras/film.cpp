@@ -1,9 +1,8 @@
 #include "film.h"
 #include <cmath>
 
-#include "api.h"
-#include "image_io.h"
-#include "paramset.h"
+#include "../core/api.h"
+#include "../core/image_io.h"
 
 namespace rt3 {
 
