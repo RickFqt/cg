@@ -12,7 +12,7 @@
 #include "primitive.h"
 #include "surfel.h"
 #include "sphere.h"
-#include "material.h"
+#include "../materials/material.h"
 #include "shape.h"
 #include "primlist.h"
 #include "scene.h"

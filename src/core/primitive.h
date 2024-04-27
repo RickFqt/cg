@@ -3,7 +3,7 @@
 
 // #include "./rt3.h"
 #include "ray.h"
-#include "material.h"
+#include "../materials/material.h"
 #include "shape.h"
 #include "error.h"
 

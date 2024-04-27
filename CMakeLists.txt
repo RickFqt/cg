@@ -15,6 +15,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include_directories( cameras
                      integrators
                      core
+                     materials
                      ext )
 
 #=== SETTING VARIABLES ===#
@@ -31,7 +32,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
                          ${RT3_SOURCE_DIR}/core/parser.cpp
                          ${RT3_SOURCE_DIR}/cameras/camera.cpp
                          ${RT3_SOURCE_DIR}/integrators/integrator.cpp
-                         ${RT3_SOURCE_DIR}/core/material.cpp
+                         ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
                          ${RT3_SOURCE_DIR}/core/sphere.cpp
                          ${RT3_SOURCE_DIR}/core/primitive.cpp

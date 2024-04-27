@@ -7,7 +7,7 @@
 #include "../core/scene.h"
 #include "../cameras/camera.h"
 #include "../core/background.h"
-#include "../core/material.h"
+#include "../materials/material.h"
 #include <optional>
 
 namespace rt3{
