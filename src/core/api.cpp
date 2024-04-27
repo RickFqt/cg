@@ -37,7 +37,9 @@ Material* API::make_material(const ParamSet& ps) {
   if(type == "flat"){
     material = create_flat_material(ps);
   }
-  // TODO: Add new materials here!
+  else if(type == "blinn"){
+    material = create_blinn_phong_material(ps);
+  }
 
   // Return the newly created material.
   return material;
