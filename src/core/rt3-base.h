@@ -4,7 +4,7 @@
 #include "../ext/lodepng.h"
 #include "error.h"
 #include "../cameras/film.h"
-#include "background.h"
+#include "../backgrounds/background.h"
 #include "../cameras/camera.h"
 #include "image_io.h"
 #include "paramset.h"

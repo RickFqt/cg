@@ -14,6 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 # Set "manually" paths that need to be considered while compiling/linking
 include_directories( cameras
                      integrators
+                     backgrounds
                      core
                      materials
                      shapes
@@ -27,7 +28,7 @@ set( RT3_SOURCE_DIR "src" )
 
 #=== main  target ===
 add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
-                         ${RT3_SOURCE_DIR}/core/background.cpp
+                         ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/core/error.cpp
                          ${RT3_SOURCE_DIR}/cameras/film.cpp
                          ${RT3_SOURCE_DIR}/core/image_io.cpp

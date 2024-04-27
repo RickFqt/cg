@@ -1,5 +1,5 @@
 #include "api.h"
-#include "background.h"
+#include "../backgrounds/background.h"
 #include "parser.h"
 
 #include <chrono>

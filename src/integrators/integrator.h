@@ -6,7 +6,7 @@
 #include "../core/rt3.h"
 #include "../core/scene.h"
 #include "../cameras/camera.h"
-#include "../core/background.h"
+#include "../backgrounds/background.h"
 #include "../materials/material.h"
 #include <optional>
 
