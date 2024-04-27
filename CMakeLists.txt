@@ -16,6 +16,7 @@ include_directories( cameras
                      integrators
                      core
                      materials
+                     shapes
                      ext )
 
 #=== SETTING VARIABLES ===#
@@ -34,7 +35,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/core/api.cpp
                          ${RT3_SOURCE_DIR}/integrators/integrator.cpp
                          ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
-                         ${RT3_SOURCE_DIR}/core/sphere.cpp
+                         ${RT3_SOURCE_DIR}/shapes/sphere.cpp
                          ${RT3_SOURCE_DIR}/core/primitive.cpp
                          ${RT3_SOURCE_DIR}/core/primlist.cpp
                          ${RT3_SOURCE_DIR}/ext/lodepng.cpp

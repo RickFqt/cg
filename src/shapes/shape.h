@@ -1,8 +1,8 @@
 #ifndef SHAPE_H
 #define SHAPE_H 1
 
-#include "ray.h"
-#include "surfel.h"
+#include "../core/ray.h"
+#include "../core/surfel.h"
 
 namespace rt3{
 

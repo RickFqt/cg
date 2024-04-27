@@ -4,7 +4,7 @@
 // #include "./rt3.h"
 #include "ray.h"
 #include "../materials/material.h"
-#include "shape.h"
+#include "../shapes/shape.h"
 #include "error.h"
 
 namespace rt3{
