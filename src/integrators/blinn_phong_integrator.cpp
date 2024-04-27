@@ -29,5 +29,10 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
 	return L;
 }
 
+BlinnPhongIntegrator* create_blinn_phong_integrator(const ParamSet& ps, std::shared_ptr<const Camera> cam){
+    int depth = retrieve(ps, "depth", 1);
+    return new BlinnPhongIntegrator(cam, depth);
+}
+
 
 } // namespace rt3

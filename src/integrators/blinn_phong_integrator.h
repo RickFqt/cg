@@ -18,6 +18,8 @@ public:
     std::optional<Color24> Li( const Ray& ray, const Scene& scene, int depth ) const;
 };
 
+BlinnPhongIntegrator* create_blinn_phong_integrator(const ParamSet& ps, std::shared_ptr<const Camera> cam);
+
 } // namespace rt3
 
 #endif
