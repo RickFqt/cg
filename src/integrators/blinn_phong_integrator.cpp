@@ -22,7 +22,14 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
         // TODO: não sei
     }
 	// [3] GET THE MATERIAL ASSOCIATED WITH THE HIT SURFACE
+    BlinnPhongMaterial * fm = dynamic_cast< BlinnPhongMaterial *>( isect.primitive->get_material() );
+
 	// [4] INITIALIZE COMMON VARIABLES FOR BLINNPHONG INTEGRATOR (COEFFICIENTS AND VECTORS L, N, V, ETC.)
+    Spectrum ka = fm->get_ka();
+    Spectrum kd = fm->get_kd();
+    Spectrum ks = fm->get_ks();
+    real_type glossiness = fm->get_glossiness();
+    
 	// [5] CALCULATE & ADD CONTRIBUTION FROM EACH LIGHT SOURCE
 	// [6] ADD AMBIENT CONTRIBUTION HERE (if there is any).
 	// [7] ADD MIRROR REFLECTION CONTRIBUTION
