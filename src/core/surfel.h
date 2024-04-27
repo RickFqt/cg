@@ -3,7 +3,7 @@
 
 #include "rt3.h"
 #include "ray.h"
-#include "primitive.h"
+#include "../primitives/primitive.h"
 
 
 

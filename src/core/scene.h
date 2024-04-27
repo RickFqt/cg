@@ -2,7 +2,7 @@
 #define SCENE_H 1
 
 #include "ray.h"
-#include "primitive.h"
+#include "../primitives/primitive.h"
 
 namespace rt3{
 

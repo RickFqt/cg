@@ -1,7 +1,7 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H 1
 
-#include "../core/primitive.h"
+#include "../primitives/primitive.h"
 #include "../core/ray.h"
 #include "../core/rt3.h"
 #include "../core/scene.h"

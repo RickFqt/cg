@@ -2,7 +2,7 @@
 #define SPHERE_H 1
 
 #include "../core/rt3.h"
-#include "../core/primitive.h"
+#include "../primitives/primitive.h"
 #include "../core/paramset.h"
 
 namespace rt3{
