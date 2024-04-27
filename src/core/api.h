@@ -6,7 +6,7 @@
 
 #include "paramset.h"
 #include "rt3.h"
-#include "integrator.h"
+#include "../integrators/integrator.h"
 #include "sphere.h"
 #include "primlist.h"
 
