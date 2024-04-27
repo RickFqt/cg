@@ -135,7 +135,8 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::REAL, "zmin" },
         { param_type_e::REAL, "zmax" },
         { param_type_e::COLOR, "near_color" },
-        { param_type_e::COLOR, "far_color" }
+        { param_type_e::COLOR, "far_color" },
+        { param_type_e::INT, "depth" }
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
 

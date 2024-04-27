@@ -16,6 +16,6 @@
 #include "../shapes/shape.h"
 #include "../primitives/primlist.h"
 #include "scene.h"
-#include "../integrators/integrator.h"
+#include "../integrators/integrators.h"
 
 #endif  // RT3-BASE_H
