@@ -35,8 +35,10 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
 
     for(auto l : scene.lights){
 
+        // std::cout << "alface 1" << std::endl;
         if(l->flags == light_flag_e::ambient){
             std::shared_ptr<AmbientLight> al = std::dynamic_pointer_cast< AmbientLight >( l );
+            // std::cout << "alface 2 " << al->get_L()[0] << " " << ka[0] << std::endl;
             L_spectrum[0] += (al->get_L()[0] * ka[0]);
             L_spectrum[1] += (al->get_L()[1] * ka[1]);
             L_spectrum[2] += (al->get_L()[2] * ka[2]);
@@ -47,8 +49,9 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
 	// [7] ADD MIRROR REFLECTION CONTRIBUTION
 
     L[0] = std::min((int) (L_spectrum[0] * 255), 255);
-    L[1] = std::min((int) (L_spectrum[0] * 255), 255);
-    L[2] = std::min((int) (L_spectrum[0] * 255), 255);
+    L[1] = std::min((int) (L_spectrum[1] * 255), 255);
+    L[2] = std::min((int) (L_spectrum[2] * 255), 255);
+    // std::cout << L[0] << " " << L[1] << " " << L[2] << "\n";
 	return L;
 }
 

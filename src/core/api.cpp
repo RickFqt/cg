@@ -41,6 +41,8 @@ Material* API::make_material(const ParamSet& ps) {
     material = create_blinn_phong_material(ps);
   }
 
+  // std::cout << "???" << std::endl;
+
   // Return the newly created material.
   return material;
 }
@@ -127,16 +129,34 @@ Integrator* API::make_integrator(const ParamSet& ps, std::shared_ptr<const Camer
   else if(type == "depth_map"){
     integrator = create_depth_map_integrator(ps, camera);
   }
-  else if(type == "blinn"){
+  else if(type == "blinn_phong"){
     integrator = create_blinn_phong_integrator(ps, camera);
   }
 
   return integrator;
 }
 
-Scene* API::make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg) {
+Light* API::make_light(const ParamSet &ps){
+  std::cout << ">>> Inside API::make_light()\n";
+  Light* light{ nullptr };
 
-  return new Scene(agg, bkg);
+  std::string type = retrieve(ps, "type", string{ "ambient" });
+
+  if(type == "ambient"){
+    light = create_ambient_light(ps);
+  }
+
+  return light;
+}
+
+Scene* API::make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg, std::vector<ParamSet> l_ps) {
+  std::cout << ">>> Inside API::make_scene()\n";
+  
+  std::vector< std::shared_ptr<Light>> v_light;
+  for(ParamSet l : l_ps){
+    v_light.push_back(std::shared_ptr<Light>(make_light(l)));
+  }
+  return new Scene(agg, bkg, v_light);
 }
 // ˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ
 // END OF THE AUXILIARY FUNCTIONS
@@ -205,7 +225,7 @@ void API::world_end() {
   m_the_integrator = std::unique_ptr<Integrator>(make_integrator(render_opt->integrator_ps, the_camera));
 
   // Initialize scene
-  m_the_scene = std::unique_ptr<Scene>(make_scene(the_background, aggregate));
+  m_the_scene = std::unique_ptr<Scene>(make_scene(the_background, aggregate, render_opt->list_lights_ps));
 
   // Run only if we got camera and background.
   if (m_the_integrator and m_the_scene) {
@@ -294,6 +314,13 @@ void API::film(const ParamSet& ps) {
   std::string type = retrieve(ps, "type", string{ "unknown" });
   render_opt->film_type = type;
   render_opt->film_ps = ps;
+}
+
+void API::light_source(const ParamSet &ps) {
+  std::cout << ">>> Inside API::light_source()\n";
+  VERIFY_WORLD_BLOCK("API::light_source");
+
+  render_opt->list_lights_ps.push_back(ps);
 }
 
 void API::make_named_material(const ParamSet &ps){
