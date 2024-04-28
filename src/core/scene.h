@@ -3,13 +3,14 @@
 
 #include "ray.h"
 #include "../primitives/primitive.h"
+#include "../lights/light.h"
 
 namespace rt3{
 
 class Scene {
     //=== Public data
     public:
-        //std::vector<shared_ptr<Light>> lights; // list of lights
+        std::vector< std::shared_ptr<Light>> lights; // list of lights
         std::shared_ptr< Background > background; // The background object.
     private:
         std::shared_ptr<Primitive> aggregate; // The scene graph of objects, acceleration structure.

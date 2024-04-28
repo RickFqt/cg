@@ -29,10 +29,26 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
     Spectrum kd = fm->get_kd();
     Spectrum ks = fm->get_ks();
     real_type glossiness = fm->get_glossiness();
+    Spectrum L_spectrum = {0,0,0};
     
 	// [5] CALCULATE & ADD CONTRIBUTION FROM EACH LIGHT SOURCE
+
+    for(auto l : scene.lights){
+
+        if(l->flags == light_flag_e::ambient){
+            std::shared_ptr<AmbientLight> al = std::dynamic_pointer_cast< AmbientLight >( l );
+            L_spectrum[0] += (al->get_L()[0] * ka[0]);
+            L_spectrum[1] += (al->get_L()[1] * ka[1]);
+            L_spectrum[2] += (al->get_L()[2] * ka[2]);
+            continue;
+        }
+    }
 	// [6] ADD AMBIENT CONTRIBUTION HERE (if there is any).
 	// [7] ADD MIRROR REFLECTION CONTRIBUTION
+
+    L[0] = std::min((int) (L_spectrum[0] * 255), 255);
+    L[1] = std::min((int) (L_spectrum[0] * 255), 255);
+    L[2] = std::min((int) (L_spectrum[0] * 255), 255);
 	return L;
 }
 
