@@ -16,9 +16,9 @@ enum class light_flag_e : int {
 	spot = 16
 };
 
-bool is_ambient( int flag ) {
-	return flag & (int) light_flag_e::ambient;
-}
+// bool is_ambient( int flag ) {
+// 	return flag & (int) light_flag_e::ambient;
+// }
 
 // Verifica se há oclusão entre dois pontos de contato.
 class VisibilityTester {

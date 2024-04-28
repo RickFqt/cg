@@ -38,6 +38,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/core/ray.cpp
                          ${RT3_SOURCE_DIR}/integrators/integrator.cpp
                          ${RT3_SOURCE_DIR}/integrators/blinn_phong_integrator.cpp
+                         ${RT3_SOURCE_DIR}/lights/ambient_light.cpp
                          ${RT3_SOURCE_DIR}/lights/light.cpp
                          ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/primitives/primitive.cpp
