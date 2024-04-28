@@ -245,7 +245,7 @@ void API::reset_engine() {
   // curr_GS = GraphicsState();
   // This will delete all information on integrator, cameras, filters,
   // acceleration structures, etc., that has been set previously.
-  render_opt = std::make_unique<RenderOptions>();
+  // render_opt = std::make_unique<RenderOptions>();
 }
 
 void API::background(const ParamSet& ps) {
