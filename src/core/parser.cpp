@@ -181,7 +181,12 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       API::object(ps);
-    } else if (tag_name == "world_begin") {
+    } else if (tag_name == "include") {
+      parse(p_element->Attribute("filename"));
+    } else if (tag_name == "render_again") {
+      API::world_begin();
+      API::world_end();
+    }else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<
       // std::endl;
       //  We should get only one `world` tag per scene file.
