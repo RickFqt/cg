@@ -2,6 +2,7 @@
 #define BLINNPHONGINTEGRATOR_H 1
 
 #include "integrator.h"
+#include "../lights/lights.h"
 
 namespace rt3 {
 
