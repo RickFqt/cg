@@ -3,5 +3,6 @@
 
 #include "light.h"
 #include "ambient_light.h"
+#include "point_light.h"
 
 #endif
