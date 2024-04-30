@@ -12,7 +12,7 @@ public:
     virtual ~AmbientLight(){};
     AmbientLight(const Spectrum AL): Light((int)light_flag_e::ambient), L{AL}{ /* empty */ };
 
-    Color24 sample_Li( const Surfel&   hit  /*in*/,
+    Spectrum sample_Li( const Surfel&   hit  /*in*/,
                              Vector3f        *wi  /*out*/,
                              VisibilityTester *vis /*out*/ ){return {0,0,0};}
 

@@ -37,7 +37,7 @@ public:
   virtual ~Light(){};
   Light( int flags ): flags{flags} {/* empty */};
   /// Retorna a intensidade da luz, direção e o teste oclusão.
-  virtual Color24 sample_Li( const Surfel&   hit  /*in*/,
+  virtual Spectrum sample_Li( const Surfel&   hit  /*in*/,
                              Vector3f        *wi  /*out*/,
                              VisibilityTester *vis /*out*/ ) = 0;
   virtual void preprocess( const Scene & ) {};

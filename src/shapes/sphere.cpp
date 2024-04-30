@@ -6,7 +6,7 @@ bool Sphere::intersect_p( const Ray& r ) const{
 
     Vector3f d = r.get_direction();
     Vector3f oc = r.get_origin() - center;
-    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
+    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * (glm::dot(oc,oc) - radius * radius));
 
     return delta >= 0;
 }
@@ -14,7 +14,7 @@ bool Sphere::intersect_p( const Ray& r ) const{
 bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
     Vector3f d = r.get_direction();
     Vector3f oc = r.get_origin() - center;
-    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * glm::dot(oc,oc) - radius * radius);
+    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * (glm::dot(oc,oc) - radius * radius));
 
     if(delta >= 0){
         real_type t1 = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d); // First root

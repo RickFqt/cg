@@ -145,6 +145,9 @@ Light* API::make_light(const ParamSet &ps){
   if(type == "ambient"){
     light = create_ambient_light(ps);
   }
+  else if(type == "point"){
+    light = create_point_light(ps);
+  }
 
   return light;
 }
