@@ -34,17 +34,15 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
     Vector3f v = isect.wo; // view vector
     Vector3f h;
     VisibilityTester vis;
-    real_type n_dot_l;
-    real_type n_dot_h;
+    real_type n_dot_l, n_dot_h;
     Spectrum L_spectrum = {0,0,0};
     Spectrum L_curr_spectrum = {0,0,0};
     
 	// [5] CALCULATE & ADD CONTRIBUTION FROM EACH LIGHT SOURCE
     for(auto light : scene.lights){
-        // std::cout << "alface 1" << std::endl;
         if(light->flags == light_flag_e::ambient){
+
             std::shared_ptr<AmbientLight> al = std::dynamic_pointer_cast< AmbientLight >( light );
-            // std::cout << "alface 2 " << al->get_L()[0] << " " << ka[0] << std::endl;
             L_spectrum[0] += (al->get_L()[0] * ka[0]);
             L_spectrum[1] += (al->get_L()[1] * ka[1]);
             L_spectrum[2] += (al->get_L()[2] * ka[2]);
@@ -60,9 +58,11 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
             n_dot_h = std::max(0.F, glm::dot(n, h));
             n_dot_h = pow(n_dot_h,  glossiness);
             
-            L_spectrum[0] += 10*(kd[0] * L_curr_spectrum[0] * n_dot_l + ks[0] * L_curr_spectrum[0] * n_dot_h);
-            L_spectrum[1] += 10*(kd[1] * L_curr_spectrum[1] * n_dot_l + ks[1] * L_curr_spectrum[1] * n_dot_h);
-            L_spectrum[2] += 10*(kd[2] * L_curr_spectrum[2] * n_dot_l + ks[2] * L_curr_spectrum[2] * n_dot_h);
+            // std::cout << L_curr_spectrum[0] << " " << L_curr_spectrum[1] << " " << L_curr_spectrum[2] << "\n";
+            // Add Diffuse and Specular contribution
+            L_spectrum[0] += (kd[0] * L_curr_spectrum[0] * n_dot_l) + (ks[0] * L_curr_spectrum[0] * n_dot_h);
+            L_spectrum[1] += (kd[1] * L_curr_spectrum[1] * n_dot_l) + (ks[1] * L_curr_spectrum[1] * n_dot_h);
+            L_spectrum[2] += (kd[2] * L_curr_spectrum[2] * n_dot_l) + (ks[2] * L_curr_spectrum[2] * n_dot_h);
         }
 
     }
