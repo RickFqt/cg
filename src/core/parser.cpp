@@ -162,6 +162,7 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::SPECTRUM, "diffuse" },
         { param_type_e::SPECTRUM, "specular" },
         { param_type_e::REAL, "glossiness" },
+        { param_type_e::SPECTRUM, "mirror" },
         { param_type_e::STRING, "name" }        // Name of the material.
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
@@ -183,7 +184,8 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::SPECTRUM, "ambient" },
         { param_type_e::SPECTRUM, "diffuse" },
         { param_type_e::SPECTRUM, "specular" },
-        { param_type_e::REAL, "glossiness" }
+        { param_type_e::REAL, "glossiness" },
+        { param_type_e::SPECTRUM, "mirror" }
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       

@@ -41,16 +41,18 @@ private:
     Spectrum ka; // Ambient coefficient
     Spectrum kd; // Diffuse coefficient
     Spectrum ks; // Specular coefficient
+    Spectrum kr; // Reflection coefficient
     real_type glossiness; // Glossiness exponent
 public:
 
-    BlinnPhongMaterial(const Spectrum& ka, const Spectrum& kd, const Spectrum& ks, const real_type& g):
-    ka{ka}, kd{kd}, ks{ks}, glossiness{g}{ /* empty */ };
+    BlinnPhongMaterial(const Spectrum& ka, const Spectrum& kd, const Spectrum& ks, const Spectrum& kr, const real_type& g):
+    ka{ka}, kd{kd}, ks{ks}, kr{kr}, glossiness{g}{ /* empty */ };
     virtual ~BlinnPhongMaterial(){ /* empty */ };
 
     Spectrum get_ka() const{return ka;}
     Spectrum get_kd() const{return kd;}
     Spectrum get_ks() const{return ks;}
+    Spectrum get_kr() const{return kr;}
     real_type get_glossiness() const{return glossiness;}
 
     void scatter(Surfel *isect, Ray *r){/* empty */};
