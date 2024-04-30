@@ -13,9 +13,10 @@ BlinnPhongMaterial* create_blinn_phong_material(const ParamSet& ps){
     Spectrum ka = retrieve(ps, "ambient", Spectrum{0,0,0});
     Spectrum kd = retrieve(ps, "diffuse", Spectrum{0,0,0});
     Spectrum ks = retrieve(ps, "specular", Spectrum{0,0,0});
+    Spectrum kr = retrieve(ps, "mirror", Spectrum{0,0,0});
     real_type glossiness = retrieve(ps, "glossiness", 256.F);
 
-    return new BlinnPhongMaterial(ka, kd, ks, glossiness);
+    return new BlinnPhongMaterial(ka, kd, ks, kr, glossiness);
 }
 
 }   // namespace rt3
