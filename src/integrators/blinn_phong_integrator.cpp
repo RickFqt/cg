@@ -19,7 +19,7 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
 
     // If cos between wo and n negative, the ray hits from behind
     if(glm::dot(isect.wo, isect.n) < 0) {
-        // TODO: não sei
+        return {};
     }
 	// [3] GET THE MATERIAL ASSOCIATED WITH THE HIT SURFACE
     BlinnPhongMaterial * fm = dynamic_cast< BlinnPhongMaterial *>( isect.primitive->get_material() );
@@ -60,9 +60,9 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
             n_dot_h = std::max(0.F, glm::dot(n, h));
             n_dot_h = pow(n_dot_h,  glossiness);
             
-            L_spectrum[0] += kd[0] * L_curr_spectrum[0] * n_dot_l + ks[0] * L_curr_spectrum[0] * n_dot_h;
-            L_spectrum[1] += kd[1] * L_curr_spectrum[1] * n_dot_l + ks[1] * L_curr_spectrum[1] * n_dot_h;
-            L_spectrum[2] += kd[2] * L_curr_spectrum[2] * n_dot_l + ks[2] * L_curr_spectrum[2] * n_dot_h;
+            L_spectrum[0] += 10*(kd[0] * L_curr_spectrum[0] * n_dot_l + ks[0] * L_curr_spectrum[0] * n_dot_h);
+            L_spectrum[1] += 10*(kd[1] * L_curr_spectrum[1] * n_dot_l + ks[1] * L_curr_spectrum[1] * n_dot_h);
+            L_spectrum[2] += 10*(kd[2] * L_curr_spectrum[2] * n_dot_l + ks[2] * L_curr_spectrum[2] * n_dot_h);
         }
 
     }

@@ -5,7 +5,7 @@ namespace rt3 {
 Spectrum PointLight::sample_Li( const Surfel& hit /*in*/, Vector3f *wi /*out*/, VisibilityTester *vis /*out*/ ){
 
     // Outgoing direction of ligh (l)
-    *wi = origin - hit.p;
+    *wi = glm::normalize(origin - hit.p);
 
     Surfel light_surfel;
     light_surfel.p = origin;
