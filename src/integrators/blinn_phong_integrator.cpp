@@ -3,13 +3,25 @@
 namespace rt3 {
 
 std::optional<Color24> BlinnPhongIntegrator::Li( const Ray& ray, const Scene& scene ) const{
-    return Li( ray, scene, total_depth );
+    Color24 L{0,0,0};
+    auto temp_L = Li( ray, scene, 0 );
+
+    if(!temp_L.has_value()){
+        return {};
+    }
+    else{
+        // Transform Spectrum to Color
+        L[0] = std::min((int) (temp_L.value()[0] * 255), 255);
+        L[1] = std::min((int) (temp_L.value()[1] * 255), 255);
+        L[2] = std::min((int) (temp_L.value()[2] * 255), 255);
+    }
+    return L;
 }
 
-std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &scene, int depth ) const
+std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &scene, int depth ) const
 {
 	// [0] FIRST STEP TO INITIATE `L` WITH THE COLOR VALUE TO BE RETURNED.
-    Color24 L{0,0,0}; // The radiance
+    Spectrum L{0,0,0}; // The radiance
 	// [1] FIND CLOSEST RAY INTERSECTION OR RETURN BACKGROUND RADIANCE
     Surfel isect; // Intersection information.
     if (!scene.intersect(ray, &isect)) {
@@ -18,7 +30,7 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
 	// [2] SPECIAL SITUATION: IF THE RAY HITS THE SURFACE FROM "BEHIND" (INSIDE), WE DO NOT COLOR.
 
     // If cos between wo and n negative, the ray hits from behind
-    if(glm::dot(isect.wo, isect.n) < 0) {
+    if(glm::dot(glm::normalize(isect.wo), isect.n) < 0) {
         return {};
     }
 	// [3] GET THE MATERIAL ASSOCIATED WITH THE HIT SURFACE
@@ -28,6 +40,7 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
     Spectrum ka = fm->get_ka();
     Spectrum kd = fm->get_kd();
     Spectrum ks = fm->get_ks();
+    Spectrum km = fm->get_kr();
     real_type glossiness = fm->get_glossiness();
     Vector3f l; // light direction
     Vector3f n = isect.n; // surface normal
@@ -35,21 +48,20 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
     Vector3f h;
     VisibilityTester vis;
     real_type n_dot_l, n_dot_h;
-    Spectrum L_spectrum = {0,0,0};
-    Spectrum L_curr_spectrum = {0,0,0};
+    Spectrum L_curr = {0,0,0};
     
 	// [5] CALCULATE & ADD CONTRIBUTION FROM EACH LIGHT SOURCE
     for(auto light : scene.lights){
         if(light->flags == light_flag_e::ambient){
 
             std::shared_ptr<AmbientLight> al = std::dynamic_pointer_cast< AmbientLight >( light );
-            L_spectrum[0] += (al->get_L()[0] * ka[0]);
-            L_spectrum[1] += (al->get_L()[1] * ka[1]);
-            L_spectrum[2] += (al->get_L()[2] * ka[2]);
+            L[0] += (al->get_L()[0] * ka[0]);
+            L[1] += (al->get_L()[1] * ka[1]);
+            L[2] += (al->get_L()[2] * ka[2]);
             continue;
         }
 
-        L_curr_spectrum = light->sample_Li(isect, &l, &vis);
+        L_curr = light->sample_Li(isect, &l, &vis);
 
         if(vis.unoccluded(scene)){
             n_dot_l = std::max(0.F, glm::dot(n, l));
@@ -60,25 +72,46 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &sc
             
             // std::cout << L_curr_spectrum[0] << " " << L_curr_spectrum[1] << " " << L_curr_spectrum[2] << "\n";
             // Add Diffuse and Specular contribution
-            L_spectrum[0] += (kd[0] * L_curr_spectrum[0] * n_dot_l) + (ks[0] * L_curr_spectrum[0] * n_dot_h);
-            L_spectrum[1] += (kd[1] * L_curr_spectrum[1] * n_dot_l) + (ks[1] * L_curr_spectrum[1] * n_dot_h);
-            L_spectrum[2] += (kd[2] * L_curr_spectrum[2] * n_dot_l) + (ks[2] * L_curr_spectrum[2] * n_dot_h);
+            L[0] += (kd[0] * L_curr[0] * n_dot_l) + (ks[0] * L_curr[0] * n_dot_h);
+            L[1] += (kd[1] * L_curr[1] * n_dot_l) + (ks[1] * L_curr[1] * n_dot_h);
+            L[2] += (kd[2] * L_curr[2] * n_dot_l) + (ks[2] * L_curr[2] * n_dot_h);
         }
 
     }
 	// [6] ADD AMBIENT CONTRIBUTION HERE (if there is any).
+
+    
+
 	// [7] ADD MIRROR REFLECTION CONTRIBUTION
 
-    // [8] Transform Spectrum to Color
-    L[0] = std::min((int) (L_spectrum[0] * 255), 255);
-    L[1] = std::min((int) (L_spectrum[1] * 255), 255);
-    L[2] = std::min((int) (L_spectrum[2] * 255), 255);
-    // std::cout << L_spectrum[0] << " " << L_spectrum[1] << " " << L_spectrum[2] << "\n";
+    // [7.1] Find new ray, based on perfect reflection about surface normal.
+    Point3f origin = isect.p;
+    Vector3f reflected_direction = glm::normalize((ray.get_direction()) - 2*(glm::dot(ray.get_direction(),n))*n);
+    Ray reflected_ray{origin, reflected_direction, 0.1};
+    // [7.2] Offset reflect_ray by an epsilon, to avoid self-intersection caused by rounding error.
+
+
+
+    // [7.3] Recursive call of Li() with new reflected ray.
+    if ( depth < max_depth ){
+        // std::cout << depth << "\n";
+        // std::cout << max_depth << "\n";
+        auto temp_L = BlinnPhongIntegrator::Li(reflected_ray, scene, depth+1);
+        if(temp_L.has_value()){
+            // std::cout <<  temp_S[0] << " " <<  temp_S[1] << " " <<  temp_S[2] << "\n";
+            // std::cout << km[0] << " " << km[1] << " " << km[2] << "\n";
+            L[0] = (L[0] + km[0] * temp_L.value()[0]);
+            L[1] = (L[1] + km[1] * temp_L.value()[1]);
+            L[2] = (L[2] + km[2] * temp_L.value()[2]);
+        }
+    }
+
 	return L;
 }
 
 BlinnPhongIntegrator* create_blinn_phong_integrator(const ParamSet& ps, std::shared_ptr<const Camera> cam){
     int depth = retrieve(ps, "depth", 1);
+    std::cout << depth << " dwawafdwajhwafd" << "\n";
     return new BlinnPhongIntegrator(cam, depth);
 }
 

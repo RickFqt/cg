@@ -22,7 +22,7 @@ Ray PerspectiveCamera::generate_ray(int x, int y)const{
     // We can assume that focal distance is 1
 
 
-    return Ray{ray_origin,ray_direction};
+    return Ray{ray_origin,ray_direction, 0.1};
 }
 
 Ray OrthographicCamera::generate_ray(int x, int y)const{
@@ -35,7 +35,7 @@ Ray OrthographicCamera::generate_ray(int x, int y)const{
     Vector3f ray_direction = w;
 
 
-    return Ray{ray_origin,ray_direction};
+    return Ray{ray_origin,ray_direction, 0.1};
 }
 
 // Factory function pattern.
