@@ -12,6 +12,13 @@ using std::string;
 
 using namespace rt3;
 
+namespace rt3 {
+Spectrum operator * (Spectrum a, Spectrum b){return Spectrum{a[0]*b[0], a[1]*b[1], a[2]*b[2]};}
+Spectrum operator + (Spectrum a, Spectrum b){return Spectrum{a[0]+b[0], a[1]+b[1], a[2]+b[2]};}
+Spectrum operator * (Spectrum a, float b){return Spectrum{a[0]*b, a[1]*b, a[2]*b};}
+Spectrum operator * (float a, Spectrum b){return Spectrum{a*b[0], a*b[1], a*b[2]};}
+}
+
 /// Lambda expression that returns a lowercase version of the input string.
 constexpr auto cstr_lowercase = [](const char* t) -> std::string {
   std::string str{ t };

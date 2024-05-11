@@ -148,7 +148,10 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::SPECTRUM, "L" },
         { param_type_e::SPECTRUM, "I" },
         { param_type_e::SPECTRUM, "scale" },
-        { param_type_e::VEC3F, "from" }
+        { param_type_e::VEC3F, "from" },
+        { param_type_e::VEC3F, "to" },
+        { param_type_e::REAL, "cutoff" },
+        { param_type_e::REAL, "falloff" }
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
 

@@ -148,6 +148,9 @@ Light* API::make_light(const ParamSet &ps){
   else if(type == "point"){
     light = create_point_light(ps);
   }
+  else if(type == "spot"){
+    light = create_spot_light(ps);
+  }
 
   return light;
 }

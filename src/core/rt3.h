@@ -39,8 +39,10 @@ using Point3f = glm::vec3;
 using Vector3f = glm::vec3;
 using Color24 = std::array<int, 3>;
 using Spectrum = std::array<float, 3>;
-// Spectrum operator * (Spectrum a, Spectrum b){return Spectrum{a[0]*b[0], a[1]*b[1], a[2]*b[2]};}
-// Spectrum operator + (Spectrum a, Spectrum b){return Spectrum{a[0]+b[0], a[1]+b[1], a[2]+b[2]};}
+Spectrum operator * (Spectrum a, Spectrum b);
+Spectrum operator + (Spectrum a, Spectrum b);
+Spectrum operator * (Spectrum a, float b);
+Spectrum operator * (float a, Spectrum b);
 using Normal3f = glm::vec3;
 
 // List of points
