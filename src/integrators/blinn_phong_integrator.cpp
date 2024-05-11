@@ -104,6 +104,14 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
             L[1] = (L[1] + km[1] * temp_L.value()[1]);
             L[2] = (L[2] + km[2] * temp_L.value()[2]);
         }
+        // else{
+        //     Point2i img_dim = camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
+        //     Point2f screen_coord{ float(120)/float(img_dim.x), float(200)/float(img_dim.y) };
+        //     Color24 abacate = scene.background->sampleXYZ(screen_coord);
+        //     Spectrum blau {(float)abacate[0]/(float)255, (float)abacate[1]/(float)255, (float)abacate[2]/(float)255};
+
+        //     L = L + (km * blau);
+        // }
     }
 
 	return L;

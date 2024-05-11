@@ -13,12 +13,11 @@ Spectrum SpotLight::sample_Li( const Surfel& hit /*in*/, Vector3f *wi /*out*/, V
     *vis = VisibilityTester(hit, light_surfel);
 
 
-    float cos_wi_direction = glm::dot(-*wi, direction);
+    float cos_wi_direction = glm::dot(glm::normalize(-*wi), glm::normalize(direction));
     float result_angle = acos(cos_wi_direction);
 
     float coef = 0;
 
-    // std::cout << "coef = " << coef << " , cutoff = " << cutoff << " , falloff = " << faloff << " , result angle= " << result_angle << "\n";
 
     if(result_angle <= faloff){
         coef = 1;
@@ -39,10 +38,10 @@ SpotLight* create_spot_light(const ParamSet& ps) {
     Vector3f direction = glm::normalize(to - origin);
 
     real_type cutoff = retrieve(ps, "cutoff", 30.F);
-    cutoff = cutoff/2;
+    // cutoff = cutoff/2;
     cutoff = rt3::Radians(cutoff);
-    real_type faloff = retrieve(ps, "faloff", 15.F);
-    faloff = faloff/2;
+    real_type faloff = retrieve(ps, "falloff", 15.F);
+    // faloff = faloff/2;
     faloff = rt3::Radians(faloff);
     return new SpotLight(I, origin, direction, cutoff, faloff);
 }
