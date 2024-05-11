@@ -41,6 +41,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/lights/ambient_light.cpp
                          ${RT3_SOURCE_DIR}/lights/light.cpp
                          ${RT3_SOURCE_DIR}/lights/point_light.cpp
+                         ${RT3_SOURCE_DIR}/lights/spot_light.cpp
                          ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/primitives/primitive.cpp
                          ${RT3_SOURCE_DIR}/primitives/primlist.cpp
