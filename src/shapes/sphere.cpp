@@ -47,6 +47,11 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
 }
 
+Bounds3f Sphere::world_bounds(){
+
+    return Bounds3f(center - radius - 2, center + radius + 2);
+}
+
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Sphere object.

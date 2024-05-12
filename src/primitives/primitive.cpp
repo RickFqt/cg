@@ -20,6 +20,9 @@ bool GeometricPrimitive::intersect( const Ray& r, Surfel *sf ) const{
     return true;
 }
 
-// TODO: Bounds3f PrimList::world_bounds(){}
+Bounds3f GeometricPrimitive::world_bounds(){
+
+    return shape->world_bounds();
+}
 
 }

@@ -20,7 +20,7 @@ private:
 public:
     Sphere(const bool& flip_n, const float& r, const Point3f& c):
     Shape(flip_n), radius{r}, center{c}{ /* empty */ }
-    // Bounds3f world_bounds TODO
+    Bounds3f world_bounds();
 
     bool intersect_p( const Ray& r ) const;
     bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;

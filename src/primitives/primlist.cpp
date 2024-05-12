@@ -23,6 +23,45 @@ bool PrimList::intersect( const Ray& r, Surfel *sf ) const{
     return has_intersected;
 }
 
-// TODO: Bounds3f PrimList::world_bounds(){}
+Bounds3f PrimList::world_bounds(){
+
+    if(initialized){
+        return global_bounds;
+    }
+
+    real_type min_x, min_y, min_z, max_x, max_y, max_z;
+    min_x = min_y = min_z = FLT_MAX;
+    max_x = max_y = max_z = FLT_MIN;
+
+    for(std::shared_ptr<Primitive> p : primitives){
+        Bounds3f bounds = p->world_bounds();
+        Point3f low = bounds.get_low();
+        if(low.x < min_x){
+            min_x = low.x;
+        }
+        if(low.y < min_y){
+            min_y = low.y;
+        }
+        if(low.z < min_z){
+            min_z = low.z;
+        }
+
+        Point3f high = bounds.get_high();
+        if(high.x > max_x){
+            max_x = high.x;
+        }
+        if(high.y > max_y){
+            max_y = high.y;
+        }
+        if(high.z > max_z){
+            max_z = high.z;
+        }
+    }
+
+    global_bounds.set_low({min_x, min_y, min_z});
+    global_bounds.set_high({max_x, max_y, max_z});
+
+    return Bounds3f({min_x, min_y, min_z}, {max_x, max_y, max_z});
+}
 
 }

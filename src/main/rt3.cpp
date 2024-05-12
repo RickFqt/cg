@@ -13,6 +13,9 @@ using std::string;
 using namespace rt3;
 
 namespace rt3 {
+Point3f operator - (Point3f a, float b){return Point3f{a.x - b, a.y - b, a.z - b};}
+Point3f operator + (Point3f a, float b){return Point3f{a.x + b, a.y + b, a.z + b};};
+
 Spectrum operator * (Spectrum a, Spectrum b){return Spectrum{a[0]*b[0], a[1]*b[1], a[2]*b[2]};}
 Spectrum operator + (Spectrum a, Spectrum b){return Spectrum{a[0]+b[0], a[1]+b[1], a[2]+b[2]};}
 Spectrum operator * (Spectrum a, float b){return Spectrum{a[0]*b, a[1]*b, a[2]*b};}
