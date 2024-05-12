@@ -3,6 +3,7 @@
 
 #include "../core/rt3.h"
 #include "../core/ray.h"
+#include "../shapes/plane.h"
 
 namespace rt3 {
 

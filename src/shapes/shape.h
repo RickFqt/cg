@@ -15,7 +15,7 @@ private:
     bool flip_normals;
 
 public:
-    Shape(bool flip_n):flip_normals{flip_n}{ /*empty*/ };
+    Shape(bool flip_n);
     virtual Bounds3f world_bounds() = 0;
     virtual bool intersect(const Ray& r, float *t_hit, Surfel *isect) const = 0;
     virtual bool intersect_p( const Ray& r ) const = 0;

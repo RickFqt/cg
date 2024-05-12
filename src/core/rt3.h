@@ -76,6 +76,14 @@ class Material;
 class Surfel;
 class Light;
 class Scene;
+class Bounds3f;
+class Plane;
+class Sphere;
+class Shape;
+class Scene;
+class PrimList;
+class GeometricPrimitive;
+class AggregatePrimitive;
 
 //=== aliases
 using real_type = float;
