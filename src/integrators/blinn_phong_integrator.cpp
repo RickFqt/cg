@@ -60,6 +60,10 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
             L[2] += (al->get_L()[2] * ka[2]);
             continue;
         }
+        else if(light->flags == light_flag_e::directional){
+            std::shared_ptr<DirectionalLight> dl = std::dynamic_pointer_cast< DirectionalLight >( light );
+            dl->set_world_bounds(scene.get_aggregate()->world_bounds());
+        }
 
         L_curr = light->sample_Li(isect, &l, &vis);
 

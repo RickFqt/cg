@@ -5,11 +5,24 @@ namespace rt3 {
 Spectrum DirectionalLight::sample_Li( const Surfel& hit /*in*/, Vector3f *wi /*out*/, VisibilityTester *vis /*out*/ ){
 
     // Outgoing direction of light (l)
-    // *wi = glm::normalize(origin - hit.p);
+    // We need to find the origin of the ray
+    Ray r(hit.p, -direction);
+    Surfel hit_bounds;
+    float t;
+    Point3f origin = {0,0,0};
+
+    if(world_bounds.intersect(r, &t, &hit_bounds)){
+        origin = hit_bounds.p;
+    }
+    else{
+        std::cout << "Attention! World Bounds not found by Directional Light!\n";
+    }
+    *wi = glm::normalize(origin - hit.p);
+
 
 
     Surfel light_surfel;
-    // light_surfel.p = origin;
+    light_surfel.p = origin;
     *vis = VisibilityTester(hit, light_surfel);
 
 
