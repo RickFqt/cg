@@ -74,11 +74,11 @@ bool Plane::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
 }
 
-Bounds3f Plane::world_bounds(){
+// Bounds3f Plane::world_bounds(){
 
-    // TODO: Fix this
-    return Bounds3f({0,0,0}, {10,10,10});
-}
+//     // TODO: Fix this
+//     return Bounds3f({0,0,0}, {10,10,10});
+// }
 
 
 }  // namespace rt3

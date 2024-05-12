@@ -15,7 +15,7 @@ public:
     Bounds3f(const Point3f& l, const Point3f& h):
     low{l}, high{h}
     { /* empty */ } 
-    bool intersect( const Ray& r, Surfel *sf ) const;
+    bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;
 	bool intersect_p( const Ray& r ) const;
     Point3f get_low() const{return low;}
     Point3f get_high() const{return high;}
