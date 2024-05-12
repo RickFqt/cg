@@ -151,6 +151,9 @@ Light* API::make_light(const ParamSet &ps){
   else if(type == "spot"){
     light = create_spot_light(ps);
   }
+  else if(type == "directional"){
+    light = create_directional_light(ps);
+  }
 
   return light;
 }

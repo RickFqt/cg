@@ -39,6 +39,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/integrators/integrator.cpp
                          ${RT3_SOURCE_DIR}/integrators/blinn_phong_integrator.cpp
                          ${RT3_SOURCE_DIR}/lights/ambient_light.cpp
+                         ${RT3_SOURCE_DIR}/lights/directional_light.cpp
                          ${RT3_SOURCE_DIR}/lights/light.cpp
                          ${RT3_SOURCE_DIR}/lights/point_light.cpp
                          ${RT3_SOURCE_DIR}/lights/spot_light.cpp
