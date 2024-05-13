@@ -3,7 +3,6 @@
     <camera type="perspective" fovy="45" />
     <integrator type="blinn_phong" depth="2" />
 
-    <film type="image" x_res="800" y_res="600" filename="images/directional.png" img_type="png" gamma_corrected="no" />
     <!-- The Scene -->
     <world_begin/>
 

@@ -1,4 +1,12 @@
 <RT3>
+    <lookat look_from="-3 5.5 -10" look_at="0 2 1" up="0 1 0" />
+    <camera type="perspective" fovy="45" />
+    <integrator type="blinn_phong" depth="2" />
+    
+    <!-- <lookat look_from="0 1 -10" look_at="0 1 1" up="0 1 0" />
+    <camera type="orthographic" screen_window="-6 6 -4.5 4.5" />
+    <integrator type="blinn_phong" depth="2" /> -->
+
     <!-- The Scene -->
     <world_begin/>
 
