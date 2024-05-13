@@ -58,7 +58,7 @@ bool Plane::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
     if(d1 + d2 + d3 != 0){
         t = numerador/denominador;
 
-        if(t > 0){
+        if(0 <= t && t < r.get_t_max()){
             *t_hit = t;
 
             // Update the contact point

@@ -60,6 +60,11 @@ Bounds3f PrimList::world_bounds(){
 
     global_bounds.set_low({min_x, min_y, min_z});
     global_bounds.set_high({max_x, max_y, max_z});
+    initialized = true;
+
+    std::cout << "GLobal Bounds: " << 
+    "{"<< min_x<<","<< min_y<<","<< min_z<<"}, " <<
+    "{"<< max_x<<","<< max_y<<","<< max_z<<"}\n";
 
     return Bounds3f({min_x, min_y, min_z}, {max_x, max_y, max_z});
 }

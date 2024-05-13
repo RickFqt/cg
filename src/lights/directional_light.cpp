@@ -14,9 +14,12 @@ Spectrum DirectionalLight::sample_Li( const Surfel& hit /*in*/, Vector3f *wi /*o
     if(world_bounds.intersect(r, &t, &hit_bounds)){
         origin = hit_bounds.p;
     }
-    else{
-        std::cout << "Attention! World Bounds not found by Directional Light!\n";
-    }
+    // else{
+    //     std::cout << "Attention! World Bounds not found by Directional Light!\n";
+    //     std::cout << "GLobal Bounds: " << 
+    //     "{"<< world_bounds.get_low().x<<","<<world_bounds.get_low().y<<","<< world_bounds.get_low().z<<"}, " <<
+    //     "{"<< world_bounds.get_high().x<<","<<world_bounds.get_high().y<<","<< world_bounds.get_high().z<<"}\n\n";
+    // }
     *wi = glm::normalize(origin - hit.p);
 
 

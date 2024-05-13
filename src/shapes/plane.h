@@ -20,8 +20,8 @@ private:
 public:
 
     //TODO: Fix flip_normals
-    Plane(/*const bool& flip_n,*/ const Vector3f& v1, const Vector3f& v2):
-    /*Shape(flip_n),*/ normal{glm::cross(v1, v2)}, point{v1}
+    Plane(const bool& flip_n, const Vector3f& v1, const Vector3f& v2):
+    /*Shape(flip_n)*/normal{ (flip_n ? -1.F : 1.F) * glm::normalize(glm::cross(v1, v2))}, point{v1}
     {};
     // Bounds3f world_bounds();
 
