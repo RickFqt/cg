@@ -25,7 +25,7 @@ class VisibilityTester {
 public:
   VisibilityTester()=default;
   VisibilityTester( const Surfel& s0, const Surfel& s1):p0{s0}, p1{s1}{/* empty */};
-  bool unoccluded( const Scene& scene );
+  bool unoccluded( const Scene& scene, const Vector3f& n);
 public:
   Surfel p0, p1;
 };

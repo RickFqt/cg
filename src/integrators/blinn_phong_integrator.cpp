@@ -67,7 +67,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
         L_curr = light->sample_Li(isect, &l, &vis);
 
-        if(vis.unoccluded(scene)){
+        if(vis.unoccluded(scene, n)){
             n_dot_l = std::max(0.F, glm::dot(n, l));
 
             h = glm::normalize(v + l);
