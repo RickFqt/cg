@@ -35,10 +35,16 @@ namespace rt3 {
 /// Point3f!!!!
 // Alias to a Point3f (simulation)
 using Point3f = glm::vec3;
+Point3f operator - (Point3f a, float b);
+Point3f operator + (Point3f a, float b);
 // Temporary Vec3, just to compile. TODO: Implement a real one!!!
 using Vector3f = glm::vec3;
 using Color24 = std::array<int, 3>;
 using Spectrum = std::array<float, 3>;
+Spectrum operator * (Spectrum a, Spectrum b);
+Spectrum operator + (Spectrum a, Spectrum b);
+Spectrum operator * (Spectrum a, float b);
+Spectrum operator * (float a, Spectrum b);
 using Normal3f = glm::vec3;
 
 // List of points
@@ -68,6 +74,16 @@ class Camera;
 class Primitive;
 class Material;
 class Surfel;
+class Light;
+class Scene;
+class Bounds3f;
+class Plane;
+class Sphere;
+class Shape;
+class Scene;
+class PrimList;
+class GeometricPrimitive;
+class AggregatePrimitive;
 
 //=== aliases
 using real_type = float;

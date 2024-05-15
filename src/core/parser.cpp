@@ -135,16 +135,37 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::REAL, "zmin" },
         { param_type_e::REAL, "zmax" },
         { param_type_e::COLOR, "near_color" },
-        { param_type_e::COLOR, "far_color" }
+        { param_type_e::COLOR, "far_color" },
+        { param_type_e::INT, "depth" }
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
 
       API::integrator(ps);
+    } else if (tag_name == "light_source") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "type" },
+        { param_type_e::SPECTRUM, "L" },
+        { param_type_e::SPECTRUM, "I" },
+        { param_type_e::SPECTRUM, "scale" },
+        { param_type_e::VEC3F, "from" },
+        { param_type_e::VEC3F, "to" },
+        { param_type_e::REAL, "cutoff" },
+        { param_type_e::REAL, "falloff" }
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+
+      API::light_source(ps);
     } else if (tag_name == "make_named_material") {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{
         { param_type_e::STRING, "type" },
         { param_type_e::COLOR, "color" },      // Single color for the material.
+        { param_type_e::SPECTRUM, "ambient" },
+        { param_type_e::SPECTRUM, "diffuse" },
+        { param_type_e::SPECTRUM, "specular" },
+        { param_type_e::REAL, "glossiness" },
+        { param_type_e::SPECTRUM, "mirror" },
         { param_type_e::STRING, "name" }        // Name of the material.
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
@@ -162,7 +183,12 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       ParamSet ps;
       vector<std::pair<param_type_e, string>> param_list{
         { param_type_e::STRING, "type" },
-        { param_type_e::COLOR, "color" }      // Single color for the material.
+        { param_type_e::COLOR, "color" },      // Single color for the material.
+        { param_type_e::SPECTRUM, "ambient" },
+        { param_type_e::SPECTRUM, "diffuse" },
+        { param_type_e::SPECTRUM, "specular" },
+        { param_type_e::REAL, "glossiness" },
+        { param_type_e::SPECTRUM, "mirror" }
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       
@@ -176,7 +202,12 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       API::object(ps);
-    } else if (tag_name == "world_begin") {
+    } else if (tag_name == "include") {
+      parse(p_element->Attribute("filename"));
+    } else if (tag_name == "render_again") {
+      API::world_begin();
+      API::world_end();
+    }else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<
       // std::endl;
       //  We should get only one `world` tag per scene file.

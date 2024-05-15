@@ -1,9 +1,9 @@
 #ifndef SPHERE_H
 #define SPHERE_H 1
 
-#include "rt3.h"
-#include "primitive.h"
-#include "paramset.h"
+#include "../core/rt3.h"
+#include "../primitives/primitive.h"
+#include "../core/paramset.h"
 
 namespace rt3{
 
@@ -18,9 +18,8 @@ private:
     float radius;
     Point3f center;
 public:
-    Sphere(const bool& flip_n, const float& r, const Point3f& c):
-    Shape(flip_n), radius{r}, center{c}{ /* empty */ }
-    // Bounds3f world_bounds TODO
+    Sphere(const bool& flip_n, const float& r, const Point3f& c);
+    Bounds3f world_bounds();
 
     bool intersect_p( const Ray& r ) const;
     bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;

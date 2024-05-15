@@ -2,10 +2,11 @@
 #define PRIMITIVE_H 1
 
 // #include "./rt3.h"
-#include "ray.h"
-#include "material.h"
-#include "shape.h"
-#include "error.h"
+#include "../core/ray.h"
+#include "../materials/material.h"
+#include "../shapes/shape.h"
+#include "../core/error.h"
+#include "bounds.h"
 
 namespace rt3{
 
@@ -22,7 +23,7 @@ class Primitive {
 		// Simpler & faster version of intersection that only return true/false.
 		// It does not compute the hit point information.
 		virtual bool intersect_p( const Ray& r ) const = 0;
-		// TODO: virtual Bounds3f world_bounds() = 0;
+		virtual Bounds3f world_bounds() = 0;
 
 		virtual Material * get_material() const = 0;
 };
@@ -37,7 +38,7 @@ public:
 	:shape{s}, material{m}
 	{ /* empty */ };
 
-	//  TODO: Bounds3f world_bounds();
+	Bounds3f world_bounds();
 
 	bool intersect_p( const Ray& r ) const;
     bool intersect( const Ray& r, Surfel *sf ) const;
@@ -58,7 +59,7 @@ public:
 	// Simpler & faster version of intersection that only return true/false.
 	// It does not compute the hit point information.
 	virtual bool intersect_p( const Ray& r ) const = 0;
-	// TODO: virtual Bounds3f world_bounds() = 0;
+	virtual Bounds3f world_bounds() = 0;
 	
 	Material * get_material() const
 	{

@@ -2,22 +2,23 @@
 #define SCENE_H 1
 
 #include "ray.h"
-#include "primitive.h"
+#include "../primitives/primitive.h"
+#include "../lights/light.h"
 
 namespace rt3{
 
 class Scene {
     //=== Public data
     public:
-        //std::vector<shared_ptr<Light>> lights; // list of lights
+        std::vector< std::shared_ptr<Light>> lights; // list of lights
         std::shared_ptr< Background > background; // The background object.
     private:
         std::shared_ptr<Primitive> aggregate; // The scene graph of objects, acceleration structure.
 
     //=== Public interface
     public:
-        Scene( std::shared_ptr<Primitive> ag, std::shared_ptr< Background > bkg)
-             : background{bkg}, aggregate{ag}
+        Scene( std::shared_ptr<Primitive> ag, std::shared_ptr< Background > bkg, std::vector< std::shared_ptr<Light>> lts)
+             : lights{lts}, background{bkg}, aggregate{ag}
         {/* empty */}
         /// Determines the intersection info; return true if there is an intersection.
         bool intersect( const Ray& r, Surfel *isect ) const

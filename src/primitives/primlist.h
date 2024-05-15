@@ -8,6 +8,8 @@ namespace rt3 {
 class PrimList : public AggregatePrimitive{
 private:
     std::vector<std::shared_ptr<Primitive>> primitives;
+    Bounds3f global_bounds;
+    bool initialized = false;
 public:
     PrimList(std::vector<std::shared_ptr<Primitive>> prim):
     primitives{prim}
@@ -16,7 +18,7 @@ public:
 	// Simpler & faster version of intersection that only return true/false.
 	// It does not compute the hit point information.
 	bool intersect_p( const Ray& r ) const;
-	// TODO: Bounds3f world_bounds();
+	Bounds3f world_bounds();
     std::vector<std::shared_ptr<Primitive>> get_primitives() const {return primitives;};
 
 };

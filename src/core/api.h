@@ -6,9 +6,9 @@
 
 #include "paramset.h"
 #include "rt3.h"
-#include "integrator.h"
-#include "sphere.h"
-#include "primlist.h"
+#include "../integrators/integrators.h"
+#include "../shapes/sphere.h"
+#include "../primitives/primlist.h"
 
 //=== API Macro definitions
 
@@ -62,6 +62,8 @@ struct RenderOptions {
   std::map<string, ParamSet> material_library;
   /// the current Material
   ParamSet curr_material;
+  /// the list of Lights
+  std::vector<ParamSet> list_lights_ps;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -109,9 +111,10 @@ private:
   static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat);
   static Shape *make_shape(const ParamSet &ps);
   static Material *make_material(const ParamSet &ps);
+  static Light *make_light(const ParamSet &ps);
   static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat);
   static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
-  static Scene *make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg);
+  static Scene *make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg, std::vector<ParamSet> l_ps);
 
 public:
   //=== API function begins here.
@@ -128,6 +131,7 @@ public:
   static void make_named_material(const ParamSet &ps);
   static void named_material(const ParamSet &ps);
   static void material(const ParamSet &ps);
+  static void light_source(const ParamSet &ps);
   static void integrator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
