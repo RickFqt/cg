@@ -2,6 +2,10 @@
 
 namespace rt3 {
 
+Sphere::Sphere(const bool& flip_n, const float& r, const Point3f& c):
+Shape(flip_n), radius{r}, center{c}
+{}
+
 bool Sphere::intersect_p( const Ray& r ) const{
 
     Vector3f d = r.get_direction();
@@ -45,6 +49,16 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
     return false;
 
+}
+
+// Bounds3f Sphere::world_bounds(){
+
+//     return Bounds3f(center - radius - 2, center + radius + 2);
+// }
+
+Bounds3f Sphere::world_bounds(){
+
+    return Bounds3f(false, radius + 2, center);
 }
 
 // Factory function pattern.

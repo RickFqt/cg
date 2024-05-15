@@ -151,6 +151,9 @@ Light* API::make_light(const ParamSet &ps){
   else if(type == "spot"){
     light = create_spot_light(ps);
   }
+  else if(type == "directional"){
+    light = create_directional_light(ps);
+  }
 
   return light;
 }
@@ -271,7 +274,7 @@ void API::reset_engine() {
   // curr_GS = GraphicsState();
   // This will delete all information on integrator, cameras, filters,
   // acceleration structures, etc., that has been set previously.
-  // render_opt = std::make_unique<RenderOptions>();
+  render_opt = std::make_unique<RenderOptions>();
 }
 
 void API::background(const ParamSet& ps) {

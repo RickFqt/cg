@@ -5,5 +5,6 @@
 #include "ambient_light.h"
 #include "point_light.h"
 #include "spot_light.h"
+#include "directional_light.h"
 
 #endif

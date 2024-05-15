@@ -29,6 +29,7 @@ set( RT3_SOURCE_DIR "src" )
 
 #=== main  target ===
 add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
+                         ${RT3_SOURCE_DIR}/shapes/shape.cpp
                          ${RT3_SOURCE_DIR}/cameras/camera.cpp
                          ${RT3_SOURCE_DIR}/cameras/film.cpp
                          ${RT3_SOURCE_DIR}/core/api.cpp
@@ -39,12 +40,15 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/integrators/integrator.cpp
                          ${RT3_SOURCE_DIR}/integrators/blinn_phong_integrator.cpp
                          ${RT3_SOURCE_DIR}/lights/ambient_light.cpp
+                         ${RT3_SOURCE_DIR}/lights/directional_light.cpp
                          ${RT3_SOURCE_DIR}/lights/light.cpp
                          ${RT3_SOURCE_DIR}/lights/point_light.cpp
                          ${RT3_SOURCE_DIR}/lights/spot_light.cpp
                          ${RT3_SOURCE_DIR}/materials/material.cpp
+                         ${RT3_SOURCE_DIR}/primitives/bounds.cpp
                          ${RT3_SOURCE_DIR}/primitives/primitive.cpp
                          ${RT3_SOURCE_DIR}/primitives/primlist.cpp
+                         ${RT3_SOURCE_DIR}/shapes/plane.cpp
                          ${RT3_SOURCE_DIR}/shapes/sphere.cpp
                          ${RT3_SOURCE_DIR}/ext/lodepng.cpp
                          ${RT3_SOURCE_DIR}/ext/tinyxml2.cpp
