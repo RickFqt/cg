@@ -199,6 +199,10 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::STRING, "type" },
         { param_type_e::REAL, "radius" },  // Radius of an object (like a sphere).
         { param_type_e::VEC3F, "center" },   // Center of an object.
+        { param_type_e::POINT3F , "p0" },  // Triangle
+        { param_type_e::POINT3F , "p1" },  // Triangle
+        { param_type_e::POINT3F , "p2" },  // Triangle
+        { param_type_e::VEC3F , "normal" } // Triangle
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       API::object(ps);

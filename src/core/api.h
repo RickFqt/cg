@@ -8,6 +8,7 @@
 #include "rt3.h"
 #include "../integrators/integrators.h"
 #include "../shapes/sphere.h"
+#include "../shapes/triangle.h"
 #include "../primitives/primlist.h"
 
 //=== API Macro definitions
