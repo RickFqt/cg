@@ -58,7 +58,7 @@ Shape* API::make_shape(const ParamSet &ps) {
     shape = create_sphere(ps);
   }
   else if(type == "triangle"){
-    shape = create_triangle(ps);
+    shape = create_simple_triangle(ps);
   }
   // TODO: Add new types here!
 

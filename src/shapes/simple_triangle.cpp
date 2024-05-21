@@ -1,16 +1,16 @@
-#include "triangle.h"
+#include "simple_triangle.h"
 
 namespace rt3 {
 
-Triangle::Triangle(const bool& flip_n, const Point3f& p0, const Point3f& p1, const Point3f& p2, const Vector3f& n):
+SimpleTriangle::SimpleTriangle(const bool& flip_n, const Point3f& p0, const Point3f& p1, const Point3f& p2, const Vector3f& n):
 Shape(flip_n), p0{p0}, p1{p1}, p2{p2}, norm{n}
 {}
 
-Triangle::Triangle(const bool& flip_n, const Point3f& po0, const Point3f& po1, const Point3f& po2):
+SimpleTriangle::SimpleTriangle(const bool& flip_n, const Point3f& po0, const Point3f& po1, const Point3f& po2):
 Shape(flip_n), p0{po0}, p1{po1}, p2{po2}, norm{glm::normalize( glm::cross(po1 - po0, po2 - po0))}
 {}
 
-bool Triangle::intersect_p( const Ray& r ) const{
+bool SimpleTriangle::intersect_p( const Ray& r ) const{
 
     
 
@@ -50,7 +50,7 @@ bool Triangle::intersect_p( const Ray& r ) const{
     return false;
 }
 
-bool Triangle::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
+bool SimpleTriangle::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
     
     constexpr float epsilon = std::numeric_limits<float>::epsilon();
 
@@ -100,7 +100,7 @@ bool Triangle::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 //     return Bounds3f(center - radius - 2, center + radius + 2);
 // }
 
-Bounds3f Triangle::world_bounds(){
+Bounds3f SimpleTriangle::world_bounds(){
 
     Point3f center = p0;
 
@@ -112,7 +112,7 @@ Bounds3f Triangle::world_bounds(){
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Triangle object.
-Triangle* create_triangle(const ParamSet &ps){
+SimpleTriangle* create_simple_triangle(const ParamSet &ps){
     
     Point3f p0 = retrieve(ps, "p0", Point3f{1,0,0});
     Point3f p1 = retrieve(ps, "p1", Point3f{0,1,0});
@@ -120,11 +120,11 @@ Triangle* create_triangle(const ParamSet &ps){
 
     if(ps.count("normal") >= 1){
         Vector3f norm = retrieve(ps, "normal", Vector3f{0,0,1});
-        return new Triangle(false, p0, p1, p2, norm);
+        return new SimpleTriangle(false, p0, p1, p2, norm);
     }
 
     // TODO: Add flip_normals
-    return new Triangle(false, p0, p1, p2);
+    return new SimpleTriangle(false, p0, p1, p2);
 }
 
 

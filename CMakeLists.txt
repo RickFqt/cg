@@ -49,8 +49,8 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/primitives/primitive.cpp
                          ${RT3_SOURCE_DIR}/primitives/primlist.cpp
                          ${RT3_SOURCE_DIR}/shapes/plane.cpp
+                         ${RT3_SOURCE_DIR}/shapes/simple_triangle.cpp
                          ${RT3_SOURCE_DIR}/shapes/sphere.cpp
-                         ${RT3_SOURCE_DIR}/shapes/triangle.cpp
                          ${RT3_SOURCE_DIR}/ext/lodepng.cpp
                          ${RT3_SOURCE_DIR}/ext/tinyxml2.cpp
                          ${RT3_SOURCE_DIR}/main/rt3.cpp
