@@ -202,7 +202,15 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::POINT3F , "p0" },  // Triangle
         { param_type_e::POINT3F , "p1" },  // Triangle
         { param_type_e::POINT3F , "p2" },  // Triangle
-        { param_type_e::VEC3F , "normal" } // Triangle
+        { param_type_e::INT , "ntriangles" },            // TriangleMesh
+        { param_type_e::ARR_INT , "indices" },           // |
+        { param_type_e::ARR_VEC3F , "vertices" },        // | //TODO: Check if this works
+        { param_type_e::ARR_VEC3F , "normals" },         // | //TODO: Check if this works
+        { param_type_e::ARR_POINT2F , "uv" },            // | //TODO: Check if this works
+        { param_type_e::BOOL , "reverse_vertex_order" }, // |
+        { param_type_e::BOOL , "compute_normals" },      // |
+        { param_type_e::BOOL , "backface_cull" },        // |
+        { param_type_e::STRING , "filename" }            // TriangleMesh
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       API::object(ps);
@@ -306,6 +314,9 @@ void parse_parameters(tinyxml2::XMLElement* p_element,
       break;
     case param_type_e::ARR_POINT3F:
       parse_array_COMPOSITE_attrib_three<real_type, Point3f>(p_element, ps_out, name);
+      break;
+    case param_type_e::ARR_POINT2F:
+      parse_array_COMPOSITE_attrib_two<int, Point2f>(p_element, ps_out, name);
       break;
     case param_type_e::ARR_COLOR:
       parse_array_COMPOSITE_attrib_three<uint8_t, Color24>(p_element, ps_out, name);

@@ -101,4 +101,18 @@ bool Triangle::intersect_p(const Ray &r) const{
     return false;
 }
 
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
+                                                     const ParamSet &ps){
+    std::vector<std::shared_ptr<Shape>> shapes;
+    //TODO
+    return shapes;
+}
+
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh>, bool){
+    
+    std::vector<std::shared_ptr<Shape>> shapes;
+    //TODO
+    return shapes;
+}
+
 } // namespace rt3

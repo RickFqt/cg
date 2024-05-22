@@ -4,7 +4,7 @@
 #define TRIANGLE_H
 
 // #include "../ext/tiny_obj_loader.h"
-#include "rt3.h"
+#include "../core/rt3.h"
 #include "../primitives/primitive.h"
 #include "../core/paramset.h"
 
@@ -85,12 +85,12 @@ public:
 
 /// This is the entry point for the client. This function begins the process of
 /// reading a triangle mesh.
-vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
                                                      const ParamSet &ps);
 
 /// This is the function that actually creates the mesh database and the
 /// triangles, ans store them in a Shape list.
-vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh>, bool);
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh>, bool);
 
 /// Internal function that calls the tinyobjloader api to read the OBJ data into
 /// memory.

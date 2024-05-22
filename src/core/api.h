@@ -9,6 +9,7 @@
 #include "../integrators/integrators.h"
 #include "../shapes/sphere.h"
 #include "../shapes/simple_triangle.h"
+#include "../shapes/triangle.h"
 #include "../primitives/primlist.h"
 
 //=== API Macro definitions
@@ -110,7 +111,9 @@ private:
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
   static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat);
+  static std::vector<std::shared_ptr<Primitive>> make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat);
   static Shape *make_shape(const ParamSet &ps);
+  static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps);
   static Material *make_material(const ParamSet &ps);
   static Light *make_light(const ParamSet &ps);
   static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat);
