@@ -1,0 +1,11 @@
+<RT3>
+    <world_begin/>
+        <background type="colors" color="70 130 180"/>
+        <!-- Lights -->
+        <light_source type="point" I="0.9 0.9 0.9" scale="1 1 1" from="500 500 -1000"/>
+        <!-- Material Library -->
+        <include filename="scene/specular_mirror_scene/strip_materials.xml" />
+        <!-- Objects -->
+        <include filename="scene/specular_mirror_scene/strip_objects.xml" />
+    <world_end/>
+</RT3>

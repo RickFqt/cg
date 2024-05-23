@@ -70,9 +70,14 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
         if(vis.unoccluded(scene, n)){
             n_dot_l = std::max(0.F, glm::dot(n, l));
 
-            h = glm::normalize(v + l);
-            n_dot_h = std::max(0.F, glm::dot(n, h));
-            n_dot_h = pow(n_dot_h,  glossiness);
+            if(glossiness != 0){
+                h = glm::normalize(v + l);
+                n_dot_h = std::max(0.F, glm::dot(n, h));
+                n_dot_h = pow(n_dot_h,  glossiness);
+            }
+            else{
+                n_dot_h = 0;
+            }
             
             // std::cout << L_curr_spectrum[0] << " " << L_curr_spectrum[1] << " " << L_curr_spectrum[2] << "\n";
             // Add Diffuse and Specular contribution
@@ -97,7 +102,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
 
     // [7.3] Recursive call of Li() with new reflected ray.
-    if ( depth < max_depth ){
+    if ( depth < max_depth && (L[0] != 0 && L[1] != 0 && L[2] != 0)){
         // std::cout << depth << "\n";
         // std::cout << max_depth << "\n";
         auto temp_L = BlinnPhongIntegrator::Li(reflected_ray, scene, depth+1);

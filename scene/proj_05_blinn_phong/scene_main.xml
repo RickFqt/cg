@@ -3,7 +3,7 @@
     <camera type="perspective" fovy="45" />
     <integrator type="blinn_phong" depth="2" />
 
-    <!-- <film type="image" x_res="800" y_res="600" filename="images/directional.png" img_type="png" gamma_corrected="no" />
+    <film type="image" x_res="800" y_res="600" filename="images/directional.png" img_type="png" gamma_corrected="no" />
     <include filename="scene/proj_05_blinn_phong/geometry_directional.xml" />
 
     <film type="image" x_res="800" y_res="600" filename="images/point.png" img_type="png" gamma_corrected="no" />
@@ -13,7 +13,7 @@
     <include filename="scene/proj_05_blinn_phong/geometry_spot.xml" />
 
     <film type="image" x_res="800" y_res="600" filename="images/ambient.png" img_type="png" gamma_corrected="no" />
-    <include filename="scene/proj_05_blinn_phong/geometry_ambient.xml" /> -->
+    <include filename="scene/proj_05_blinn_phong/geometry_ambient.xml" />
 
     <film type="image" x_res="800" y_res="600" filename="images/combined.png" img_type="png" gamma_corrected="no" />
     <include filename="scene/proj_05_blinn_phong/geometry_light_combination.xml" />
