@@ -65,8 +65,8 @@ private:
 public:
   // The single constructor, that receives the mesh, this triangle id, and an
   // indication for backface culling.
-  Triangle(std::shared_ptr<TriangleMesh> mesh, int tri_id, bool bfc = true)
-      : Shape(false), mesh{mesh}, backface_cull{bfc} {
+  Triangle(std::shared_ptr<TriangleMesh> mesh, int tri_id, bool bfc = true, bool fn = false)
+      : Shape(fn), mesh{mesh}, backface_cull{bfc} {
     // This is just a shortcut to access this triangle's data stored in the mesh
     // database.
     v = &mesh->vertex_indices[3 * tri_id];
@@ -74,9 +74,9 @@ public:
     uv = &mesh->uvcoord_indices[3 * tri_id];
   }
   /// Return the triangle's bounding box.
-  // Bounds3f object_bound() const;
+  Bounds3f world_bounds();
   /// The regular intersection methods, as defined in the Shape parent class.
-  bool intersect(const Ray &r, float *t_hit, Surfel *sf);
+  bool intersect(const Ray &r, float *t_hit, Surfel *sf) const;
   [[nodiscard]] bool intersect_p(const Ray &r) const override;
 
   /// This friend function helps us debug the triangles, if we want to.
@@ -90,7 +90,7 @@ std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals
 
 /// This is the function that actually creates the mesh database and the
 /// triangles, ans store them in a Shape list.
-std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh>, bool);
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn);
 
 /// Internal function that calls the tinyobjloader api to read the OBJ data into
 /// memory.

@@ -2,7 +2,7 @@
 
 namespace rt3 {
 
-bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf){
+bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
 
     // This is how we retrieve the information associated with this particular triangle.
     const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
@@ -101,17 +101,64 @@ bool Triangle::intersect_p(const Ray &r) const{
     return false;
 }
 
-std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
-                                                     const ParamSet &ps){
-    std::vector<std::shared_ptr<Shape>> shapes;
-    //TODO
-    return shapes;
+Bounds3f Triangle::world_bounds(){
+
+    const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
+    const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
+    const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
+
+    Point3f center = p0;
+
+    real_type radius = std::max( glm::distance(p0, p1), glm::distance(p0, p2) );
+
+    return Bounds3f(false, radius + 2, center);
 }
 
-std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh>, bool){
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
+                                                     const ParamSet &ps){
+    std::shared_ptr<TriangleMesh> mesh;
+    
+    // TODO: Ver isso dai ta ligado
+    bool reverse_vertex_order = retrieve(ps, "reverse_vertex_order", false);
+    bool compute_normals = retrieve(ps, "compute_normals", false);
+    bool backface_cull = retrieve(ps, "backface_cull", false);
+    if(ps.count("filename") >= 1){
+        std::string filename = retrieve(ps, "filename", std::string("default.obj"));
+
+        // TODO
+    }
+    else{
+
+        int n_triangles = retrieve(ps, "ntriangles", 1);
+        std::vector<int> indices = retrieve(ps, "indices", std::vector<int>{0,1,2});
+        std::vector<Vector3f> vertices = retrieve(ps, "vertices", std::vector<Vector3f>({{-3, -0.5, -3}, {3, -0.5, -3}, {3, -0.5, 3}}));
+        std::vector<Vector3f> normals = retrieve(ps, "normals", std::vector<Vector3f>({{0, 1, 0}, {0, 1, 0}, {0, 1, 0}}));
+        std::vector<Point2f> uv = retrieve(ps, "normals", std::vector<Point2f>({{0, 0}, {0, 1}, {1, 0}}));
+        
+
+        mesh->n_triangles = n_triangles;
+        mesh->vertices = vertices;
+        mesh->normals = normals;
+        mesh->uvcoords = uv;
+        mesh->normal_indices = indices;
+        mesh->vertex_indices = indices;
+        mesh->uvcoord_indices = indices;
+
+    }
+
+    return create_triangle_mesh(mesh, backface_cull, flip_normals );
+}
+
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn){
     
     std::vector<std::shared_ptr<Shape>> shapes;
+    std::shared_ptr<Shape> shape;
     //TODO
+    int n_triangles = mesh->n_triangles;
+    for(int i = 0; i < n_triangles; ++i){
+
+        shape = std::shared_ptr<Shape>(new Triangle(mesh, i, bfc, fn));
+    }
     return shapes;
 }
 
