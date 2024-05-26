@@ -7,6 +7,7 @@
 #include "../core/rt3.h"
 #include "../primitives/primitive.h"
 #include "../core/paramset.h"
+#include "../ext/tiny_obj_loader.h"
 
 namespace rt3{
 
@@ -99,9 +100,9 @@ bool load_mesh_data(const std::string &filename, bool rvo, bool cn, bool fn,
 
 /// This function essentially converts the mesh data from the tinyobjloader
 /// internal data structure to our mesh data structure.
-// void extract_obj_data(const tinyobj::attrib_t &attrib,
-//                       const std::vector<tinyobj::shape_t> &shapes, bool rvo,
-//                       bool cn, bool fn, std::shared_ptr<TriangleMesh> md);
+void extract_obj_data(const tinyobj::attrib_t &attrib,
+                      const std::vector<tinyobj::shape_t> &shapes, bool rvo,
+                      bool cn, bool fn, std::shared_ptr<TriangleMesh> md);
 
 } // namespace rt3
 
