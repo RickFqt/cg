@@ -184,9 +184,9 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       vector<std::pair<param_type_e, string>> param_list{
         { param_type_e::STRING, "type" },
         { param_type_e::COLOR, "color" },      // Single color for the material.
-        { param_type_e::SPECTRUM, "ambient" },
-        { param_type_e::SPECTRUM, "diffuse" },
-        { param_type_e::SPECTRUM, "specular" },
+        { param_type_e::COLOR, "ambient" },
+        { param_type_e::COLOR, "diffuse" },
+        { param_type_e::COLOR, "specular" },
         { param_type_e::REAL, "glossiness" },
         { param_type_e::SPECTRUM, "mirror" }
       };
@@ -403,14 +403,16 @@ void ask_color(tinyxml2::XMLElement* p_element,
                           "for attribute \""
                           + att_key + "\"!" });
       }else{
+        // std::cout << "--------------------------------------------------------Result: " << result.value()[0] << " size = " << result.value()[0].size() << std::endl;
+        // std::cout << "--------------------------------------------------------Result: " << result.value()[1] << " size = " << result.value()[1].size() << std::endl;
+        // std::cout << "--------------------------------------------------------Result: " << result.value()[2] << " size = " << result.value()[2].size() << std::endl;
         bool isInt = true;
-        for(int j = 0; j < 3; j++){
-          for(long unsigned int i = 0; i < result.value()[j].size(); i++){
-            if(result.value()[0][i]=='.'){
-              isInt = false;break;
-            }
-          }
+        // Create a string with the value
+        std::string att_value_str = att_value_cstr;
+        if(att_value_str.find(".") != string::npos){
+          isInt = false;
         }
+        // std::cout << "Is int? " << isInt << "\n";
         Color24 comp;
         // Create the COMPOSITE value.
         if(isInt){
@@ -572,7 +574,7 @@ bool parse_array_COMPOSITE_attrib_two(tinyxml2::XMLElement* p_element,
     // --------------------------------------------------------------------------
     clog << "\tAdded attribute (" << att_key << ": \"";
     for (const auto& e : composit_list) {
-      for(int i{0}; i < (int)n_basic; ++i){
+      for(int i{0}; i < (int)COMPOSITE_SIZE; ++i){
         clog << e[i] << " ";
       }
     }
@@ -662,7 +664,7 @@ bool parse_array_COMPOSITE_attrib_three(tinyxml2::XMLElement* p_element,
     // --------------------------------------------------------------------------
     clog << "\tAdded attribute (" << att_key << ": \"";
     for (const auto& e : composit_list) {
-      for(int i{0}; i < (int)n_basic; ++i){
+      for(int i{0}; i < (int)COMPOSITE_SIZE; ++i){
         clog << e[i] << " ";
       }
     }

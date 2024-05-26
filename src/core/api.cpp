@@ -117,7 +117,7 @@ Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>&
   for(auto pair_ps : vet_ps_obj_mat){
     std::string type = retrieve(pair_ps.first, "type", string{ "sphere" });
     // Check if our object is a triangle_mesh. If so, several shapes will be created
-    if(type == "triangle_mesh"){
+    if(type == "trianglemesh"){
       prims = make_objects(pair_ps.first, pair_ps.second);
       for(std::shared_ptr<Primitive> p : prims){
         primitives.push_back(p);
