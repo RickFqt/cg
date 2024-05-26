@@ -4,8 +4,6 @@ namespace rt3 {
 
 bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
 
-    std::cout << "Cheguei aqui?" <<std::endl;
-
     // This is how we retrieve the information associated with this particular triangle.
     const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
     const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
@@ -51,13 +49,11 @@ bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
         sf->p = r(t);
         sf->wo = glm::normalize(-r.get_direction());
         // Update the surface normal (which is normally normalized)
-        sf->n = n0; // TODO: Change this to interpolation of each vertex normal
+        sf->n = rt3::Lerp(v,rt3::Lerp(u, n0, n1),n2); // TODO: Check if this works
         sf->uv = Point2f(u, v);
         return true;
     }
-    else // This means that there is a line intersection but not a ray intersection.
-        return false;
-
+    // This means that there is a line intersection but not a ray intersection.
     return false;
 
 }
@@ -161,6 +157,7 @@ std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<Triangl
     for(int i = 0; i < n_triangles; ++i){
 
         shape = std::shared_ptr<Shape>(new Triangle(mesh, i, bfc, fn));
+        shapes.push_back(shape);
     }
     return shapes;
 }

@@ -95,8 +95,11 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
     // [7.1] Find new ray, based on perfect reflection about surface normal.
     Point3f origin = isect.p;
+    // if(origin.y < 0){
+    //     origin.y = 0;
+    // }
     Vector3f reflected_direction = glm::normalize((ray.get_direction()) - 2*(glm::dot(ray.get_direction(),n))*n);
-    Ray reflected_ray{origin, reflected_direction, 0.1};
+    Ray reflected_ray{origin + reflected_direction*0.0001F, reflected_direction, 0.1};
     // [7.2] Offset reflect_ray by an epsilon, to avoid self-intersection caused by rounding error.
 
 
@@ -105,14 +108,19 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
     if ( depth < max_depth && (L[0] != 0 && L[1] != 0 && L[2] != 0)){
         // std::cout << depth << "\n";
         // std::cout << max_depth << "\n";
+        // std::cout << reflected_ray << "\n";
         auto temp_L = BlinnPhongIntegrator::Li(reflected_ray, scene, depth+1);
         if(temp_L.has_value()){
+            // std::cout << "Teve valor!\n";
             // std::cout <<  temp_S[0] << " " <<  temp_S[1] << " " <<  temp_S[2] << "\n";
             // std::cout << km[0] << " " << km[1] << " " << km[2] << "\n";
             L[0] = (L[0] + km[0] * temp_L.value()[0]);
             L[1] = (L[1] + km[1] * temp_L.value()[1]);
             L[2] = (L[2] + km[2] * temp_L.value()[2]);
         }
+        // else{
+        //     std::cout << "Não teve valor!\n";
+        // }
         // else{
         //     Point2i img_dim = camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
         //     Point2f screen_coord{ float(120)/float(img_dim.x), float(200)/float(img_dim.y) };
