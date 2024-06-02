@@ -31,7 +31,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
     // If cos between wo and n negative, the ray hits from behind
     if(glm::dot(glm::normalize(isect.wo), isect.n) < 0) {
-        return {};
+        return Spectrum{0,0,0};
     }
 	// [3] GET THE MATERIAL ASSOCIATED WITH THE HIT SURFACE
     BlinnPhongMaterial * fm = dynamic_cast< BlinnPhongMaterial *>( isect.primitive->get_material() );
@@ -81,6 +81,26 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
             
             // std::cout << L_curr_spectrum[0] << " " << L_curr_spectrum[1] << " " << L_curr_spectrum[2] << "\n";
             // Add Diffuse and Specular contribution
+            // std::cout << "v = " <<v[0]<< " ";
+            // std::cout << v[1]<< " ";
+            // std::cout << v[2]<< "\n";
+            // std::cout << "l = " <<l[0]<< " ";
+            // std::cout << l[1]<< " ";
+            // std::cout << l[2]<< "\n";
+            // std::cout << "n = " <<n[0]<< " ";
+            // std::cout << n[1]<< " ";
+            // std::cout << n[2]<< "\n";
+            // std::cout << "glossiness = " << glossiness << "\n";
+            // std::cout << "ks = " <<ks[0]<< " ";
+            // std::cout << ks[1]<< " ";
+            // std::cout << ks[2]<< "\n";
+            // std::cout << "lcurr = " << L_curr[0] << " ";
+            // std::cout << L_curr[1] << " ";
+            // std::cout << L_curr[2] << "\n";
+            // std::cout << "n_dot_h = " << n_dot_h << "\n";
+            // std::cout << ks[0] * L_curr[0] * n_dot_h << " ";
+            // std::cout << ks[1] * L_curr[1] * n_dot_h << " ";
+            // std::cout << ks[2] * L_curr[2] * n_dot_h << "\n";
             L[0] += (kd[0] * L_curr[0] * n_dot_l) + (ks[0] * L_curr[0] * n_dot_h);
             L[1] += (kd[1] * L_curr[1] * n_dot_l) + (ks[1] * L_curr[1] * n_dot_h);
             L[2] += (kd[2] * L_curr[2] * n_dot_l) + (ks[2] * L_curr[2] * n_dot_h);

@@ -26,6 +26,7 @@ void SamplerIntegrator::render(const Scene& scene) {
     int current_pixel = 0;
     int progress = 0;
     int last_progress = -1;
+    // std::cout << "AAAAAAAAAAAAA " << h_init <<  " " <<  h_final << " " << w_init << " " << w_final << "\n";
     // This might just be a tile (part) of an image, rendered in parallel.
     for ( size_t y = h_init ; y < h_final ; y++ ) {
         for( size_t x = w_init ; x < w_final ; x++ ) {

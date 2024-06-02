@@ -259,10 +259,10 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
   // Retrieve the complete list of vertices.
   auto n_vertices{attrib.vertices.size() / 3};
   for (auto idx_v{0U}; idx_v < n_vertices; idx_v++) {
-    std::cout << "   v[" << static_cast<long>(idx_v) << "] = ( "
-         << static_cast<double>(attrib.vertices[3 * idx_v + 0]) << ", "
-         << static_cast<double>(attrib.vertices[3 * idx_v + 1]) << ", "
-         << static_cast<double>(attrib.vertices[3 * idx_v + 2]) << " )\n";
+    // std::cout << "   v[" << static_cast<long>(idx_v) << "] = ( "
+    //      << static_cast<double>(attrib.vertices[3 * idx_v + 0]) << ", "
+    //      << static_cast<double>(attrib.vertices[3 * idx_v + 1]) << ", "
+    //      << static_cast<double>(attrib.vertices[3 * idx_v + 2]) << " )\n";
 
     // Store the vertex in the mesh data structure.
     md->vertices.push_back(Point3f{attrib.vertices[3 * idx_v + 0],
@@ -286,13 +286,13 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
 
   // Traverse the normals read from the OBJ file.
   for (auto idx_n{0U}; idx_n < n_normals; idx_n++) {
-    std::cout << "   n[" << static_cast<long>(idx_n) << "] = ( "
-         << static_cast<double>(attrib.normals[3 * idx_n + 0]) << ", "
-         << static_cast<double>(attrib.normals[3 * idx_n + 1]) << ", "
-         << static_cast<double>(attrib.normals[3 * idx_n + 2]) << " )\n";
+    // std::cout << "   n[" << static_cast<long>(idx_n) << "] = ( "
+    //      << static_cast<double>(attrib.normals[3 * idx_n + 0]) << ", "
+    //      << static_cast<double>(attrib.normals[3 * idx_n + 1]) << ", "
+    //      << static_cast<double>(attrib.normals[3 * idx_n + 2]) << " )\n";
 
     // Store the normal.
-    md->normals.push_back(Normal3f{attrib.normals[3 * idx_n + 0] * flip,
+    md->normals.push_back(Vector3f{attrib.normals[3 * idx_n + 0] * flip,
                                    attrib.normals[3 * idx_n + 1] * flip,
                                    attrib.normals[3 * idx_n + 2] * flip});
   }
@@ -300,9 +300,9 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
   // Read the complete list of texture coordinates.
   auto n_texcoords{attrib.texcoords.size() / 2};
   for (auto idx_tc{0U}; idx_tc < n_texcoords; idx_tc++) {
-    std::cout << "   t[" << static_cast<long>(idx_tc) << "] = ( "
-         << static_cast<double>(attrib.texcoords[2 * idx_tc + 0]) << ", "
-         << static_cast<double>(attrib.texcoords[2 * idx_tc + 1]) << " )\n";
+    // std::cout << "   t[" << static_cast<long>(idx_tc) << "] = ( "
+    //      << static_cast<double>(attrib.texcoords[2 * idx_tc + 0]) << ", "
+    //      << static_cast<double>(attrib.texcoords[2 * idx_tc + 1]) << " )\n";
 
     // Store the texture coords.
     md->uvcoords.push_back(Point2f{attrib.texcoords[2 * idx_tc + 0],
@@ -316,14 +316,14 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
   // groups, we ignore this and store all triangles as a single mesh dataset.
   // This is why we need to reset the triangle count here.
   for (auto idx_s{0U}; idx_s < n_shapes; idx_s++) {
-    std::cout << "The shape[" << idx_s << "].name = " << shapes[idx_s].name << '\n';
-    std::cout << "Size of shape[" << idx_s << "].mesh.indices: "
-         << static_cast<unsigned long>(shapes[idx_s].mesh.indices.size())
-         << '\n';
-    std::cout << "shape[" << idx_s << "].num_faces: "
-         << static_cast<unsigned long>(
-                shapes[idx_s].mesh.num_face_vertices.size())
-         << '\n';
+    // std::cout << "The shape[" << idx_s << "].name = " << shapes[idx_s].name << '\n';
+    // std::cout << "Size of shape[" << idx_s << "].mesh.indices: "
+    //      << static_cast<unsigned long>(shapes[idx_s].mesh.indices.size())
+    //      << '\n';
+    // std::cout << "shape[" << idx_s << "].num_faces: "
+    //      << static_cast<unsigned long>(
+    //             shapes[idx_s].mesh.num_face_vertices.size())
+    //      << '\n';
 
     // For each face print out the indices lists.
     size_t index_offset = 0;
@@ -335,18 +335,18 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
       // Number of vertices per face (always 3, in our case)
       size_t fnum = shapes[idx_s].mesh.num_face_vertices[idx_f];
 
-      std::cout << "  face[" << idx_f
-           << "].fnum = " << static_cast<unsigned long>(fnum) << '\n';
+      // std::cout << "  face[" << idx_f
+      //      << "].fnum = " << static_cast<unsigned long>(fnum) << '\n';
 
       // TODO: Invert order of vertices if flag is on. (DONE!)
       if (reverse_order) {
-        std::cout << "Reverse order\n";
+        // std::cout << "Reverse order\n";
         // For each vertex in the face print the corresponding indices
         for (int v = fnum - 1; v >= 0; v--) {
           tinyobj::index_t idx = shapes[idx_s].mesh.indices[index_offset + v];
-          std::cout << "    face[" << idx_f << "].v[" << v
-               << "].indices = " << idx.vertex_index << "/" << idx.normal_index
-               << "/" << idx.texcoord_index << '\n';
+          // std::cout << "    face[" << idx_f << "].v[" << v
+          //      << "].indices = " << idx.vertex_index << "/" << idx.normal_index
+          //      << "/" << idx.texcoord_index << '\n';
           // Add the indices to the global list of indices we need to pass on to
           // the mesh object.
           md->vertex_indices.push_back(idx.vertex_index);
@@ -357,9 +357,9 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
         // For each vertex in the face get the corresponding indices
         for (size_t v = 0; v < fnum; v++) {
           tinyobj::index_t idx = shapes[idx_s].mesh.indices[index_offset + v];
-          std::cout << "    face[" << idx_f << "].v[" << v
-               << "].indices = " << idx.vertex_index << "/" << idx.normal_index
-               << "/" << idx.texcoord_index << '\n';
+          // std::cout << "    face[" << idx_f << "].v[" << v
+          //      << "].indices = " << idx.vertex_index << "/" << idx.normal_index
+          //      << "/" << idx.texcoord_index << '\n';
           // Add the indices to the global list of indices we need to pass on to
           // the mesh object. This goes to the mesh data structure.
           md->vertex_indices.push_back(idx.vertex_index);
@@ -373,22 +373,22 @@ void extract_obj_data(const tinyobj::attrib_t &attrib,
     }
   }
 
-  std::cout << "This is the list of indices: \n";
+  // std::cout << "This is the list of indices: \n";
 
-  std::cout << "   + Vertices [ ";
-  std::copy(md->vertex_indices.begin(), md->vertex_indices.end(),
-            std::ostream_iterator<int>(std::cout, " "));
-  std::cout << "]\n";
+  // std::cout << "   + Vertices [ ";
+  // std::copy(md->vertex_indices.begin(), md->vertex_indices.end(),
+  //           std::ostream_iterator<int>(std::cout, " "));
+  // std::cout << "]\n";
 
-  std::cout << "   + Normals [ ";
-  std::copy(md->normal_indices.begin(), md->normal_indices.end(),
-            std::ostream_iterator<int>(std::cout, " "));
-  std::cout << "]\n";
+  // std::cout << "   + Normals [ ";
+  // std::copy(md->normal_indices.begin(), md->normal_indices.end(),
+  //           std::ostream_iterator<int>(std::cout, " "));
+  // std::cout << "]\n";
 
-  std::cout << "   + UV coords [ ";
-  std::copy(md->uvcoord_indices.begin(), md->uvcoord_indices.end(),
-            std::ostream_iterator<int>(std::cout, " "));
-  std::cout << "]\n";
+  // std::cout << "   + UV coords [ ";
+  // std::copy(md->uvcoord_indices.begin(), md->uvcoord_indices.end(),
+  //           std::ostream_iterator<int>(std::cout, " "));
+  // std::cout << "]\n";
 }
 
 } // namespace rt3
