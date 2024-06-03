@@ -47,7 +47,7 @@ bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
     // At this stage we can compute t to find out where the intersection point is on the line.
     float t = inv_det * dot(edge2, s_cross_e1);
 
-    if (t > epsilon && t < r.get_t_max()) // ray intersection
+    if (t > epsilon && r.get_t_min() < t && t < r.get_t_max()) // ray intersection
     {
         *t_hit = t;
         sf->p = r(t);
@@ -93,7 +93,7 @@ bool Triangle::intersect_p(const Ray &r) const{
     // At this stage we can compute t to find out where the intersection point is on the line.
     float t = inv_det * dot(edge2, s_cross_e1);
 
-    if (t > epsilon && t < r.get_t_max()) // ray intersection
+    if (t > epsilon && r.get_t_min() < t && t < r.get_t_max()) // ray intersection
     {
         return true;
     }
