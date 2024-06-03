@@ -204,12 +204,12 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         { param_type_e::POINT3F , "p2" },  // Triangle
         { param_type_e::INT , "ntriangles" },            // TriangleMesh
         { param_type_e::ARR_INT , "indices" },           // |
-        { param_type_e::ARR_VEC3F , "vertices" },        // | //TODO: Check if this works
-        { param_type_e::ARR_VEC3F , "normals" },         // | //TODO: Check if this works
-        { param_type_e::ARR_POINT2F , "uv" },            // | //TODO: Check if this works
-        { param_type_e::BOOL , "reverse_vertex_order" }, // |
-        { param_type_e::BOOL , "compute_normals" },      // |
-        { param_type_e::BOOL , "backface_cull" },        // |
+        { param_type_e::ARR_VEC3F , "vertices" },        // |
+        { param_type_e::ARR_VEC3F , "normals" },         // |
+        { param_type_e::ARR_POINT2F , "uv" },            // |
+        { param_type_e::BOOL , "reverse_vertex_order" }, // | //TODO: This doesn't work yet
+        { param_type_e::BOOL , "compute_normals" },      // | //TODO: This doesn't work yet
+        { param_type_e::BOOL , "backface_cull" },        // | //TODO: This doesn't work yet
         { param_type_e::STRING , "filename" }            // TriangleMesh
       };
       parse_parameters(p_element, param_list, /* out */ &ps);

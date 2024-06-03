@@ -16,6 +16,8 @@ bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
     const Normal3f &n0 = mesh->normals[n[0]]; // Retrieve the normal at vertex 0.
     const Normal3f &n1 = mesh->normals[n[1]]; // Retrieve the normal at vertex 1.
     const Normal3f &n2 = mesh->normals[n[2]]; // Retrieve the normal at vertex 2.
+
+    //TODO: This isn't used yet
     // Same goes for the UV coords.
     const Point2f &uv0 = mesh->uvcoords[uv[0]]; // Retrieve the uv coord at vertex 0.
     const Point2f &uv1 = mesh->uvcoords[uv[1]]; // Retrieve the uv coord at vertex 1.
@@ -120,7 +122,7 @@ std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals
                                                      const ParamSet &ps){
     std::shared_ptr<TriangleMesh> mesh = std::make_shared<TriangleMesh>();
     
-    // TODO: Ver isso dai ta ligado
+    //TODO: These parameters aren't supported yet
     bool reverse_vertex_order = retrieve(ps, "reverse_vertex_order", false);
     bool compute_normals = retrieve(ps, "compute_normals", false);
     bool backface_cull = retrieve(ps, "backface_cull", false);
@@ -162,7 +164,6 @@ std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<Triangl
     
     std::vector<std::shared_ptr<Shape>> shapes;
     std::shared_ptr<Shape> shape;
-    //TODO
     int n_triangles = mesh->n_triangles;
     for(int i = 0; i < n_triangles; ++i){
 
