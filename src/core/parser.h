@@ -101,6 +101,7 @@ enum class param_type_e : int {
   ARR_VEC3F,    //!< An array of Vector3f
   ARR_VEC3I,    //!< An array of Vector3i
   ARR_POINT3F,  //!< An array of Point3f
+  ARR_POINT2F,  //!< An array of Point2f
   ARR_COLOR,    //!< An array of Color
   ARR_NORMAL3F  //!< An array of Normal3f
 };

@@ -1,4 +1,5 @@
 #include "integrator.h"
+#define MAX_CARACTERES 50
 
 namespace rt3 {
 
@@ -20,6 +21,11 @@ void SamplerIntegrator::render(const Scene& scene) {
     size_t w_final = round(img_dim[0]*(x1));
     size_t h_final = round(img_dim[1]*(y1));
 
+    // Used for load bar
+    int final_pixel = (h_final - h_init) * (w_final - w_init);
+    int current_pixel = 0;
+    int progress = 0;
+    int last_progress = -1;
     // This might just be a tile (part) of an image, rendered in parallel.
     for ( size_t y = h_init ; y < h_final ; y++ ) {
         for( size_t x = w_init ; x < w_final ; x++ ) {
@@ -31,6 +37,23 @@ void SamplerIntegrator::render(const Scene& scene) {
             Color24 L = (temp_L.has_value()) ?  temp_L.value() : scene.background->sampleXYZ(screen_coord) ;
             // Add color (radiance) to the image.
             camera->film->add_sample( Point2i( x, y ), L ); // Set color of pixel (x,y) to L.
+            current_pixel++;
+            
+            // The loading bar
+            progress = (MAX_CARACTERES * current_pixel) / final_pixel;
+            if(progress != last_progress){
+                last_progress = progress;
+                std::cout << "\t";
+                for(int i=0; i < progress; ++i){
+                    std::cout << "#";
+                }
+                for(int i=progress; i < MAX_CARACTERES; ++i){
+                    std::cout << ".";
+                }
+                std::cout << "\r";
+                std::cout.flush();
+            }
+
         }
     }
     // Send image color buffer to the output file.

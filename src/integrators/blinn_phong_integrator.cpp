@@ -31,7 +31,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
     // If cos between wo and n negative, the ray hits from behind
     if(glm::dot(glm::normalize(isect.wo), isect.n) < 0) {
-        return {};
+        return Spectrum{0,0,0};
     }
 	// [3] GET THE MATERIAL ASSOCIATED WITH THE HIT SURFACE
     BlinnPhongMaterial * fm = dynamic_cast< BlinnPhongMaterial *>( isect.primitive->get_material() );
@@ -70,12 +70,38 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
         if(vis.unoccluded(scene, n)){
             n_dot_l = std::max(0.F, glm::dot(n, l));
 
-            h = glm::normalize(v + l);
-            n_dot_h = std::max(0.F, glm::dot(n, h));
-            n_dot_h = pow(n_dot_h,  glossiness);
+            if(glossiness != 0){
+                h = glm::normalize(v + l);
+                n_dot_h = std::max(0.F, glm::dot(n, h));
+                n_dot_h = pow(n_dot_h,  glossiness);
+            }
+            else{
+                n_dot_h = 0;
+            }
             
             // std::cout << L_curr_spectrum[0] << " " << L_curr_spectrum[1] << " " << L_curr_spectrum[2] << "\n";
             // Add Diffuse and Specular contribution
+            // std::cout << "v = " <<v[0]<< " ";
+            // std::cout << v[1]<< " ";
+            // std::cout << v[2]<< "\n";
+            // std::cout << "l = " <<l[0]<< " ";
+            // std::cout << l[1]<< " ";
+            // std::cout << l[2]<< "\n";
+            // std::cout << "n = " <<n[0]<< " ";
+            // std::cout << n[1]<< " ";
+            // std::cout << n[2]<< "\n";
+            // std::cout << "glossiness = " << glossiness << "\n";
+            // std::cout << "lcurr = " << L_curr[0] << " ";
+            // std::cout << L_curr[1] << " ";
+            // std::cout << L_curr[2] << "\n";
+            // std::cout << "kd: " << kd[0] << " ";
+            // std::cout << kd[1]   << " ";
+            // std::cout << kd[2]  << "\n";
+            // std::cout << "n_dot_l = " << n_dot_l << "\n";
+            // std::cout << "ks = " <<ks[0]<< " ";
+            // std::cout << ks[1]<< " ";
+            // std::cout << ks[2]<< "\n";
+            // std::cout << "n_dot_h = " << n_dot_h << "\n";
             L[0] += (kd[0] * L_curr[0] * n_dot_l) + (ks[0] * L_curr[0] * n_dot_h);
             L[1] += (kd[1] * L_curr[1] * n_dot_l) + (ks[1] * L_curr[1] * n_dot_h);
             L[2] += (kd[2] * L_curr[2] * n_dot_l) + (ks[2] * L_curr[2] * n_dot_h);
@@ -90,8 +116,11 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
     // [7.1] Find new ray, based on perfect reflection about surface normal.
     Point3f origin = isect.p;
+    // if(origin.y < 0){
+    //     origin.y = 0;
+    // }
     Vector3f reflected_direction = glm::normalize((ray.get_direction()) - 2*(glm::dot(ray.get_direction(),n))*n);
-    Ray reflected_ray{origin, reflected_direction, 0.1};
+    Ray reflected_ray{origin + reflected_direction*0.0001F, reflected_direction, 0.1};
     // [7.2] Offset reflect_ray by an epsilon, to avoid self-intersection caused by rounding error.
 
 
@@ -100,14 +129,19 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
     if ( depth < max_depth ){
         // std::cout << depth << "\n";
         // std::cout << max_depth << "\n";
+        // std::cout << reflected_ray << "\n";
         auto temp_L = BlinnPhongIntegrator::Li(reflected_ray, scene, depth+1);
         if(temp_L.has_value()){
+            // std::cout << "Teve valor!\n";
             // std::cout <<  temp_S[0] << " " <<  temp_S[1] << " " <<  temp_S[2] << "\n";
             // std::cout << km[0] << " " << km[1] << " " << km[2] << "\n";
             L[0] = (L[0] + km[0] * temp_L.value()[0]);
             L[1] = (L[1] + km[1] * temp_L.value()[1]);
             L[2] = (L[2] + km[2] * temp_L.value()[2]);
         }
+        // else{
+        //     std::cout << "Não teve valor!\n";
+        // }
         // else{
         //     Point2i img_dim = camera->film->get_resolution(); // Retrieve the image dimensions in pixels.
         //     Point2f screen_coord{ float(120)/float(img_dim.x), float(200)/float(img_dim.y) };

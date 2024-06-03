@@ -120,6 +120,21 @@ struct RunningOptions {
 //
 inline float Lerp(float t, float v1, float v2) { return (1.F - t) * v1 + t * v2; }
 
+/*! Linear interpolation between two Vectors.
+ * \param t The parameter, in [0,1].
+ * \param v1 The initial interpolation value.
+ * \param v2 The final interpolation value.
+ * \return The interpolated value.
+ */
+//
+inline Vector3f Lerp(float t, Vector3f v1, Vector3f v2) { 
+  return Vector3f(
+    Lerp(t, v1[0], v2[0]),
+    Lerp(t, v1[1], v2[1]),
+    Lerp(t, v1[2], v2[2])
+  );
+}
+
 /// Clamp T to [low,high].
 template <typename T, typename U, typename V> inline T Clamp(T val, U low, V high) {
   if (val < low) {
