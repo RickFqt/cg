@@ -47,7 +47,7 @@ bool VisibilityTester::unoccluded( const Scene& scene, const Vector3f& n) {
     Ray r{x, p1.p - x, 0, 1};
     Surfel isect;
 
-    return (!scene.intersect(r, &isect));
+    return (!scene.intersect_p(r));
 }
 
 } // namespace rt3

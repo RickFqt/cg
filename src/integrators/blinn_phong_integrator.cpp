@@ -91,16 +91,17 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
             // std::cout << n[1]<< " ";
             // std::cout << n[2]<< "\n";
             // std::cout << "glossiness = " << glossiness << "\n";
-            // std::cout << "ks = " <<ks[0]<< " ";
-            // std::cout << ks[1]<< " ";
-            // std::cout << ks[2]<< "\n";
             // std::cout << "lcurr = " << L_curr[0] << " ";
             // std::cout << L_curr[1] << " ";
             // std::cout << L_curr[2] << "\n";
+            // std::cout << "kd: " << kd[0] << " ";
+            // std::cout << kd[1]   << " ";
+            // std::cout << kd[2]  << "\n";
+            // std::cout << "n_dot_l = " << n_dot_l << "\n";
+            // std::cout << "ks = " <<ks[0]<< " ";
+            // std::cout << ks[1]<< " ";
+            // std::cout << ks[2]<< "\n";
             // std::cout << "n_dot_h = " << n_dot_h << "\n";
-            // std::cout << ks[0] * L_curr[0] * n_dot_h << " ";
-            // std::cout << ks[1] * L_curr[1] * n_dot_h << " ";
-            // std::cout << ks[2] * L_curr[2] * n_dot_h << "\n";
             L[0] += (kd[0] * L_curr[0] * n_dot_l) + (ks[0] * L_curr[0] * n_dot_h);
             L[1] += (kd[1] * L_curr[1] * n_dot_l) + (ks[1] * L_curr[1] * n_dot_h);
             L[2] += (kd[2] * L_curr[2] * n_dot_l) + (ks[2] * L_curr[2] * n_dot_h);
@@ -125,7 +126,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 
 
     // [7.3] Recursive call of Li() with new reflected ray.
-    if ( depth < max_depth && (L[0] != 0 && L[1] != 0 && L[2] != 0)){
+    if ( depth < max_depth ){
         // std::cout << depth << "\n";
         // std::cout << max_depth << "\n";
         // std::cout << reflected_ray << "\n";
