@@ -57,9 +57,27 @@ Shape* API::make_shape(const ParamSet &ps) {
   if(type == "sphere"){
     shape = create_sphere(ps);
   }
+  else if(type == "triangle"){
+    shape = create_simple_triangle(ps);
+  }
   // TODO: Add new types here!
 
   return shape;
+}
+
+std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps) {
+
+  std::cout << ">>> Inside API::make_shapes()\n";
+  std::vector<std::shared_ptr<Shape>> shapes;
+
+  std::string type = retrieve(ps, "type", string{ "sphere" });
+
+  if(type == "trianglemesh"){
+    shapes = create_triangle_mesh_shape(false, ps); // TODO: Fix flip_normals
+  }
+
+  return shapes;
+  
 }
 
 Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
@@ -73,16 +91,42 @@ Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
   return new GeometricPrimitive(shape, material);
 }
 
+std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+
+  std::cout << ">>> Inside API::make_objects()\n";
+  std::vector<std::shared_ptr<Primitive>> objects;
+
+  std::vector<std::shared_ptr<Shape>> shapes{make_shapes(ps_obj)};
+  std::shared_ptr<Material> material{make_material(ps_mat)};
+
+  for(std::shared_ptr<Shape> shape : shapes){
+    objects.push_back( std::shared_ptr<Primitive>(new GeometricPrimitive(shape, material)) );
+  }
+
+  return objects;
+}
+
 Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat){
 
   std::cout << ">>> Inside API::make_aggregate()\n";
   
   std::vector<std::shared_ptr<Primitive>> primitives;
   std::shared_ptr<Primitive> prim;
+  std::vector<std::shared_ptr<Primitive>> prims;
 
   for(auto pair_ps : vet_ps_obj_mat){
-    prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
-    primitives.push_back(prim);
+    std::string type = retrieve(pair_ps.first, "type", string{ "sphere" });
+    // Check if our object is a triangle_mesh. If so, several shapes will be created
+    if(type == "trianglemesh"){
+      prims = make_objects(pair_ps.first, pair_ps.second);
+      for(std::shared_ptr<Primitive> p : prims){
+        primitives.push_back(p);
+      }
+    }
+    else{
+      prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
+      primitives.push_back(prim);
+    }
   }
 
   return new PrimList(primitives);

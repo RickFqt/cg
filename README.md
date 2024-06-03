@@ -20,4 +20,4 @@ cmake --build build
 
 # TODO
 
-- [ ] Rendering multiple files at once
+- [ ] Fix parsing of triangle boolean attributes (back_face_culling, compute normals)
