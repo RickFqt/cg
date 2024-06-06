@@ -102,11 +102,17 @@ bool SimpleTriangle::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
 Bounds3f SimpleTriangle::world_bounds(){
 
-    Point3f center = p0;
+    real_type min_x, min_y, min_z, max_x, max_y, max_z;
 
-    real_type radius = std::max( glm::distance(p0, p1), glm::distance(p0, p2) );
+    min_x = std::min(std::min(p0.x, p1.x) , p2.x);
+    min_y = std::min(std::min(p0.y, p1.y) , p2.y);
+    min_z = std::min(std::min(p0.z, p1.z) , p2.z);
 
-    return Bounds3f(false, radius + 2, center);
+    max_x = std::max(std::max(p0.x, p1.x) , p2.x);
+    max_y = std::max(std::max(p0.y, p1.y) , p2.y);
+    max_z = std::max(std::max(p0.z, p1.z) , p2.z);
+
+    return Bounds3f({min_x, min_y, min_z}, {max_x, max_y, max_z});
 }
 
 // Factory function pattern.

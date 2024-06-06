@@ -71,33 +71,12 @@ bool PrimList::intersect( const Ray& r, Surfel *sf ) const{
 
 Bounds3f PrimList::world_bounds(){
 
-    float max_r = FLT_MIN;
-    float max_distance = FLT_MIN;
-    Point3f new_center = {0,0,0};
+    Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
     for(std::shared_ptr<Primitive> p : primitives){
-        if(p->world_bounds().radius > max_r){
-            max_r = p->world_bounds().radius;
-        }
-        new_center += p->world_bounds().center;
-        
+        global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
     }
 
-    new_center = (new_center / (float)primitives.size());
-
-    float curr_distance;
-    for(std::shared_ptr<Primitive> p : primitives){
-        curr_distance = glm::distance(p->world_bounds().center, new_center);
-        if(curr_distance > max_distance){
-            max_distance = curr_distance;
-        }
-        
-    }
-
-    global_bounds.center = new_center;
-    global_bounds.radius = max_distance + max_r + 2;
-    initialized = true;
-
-    return Bounds3f(false, max_distance + max_r + 2, new_center);
+    return global_bounding_box;
 }
 
 }
