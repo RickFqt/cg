@@ -24,7 +24,7 @@ include_directories( cameras
 
 #=== SETTING VARIABLES ===#
 # Compiling flags
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -pedantic" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -pedantic -O3 -ffast-math" )
 set( RT3_SOURCE_DIR "src" )
 
 #=== main  target ===
