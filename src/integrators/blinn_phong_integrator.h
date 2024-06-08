@@ -17,6 +17,7 @@ public:
 
     std::optional<Color24> Li( const Ray& ray, const Scene& scene ) const;
     std::optional<Spectrum> Li( const Ray& ray, const Scene& scene, int depth ) const;
+    virtual void preprocess( const Scene& scene );
 };
 
 BlinnPhongIntegrator* create_blinn_phong_integrator(const ParamSet& ps, std::shared_ptr<const Camera> cam);

@@ -71,10 +71,17 @@ bool PrimList::intersect( const Ray& r, Surfel *sf ) const{
 
 Bounds3f PrimList::world_bounds(){
 
+    if(initialized){
+        return global_bounds;
+    }
+
     Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
     for(std::shared_ptr<Primitive> p : primitives){
         global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
     }
+
+    global_bounds = global_bounding_box;
+    initialized = true;
 
     return global_bounding_box;
 }
