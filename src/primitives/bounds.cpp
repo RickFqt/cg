@@ -16,9 +16,41 @@ Bounds3f::Bounds3f(const Bounds3f & b1, const Bounds3f& b2){
     p_max = {max_x, max_y, max_z};
 }
 
+int Bounds3f::largest_extent(){
+    Vector3f retorno = {0,0,0};
+    for (int axis = 0; axis < 3; axis++){
+        retorno[axis] = p_max[axis] - p_min[axis];
+    }
+    if(retorno[0] >= retorno[1] && retorno[0] >= retorno[2])return 0;
+    if(retorno[1] >= retorno[0] && retorno[1] >= retorno[2])return 1;
+    return 2;
+}
+
 bool Bounds3f::intersect_p( const Ray &ray, float &hit1, float &hit2 ) {
 
-    // TODO:
+    const Point3f& ray_orig = ray.get_origin();
+    const Vector3f&   ray_dir  = ray.get_direction();
+
+    for (int axis = 0; axis < 3; axis++) {
+        // const interval& ax = axis_interval(axis);
+        const float  ax1 = p_min[axis];
+        const float  ax2 = p_max[axis];
+        const double adinv = 1.0 / ray_dir[axis];
+
+        auto t0 = (ax1 - ray_orig[axis]) * adinv;
+        auto t1 = (ax2 - ray_orig[axis]) * adinv;
+
+        if (t0 < t1) {
+            if (t0 > hit1) hit1 = t0;
+            if (t1 < hit2) hit2 = t1;
+        } else {
+            if (t1 > hit1) hit1 = t1;
+            if (t0 < hit2) hit2 = t0;
+        }
+
+        if (hit2 <= hit1)
+            return false;
+    }
     return true;
 }
 

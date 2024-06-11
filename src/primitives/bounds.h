@@ -20,7 +20,7 @@ public:
     { /* empty */ } 
     Bounds3f(const Bounds3f & b1, const Bounds3f& b2);
 	bool intersect_p(const Ray &ray, float &hit1, float &hit2);
-    // TODO: method that gets the largest extend among all dimensions
+    int largest_extent();
 
     float get_diagonal(){return glm::distance(p_min, p_max);};
     Point3f get_p_min() const{return p_min;}
