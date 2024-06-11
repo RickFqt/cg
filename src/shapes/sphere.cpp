@@ -64,15 +64,15 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
 }
 
-// Bounds3f Sphere::world_bounds(){
-
-//     return Bounds3f(center - radius - 2, center + radius + 2);
-// }
-
 Bounds3f Sphere::world_bounds(){
 
-    return Bounds3f(false, radius + 2, center);
+    return Bounds3f(center - radius - 2, center + radius + 2);
 }
+
+// Bounds3f Sphere::world_bounds(){
+
+//     return Bounds3f(false, radius + 2, center);
+// }
 
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object

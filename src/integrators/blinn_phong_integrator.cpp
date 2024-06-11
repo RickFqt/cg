@@ -18,6 +18,13 @@ std::optional<Color24> BlinnPhongIntegrator::Li( const Ray& ray, const Scene& sc
     return L;
 }
 
+void BlinnPhongIntegrator::preprocess(const Scene& scene){
+
+    for(auto light : scene.lights){
+        light->preprocess(scene);
+    }
+}
+
 std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &scene, int depth ) const
 {
 	// [0] FIRST STEP TO INITIATE `L` WITH THE COLOR VALUE TO BE RETURNED.
@@ -59,10 +66,6 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
             L[1] += (al->get_L()[1] * ka[1]);
             L[2] += (al->get_L()[2] * ka[2]);
             continue;
-        }
-        else if(light->flags == light_flag_e::directional){
-            std::shared_ptr<DirectionalLight> dl = std::dynamic_pointer_cast< DirectionalLight >( light );
-            dl->set_world_bounds(scene.get_aggregate()->world_bounds());
         }
 
         L_curr = light->sample_Li(isect, &l, &vis);

@@ -8,40 +8,42 @@
 
 namespace rt3 {
 
-// class Bounds3f {
-// private:
-//     Point3f low, high; // Low represents the point with minimum, x, y and z. High the maximum x, y and z
-
-//     Sphere s;
-
-// public:
-//     Bounds3f(){}
-//     Bounds3f(const Point3f& l, const Point3f& h):
-//     low{l}, high{h}
-//     { /* empty */ } 
-//     bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;
-// 	bool intersect_p( const Ray& r ) const;
-//     Point3f get_low() const{return low;}
-//     Point3f get_high() const{return high;}
-//     void set_low(const Point3f& l) {low = l;}
-//     void set_high(const Point3f& h) {high = h;}
-
-// };
-
-class Bounds3f{
+class Bounds3f {
 private:
+    Point3f p_min, p_max; // Low represents the point with minimum, x, y and z. High the maximum x, y and z
+
+
 public:
-    bool flip_n;
-    float radius;
-    Point3f center;
-    Bounds3f();
-    Bounds3f(const bool& flip_n, const float& r, const Point3f& c);
+    Bounds3f(){}
+    Bounds3f(const Point3f& l, const Point3f& h):
+    p_min{l}, p_max{h}
+    { /* empty */ } 
+    Bounds3f(const Bounds3f & b1, const Bounds3f& b2);
+	bool intersect_p(const Ray &ray, float &hit1, float &hit2);
+    int largest_extent();
 
-    bool intersect_p( const Ray& r ) const;
-    bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;
+    float get_diagonal(){return glm::distance(p_min, p_max);};
+    Point3f get_p_min() const{return p_min;}
+    Point3f get_p_max() const{return p_max;}
+    void set_p_min(const Point3f& l) {p_min = l;}
+    void set_p_max(const Point3f& h) {p_max = h;}
 
-    virtual ~Bounds3f(){};
 };
+
+// class Bounds3f{
+// private:
+// public:
+//     bool flip_n;
+//     float radius;
+//     Point3f center;
+//     Bounds3f();
+//     Bounds3f(const bool& flip_n, const float& r, const Point3f& c);
+
+//     bool intersect_p( const Ray& r ) const;
+//     bool intersect( const Ray& r, float *t_hit, Surfel *sf ) const;
+
+//     virtual ~Bounds3f(){};
+// };
 
 //-------------------------------------------------------------------------------
 } // namespace rt3
