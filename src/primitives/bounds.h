@@ -19,7 +19,7 @@ public:
     p_min{l}, p_max{h}
     { /* empty */ } 
     Bounds3f(const Bounds3f & b1, const Bounds3f& b2);
-	bool intersect_p(const Ray &ray, float &hit1, float &hit2);
+	bool intersect_p(const Ray &ray, float *hit1, float *hit2) const;
     int largest_extent();
 
     float get_diagonal(){return glm::distance(p_min, p_max);};
