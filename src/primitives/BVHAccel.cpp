@@ -22,7 +22,12 @@ namespace rt3{
         return box_compare(a, b, 2);
     }
 
-    BVHAccel::BVHAccel(int l, int r, const std::vector<std::shared_ptr<Primitive>>& objects){
+    BVHAccel::BVHAccel(const int& l, const int& r, const std::vector<std::shared_ptr<Primitive>>& objects, const int& max_prims)
+    : max_prims_per_node{max_prims}{
+        BVHAccel(l, r, objects);
+    }
+
+    BVHAccel::BVHAccel(const int& l, const int& r, const std::vector<std::shared_ptr<Primitive>>& objects){
 
         // Build the bounding box of the span of source objects.
         Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
@@ -47,14 +52,14 @@ namespace rt3{
         if(axis == 0){
             std::sort(primitives.begin(), primitives.end(), box_x_compare);
         }else if(axis == 1){
-            std::sort(primitives.begin(), primitives.end(), box_x_compare);
+            std::sort(primitives.begin(), primitives.end(), box_y_compare);
         }else{
-            std::sort(primitives.begin(), primitives.end(), box_x_compare);
+            std::sort(primitives.begin(), primitives.end(), box_z_compare);
         }
 
         int mid = (l + r)/2;
-        left = std::make_shared<Primitive>(BVHAccel(l, mid, objects));
-        right = std::make_shared<Primitive>(BVHAccel(mid, r, objects));
+        left = ((std::shared_ptr<Primitive>) new BVHAccel(l, mid, objects));
+        right = ((std::shared_ptr<Primitive>) new BVHAccel(mid, r, objects));
 
 
     }
@@ -116,4 +121,4 @@ namespace rt3{
 
         return hit_left || hit_right;
     }
-}
+}// namespace rt3
