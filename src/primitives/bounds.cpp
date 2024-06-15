@@ -26,7 +26,7 @@ int Bounds3f::largest_extent(){
     return 2;
 }
 
-bool Bounds3f::intersect_p( const Ray &ray, float &hit1, float &hit2 ) {
+bool Bounds3f::intersect_p( const Ray &ray, float *hit1, float *hit2 ) const {
 
     const Point3f& ray_orig = ray.get_origin();
     const Vector3f&   ray_dir  = ray.get_direction();
@@ -41,14 +41,14 @@ bool Bounds3f::intersect_p( const Ray &ray, float &hit1, float &hit2 ) {
         auto t1 = (ax2 - ray_orig[axis]) * adinv;
 
         if (t0 < t1) {
-            if (t0 > hit1) hit1 = t0;
-            if (t1 < hit2) hit2 = t1;
+            if (t0 > *hit1) *hit1 = t0;
+            if (t1 < *hit2) *hit2 = t1;
         } else {
-            if (t1 > hit1) hit1 = t1;
-            if (t0 < hit2) hit2 = t0;
+            if (t1 > *hit1) *hit1 = t1;
+            if (t0 < *hit2) *hit2 = t0;
         }
 
-        if (hit2 <= hit1)
+        if (*hit2 <= *hit1)
             return false;
     }
     return true;
