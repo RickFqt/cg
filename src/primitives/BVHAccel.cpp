@@ -22,27 +22,39 @@ namespace rt3{
         return box_compare(a, b, 2);
     }
 
-    BVHAccel::BVHAccel(std::vector<std::shared_ptr<Primitive>>& objects){
+    BVHAccel::BVHAccel(int l, int r, const std::vector<std::shared_ptr<Primitive>>& objects){
 
         // Build the bounding box of the span of source objects.
         Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
-        for (std::shared_ptr<Primitive> p : objects)
+        std::shared_ptr<Primitive> p;
+        for(int i = l; i < r; ++i){
+            p = objects[i];
+            // Save the primitives
+            primitives.push_back(objects[i]);
             global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
+        }
+        // for (std::shared_ptr<Primitive> p : objects)
+        //     global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
 
         bbox = global_bounding_box;
+
+        if(r - l == 1){ // TODO: Ver qual é o ponto de parada certo lido do parser
+            return;
+        }
 
         int axis = bbox.largest_extent();
 
         if(axis == 0){
-            std::sort(objects.begin(), objects.end(), box_x_compare);
-        }
-        else if(axis == 1){
-            std::sort(objects.begin(), objects.end(), box_x_compare);
+            std::sort(primitives.begin(), primitives.end(), box_x_compare);
+        }else if(axis == 1){
+            std::sort(primitives.begin(), primitives.end(), box_x_compare);
         }else{
-            std::sort(objects.begin(), objects.end(), box_x_compare);
+            std::sort(primitives.begin(), primitives.end(), box_x_compare);
         }
 
-        //TODO: Chamar recursivamente aqui
+        int mid = (l + r)/2;
+        left = std::make_shared<Primitive>(BVHAccel(l, mid, objects));
+        right = std::make_shared<Primitive>(BVHAccel(mid, r, objects));
 
 
     }
@@ -53,23 +65,55 @@ namespace rt3{
         real_type t2{0};
         if (!bbox.intersect_p(r, &t1, &t2))
             return false;
+        
+        if(left == nullptr && right == nullptr){
+            for(auto e : primitives){
+                if(e->intersect_p(r)){
+                    return true;
+                }
+            }
+            return false;
+        }
 
-        bool hit_left = left->intersect_p(r);
-        bool hit_right = right->intersect_p(r);
+        bool hit_left = false;
+        bool hit_right = false;
+        if(left != nullptr){
+            hit_left = left->intersect_p(r);
+        }
+        if(right != nullptr && !hit_left){
+            hit_right = right->intersect_p(r);
+        }
 
         return hit_left || hit_right;
     }
 
     bool BVHAccel::intersect(const Ray& r, Surfel *sf) const{
 
-        float t1, t2;
+        real_type t1{0};
+        real_type t2{0};
         if (!bbox.intersect_p(r, &t1, &t2))
             return false;
+        
+        if(left == nullptr && right == nullptr){
+            // We've reached the bottom of the tree
+            bool has_intersected = false;
+            for(std::shared_ptr<Primitive> e : primitives){
+                if(e->intersect(r, sf)){
+                    has_intersected = true;
+                }
+            }
+            return has_intersected;
+        }
 
-        bool hit_left = left->intersect(r,sf);
-        bool hit_right = right->intersect(r,sf);
+        bool hit_left = false;
+        bool hit_right = false;
+        if(left != nullptr){
+            hit_left = left->intersect(r, sf);
+        }
+        if(right != nullptr && !hit_left){
+            hit_right = right->intersect(r, sf);
+        }
 
         return hit_left || hit_right;
-        return true;
     }
 }
