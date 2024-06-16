@@ -131,6 +131,9 @@ Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>&
 
   if(accel_ps.count("type") >= 1){
 
+    std::cout << "Entrei aqui o\n";
+    std::cout << primitives.size() << "\n";
+
     std::string type = retrieve(accel_ps, "type", string{ "bvh" });
 
     int max_prims = retrieve(accel_ps, "max_prims_per_node", int{ 4 } );
@@ -288,7 +291,9 @@ void API::world_end() {
 
   // Initialize scene
   m_the_scene = std::unique_ptr<Scene>(make_scene(the_background, aggregate, render_opt->list_lights_ps));
-
+  
+  // std::shared_ptr<BVHAccel> a = std::dynamic_pointer_cast< BVHAccel >( m_the_scene->get_aggregate() );
+  // a->print_tree();
   // Run only if we got camera and background.
   if (m_the_integrator and m_the_scene) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
