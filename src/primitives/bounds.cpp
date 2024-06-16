@@ -50,9 +50,6 @@ bool Bounds3f::intersect_p( const Ray &ray, float *hit1, float *hit2 ) const {
         auto t0 = (ax1 - ray_orig[axis]) * adinv;
         auto t1 = (ax2 - ray_orig[axis]) * adinv;
 
-        if(adinv < 0.0f){
-            std::swap(t0, t1);
-        }
 
         if (t0 < t1) {
             if (t0 > *hit1) *hit1 = t0;
@@ -66,13 +63,7 @@ bool Bounds3f::intersect_p( const Ray &ray, float *hit1, float *hit2 ) const {
             return false;
     }
 
-    if(*hit1 > 0){
-        return *hit1 < ray.get_t_max();
-    }
-    if(*hit2 > 0){
-        return *hit2 < ray.get_t_max();
-    }
-    return false;
+    return true;
 }
 
 

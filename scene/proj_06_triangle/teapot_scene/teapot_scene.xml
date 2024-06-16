@@ -10,11 +10,12 @@
     <film type="image" x_res="900" y_res="450" filename="images/teapot_hires_P.png" img_type="png" gamma_corrected="no" />
     <include filename="scene/proj_06_triangle/teapot_scene/teapot_geometry.xml" />
 
-    <!-- <lookat look_from="0 0 30" look_at="0 0 0" up="0 1 0" />
+    <lookat look_from="0 0 30" look_at="0 0 0" up="0 1 0" />
     <camera type="orthographic" screen_window="-40 40 -20 20" />
     <integrator type="blinn_phong" depth="2" />
+    <accelerator type="bvh" split_method="middle" max_prims_per_node="4" />
 
     <film type="image" x_res="900" y_res="450" filename="images/teapot_hires_O.png" img_type="png" gamma_corrected="no" />
-    <include filename="scene/proj_06_triangle/teapot_scene/teapot_geometry.xml" /> -->
+    <include filename="scene/proj_06_triangle/teapot_scene/teapot_geometry.xml" />
 
 </RT3>

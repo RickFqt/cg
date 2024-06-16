@@ -82,7 +82,7 @@ namespace rt3{
         if(left != nullptr){
             hit_left = left->intersect_p(r);
         }
-        if(right != nullptr && !hit_left){
+        if(right != nullptr){
             hit_right = right->intersect_p(r);
         }
 
@@ -135,7 +135,6 @@ namespace rt3{
     void BVHAccel::print_tree(){
 
         std::cout << "Tenho " << primitives.size() << "primitives." << std::endl;
-        std::cout << "inutil: " << max_prims_per_node << "\n";
         std::cout << "Esquerda: ";
         
         if(left != nullptr){
