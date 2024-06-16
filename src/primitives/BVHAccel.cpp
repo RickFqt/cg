@@ -118,7 +118,7 @@ namespace rt3{
             hit_left = left->intersect(r, sf);
             // std::cout << "chamei o da esquerda\n";
         }
-        if(right != nullptr && !hit_left){
+        if(right != nullptr){
             // std::cout << "vou chamar o da direita\n";
             hit_right = right->intersect(r, sf);
             // std::cout << "chamei o da direita\n";
