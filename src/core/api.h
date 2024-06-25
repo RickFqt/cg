@@ -10,6 +10,7 @@
 #include "../shapes/sphere.h"
 #include "../shapes/simple_triangle.h"
 #include "../shapes/triangle.h"
+#include "../primitives/BVHAccel.h"
 #include "../primitives/primlist.h"
 
 //=== API Macro definitions
@@ -60,6 +61,8 @@ struct RenderOptions {
   std::vector<std::pair<ParamSet, ParamSet>> list_objects_with_materials;
   /// the Integrator
   ParamSet integrator_ps;
+  /// the Accelerator Structure
+  ParamSet accelerator_ps;
   /// the library of Materials
   std::map<string, ParamSet> material_library;
   /// the current Material
@@ -116,7 +119,7 @@ private:
   static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps);
   static Material *make_material(const ParamSet &ps);
   static Light *make_light(const ParamSet &ps);
-  static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat);
+  static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat, const ParamSet &accel_ps);
   static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
   static Scene *make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg, std::vector<ParamSet> l_ps);
 
@@ -137,6 +140,7 @@ public:
   static void material(const ParamSet &ps);
   static void light_source(const ParamSet &ps);
   static void integrator(const ParamSet &ps);
+  static void accelerator(const ParamSet &ps);
   static void world_begin();
   static void world_end();
 };

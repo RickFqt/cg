@@ -2,56 +2,70 @@
 
 namespace rt3 {
 
-Bounds3f::Bounds3f():flip_n{false}, radius{0}, center{0,0,0}{}
+Bounds3f::Bounds3f(const Bounds3f & b1, const Bounds3f& b2){
+    real_type min_x, min_y, min_z, max_x, max_y, max_z;
+    min_x = std::min(b1.get_p_min().x, b2.get_p_min().x);
+    min_y = std::min(b1.get_p_min().y, b2.get_p_min().y);
+    min_z = std::min(b1.get_p_min().z, b2.get_p_min().z);
 
-Bounds3f::Bounds3f(const bool& flip_n, const float& r, const Point3f& c):
-    flip_n{flip_n}, radius{r}, center{c}
-    {}
+    max_x = std::max(b1.get_p_max().x, b2.get_p_max().x);
+    max_y = std::max(b1.get_p_max().y, b2.get_p_max().y);
+    max_z = std::max(b1.get_p_max().z, b2.get_p_max().z);
 
-bool Bounds3f::intersect_p( const Ray& r ) const{
-
-    Vector3f d = r.get_direction();
-    Vector3f oc = r.get_origin() - center;
-    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * (glm::dot(oc,oc) - radius * radius));
-
-    return delta >= 0;
+    p_min = {min_x, min_y, min_z};
+    p_max = {max_x, max_y, max_z};
 }
 
-bool Bounds3f::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
-    Vector3f d = r.get_direction();
-    Vector3f oc = r.get_origin() - center;
-    float delta = glm::dot(oc, d) * glm::dot(oc, d) - ( glm::dot(d,d) * (glm::dot(oc,oc) - radius * radius));
+int Bounds3f::largest_extent(){
+    Vector3f retorno = {0,0,0};
+    for (int axis = 0; axis < 3; axis++){
+        retorno[axis] = p_max[axis] - p_min[axis];
+    }
+    if(retorno[0] >= retorno[1] && retorno[0] >= retorno[2])return 0;
+    if(retorno[1] >= retorno[0] && retorno[1] >= retorno[2])return 1;
+    return 2;
+}
 
-    if(delta >= 0){
-        real_type t1 = (-(glm::dot(oc, d)) - sqrt(delta)) / glm::dot(d,d); // First root
-        real_type t2 = (-(glm::dot(oc, d)) + sqrt(delta)) / glm::dot(d,d); // Second root
+bool Bounds3f::intersect_p( const Ray &ray, float *hit1, float *hit2 ) const {
 
-        // Check if t1 or t2 are between the range
-        if(r.get_t_min() < t1 && t1 < r.get_t_max()){
-            *t_hit = t1;
+    const Point3f& ray_orig = ray.get_origin();
+    const Vector3f&   ray_dir  = ray.get_direction();
+    *hit1 = -1e18;
+    *hit2 = 1e18;
+    // std::cout << "p_min: " << p_min.x << " " << p_min.y <<  " " << p_min.z << "\n";
+    // std::cout << "p_min: " << p_min.x << " " << p_min.y <<  " " << p_min.z << "\n";
 
-            // Update the contact point
-            sf->p = r(t1);
-            // Update the surface normal (which is normally normalized)
-            sf->n = glm::normalize(r(t1) - center);
-            sf->wo = glm::normalize(-r.get_direction());
-            return true;
+    for (int axis = 0; axis < 3; axis++) {
+        // const interval& ax = axis_interval(axis);
+        const float  ax1 = p_min[axis];
+        const float  ax2 = p_max[axis];
+        double adinv;
+        if(ray_dir[axis] == 0){
+            adinv = 1e18;
         }
-        else if(r.get_t_min() < t2 && t2 < r.get_t_max()){
-            *t_hit = t2;
-
-            // Update the contact point
-            sf->p = r(t2);
-            sf->wo = glm::normalize(-r.get_direction());
-            // Update the surface normal (which is normally normalized)
-            sf->n = glm::normalize(r(t2) - center);
-            return true;
+        else{
+            adinv = 1.0 / ray_dir[axis];
         }
+
+        auto t0 = (ax1 - ray_orig[axis]) * adinv;
+        auto t1 = (ax2 - ray_orig[axis]) * adinv;
+
+
+        if (t0 < t1) {
+            if (t0 > *hit1) *hit1 = t0;
+            if (t1 < *hit2) *hit2 = t1;
+        } else {
+            if (t1 > *hit1) *hit1 = t1;
+            if (t0 < *hit2) *hit2 = t0;
+        }
+
+        if (*hit2 <= *hit1)
+            return false;
     }
 
-    return false;
-
+    return true;
 }
+
 
 // bool Bounds3f::intersect_p( const Ray& r ) const{
 

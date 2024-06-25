@@ -106,7 +106,7 @@ std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj
   return objects;
 }
 
-Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat){
+Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat, const ParamSet& accel_ps){
 
   std::cout << ">>> Inside API::make_aggregate()\n";
   
@@ -127,6 +127,18 @@ Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>&
       prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
       primitives.push_back(prim);
     }
+  }
+
+  if(accel_ps.count("type") >= 1){
+
+    std::cout << "Entrei aqui o\n";
+    std::cout << primitives.size() << "\n";
+
+    std::string type = retrieve(accel_ps, "type", string{ "bvh" });
+
+    int max_prims = retrieve(accel_ps, "max_prims_per_node", int{ 4 } );
+
+    return new BVHAccel(0, primitives.size(), primitives, max_prims);
   }
 
   return new PrimList(primitives);
@@ -265,7 +277,7 @@ void API::world_end() {
   // In the future, the background will be parte of the scene object.
   std::shared_ptr<Background> the_background{ make_background(render_opt->bkg_ps) };
 
-  std::shared_ptr<Primitive> aggregate{ make_aggregate(render_opt->list_objects_with_materials)};
+  std::shared_ptr<Primitive> aggregate{ make_aggregate(render_opt->list_objects_with_materials, render_opt->accelerator_ps)};
 
   // Same with the film, that later on will belong to a camera object.
   std::unique_ptr<Film> the_film = std::unique_ptr<Film>( make_film(render_opt->film_ps) );
@@ -279,7 +291,9 @@ void API::world_end() {
 
   // Initialize scene
   m_the_scene = std::unique_ptr<Scene>(make_scene(the_background, aggregate, render_opt->list_lights_ps));
-
+  
+  // std::shared_ptr<BVHAccel> a = std::dynamic_pointer_cast< BVHAccel >( m_the_scene->get_aggregate() );
+  // a->print_tree();
   // Run only if we got camera and background.
   if (m_the_integrator and m_the_scene) {
     RT3_MESSAGE("    Parsing scene successfuly done!\n");
@@ -417,6 +431,12 @@ void API::integrator(const ParamSet &ps) {
   std::cout << ">>> Inside API::integrator()\n";
   VERIFY_SETUP_BLOCK("API::integrator");
   render_opt->integrator_ps = ps;
+}
+
+void API::accelerator(const ParamSet &ps) {
+  std::cout << ">>> Inside API::integrator()\n";
+  VERIFY_SETUP_BLOCK("API::accelerator");
+  render_opt->accelerator_ps = ps;
 }
 
 }  // namespace rt3

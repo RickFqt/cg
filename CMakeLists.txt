@@ -24,7 +24,7 @@ include_directories( cameras
 
 #=== SETTING VARIABLES ===#
 # Compiling flags
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -pedantic" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -pedantic -O3 -ffast-math" )
 set( RT3_SOURCE_DIR "src" )
 
 #=== main  target ===
@@ -46,6 +46,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/lights/spot_light.cpp
                          ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/primitives/bounds.cpp
+                         ${RT3_SOURCE_DIR}/primitives/BVHAccel.cpp
                          ${RT3_SOURCE_DIR}/primitives/primitive.cpp
                          ${RT3_SOURCE_DIR}/primitives/primlist.cpp
                          ${RT3_SOURCE_DIR}/shapes/plane.cpp

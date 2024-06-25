@@ -2,30 +2,21 @@
 
 namespace rt3 {
 
+void DirectionalLight::preprocess( const Scene & scene){
+
+    max_distance = scene.get_aggregate()->world_bounds().get_diagonal();
+}
+
 Spectrum DirectionalLight::sample_Li( const Surfel& hit /*in*/, Vector3f *wi /*out*/, VisibilityTester *vis /*out*/ ){
 
     // Outgoing direction of light (l)
     // We need to find the origin of the ray
     Ray r(hit.p, -direction);
-    Surfel hit_bounds;
-    float t;
-    Point3f origin = {0,0,0};
 
-    if(world_bounds.intersect(r, &t, &hit_bounds)){
-        origin = hit_bounds.p;
-    }
-    else{
-        std::cout << "Attention! World Bounds not found by Directional Light!\n";
-        // std::cout << "GLobal Bounds: " << 
-        // "{"<< world_bounds.get_low().x<<","<<world_bounds.get_low().y<<","<< world_bounds.get_low().z<<"}, " <<
-        // "{"<< world_bounds.get_high().x<<","<<world_bounds.get_high().y<<","<< world_bounds.get_high().z<<"}\n\n";
-    }
-    *wi = glm::normalize(origin - hit.p);
-
-
+    *wi = glm::normalize(-direction);
 
     Surfel light_surfel;
-    light_surfel.p = origin;
+    light_surfel.p = hit.p + (*wi)* max_distance;
     *vis = VisibilityTester(hit, light_surfel);
 
 

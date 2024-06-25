@@ -10,7 +10,7 @@ class DirectionalLight : public Light {
 private:
     Spectrum L;
     Vector3f direction;
-    Bounds3f world_bounds;
+    real_type max_distance;
 public:
     virtual ~DirectionalLight(){};
     DirectionalLight(const Spectrum AL, const Vector3f& d): 
@@ -20,7 +20,7 @@ public:
                              Vector3f        *wi  /*out*/,
                              VisibilityTester *vis /*out*/ );
 
-    void set_world_bounds(const Bounds3f& bounds){world_bounds = bounds;}
+    virtual void preprocess( const Scene & );
 };
 
 DirectionalLight* create_directional_light(const ParamSet& ps);
