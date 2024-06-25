@@ -30,15 +30,26 @@ bool Bounds3f::intersect_p( const Ray &ray, float *hit1, float *hit2 ) const {
 
     const Point3f& ray_orig = ray.get_origin();
     const Vector3f&   ray_dir  = ray.get_direction();
+    *hit1 = -1e18;
+    *hit2 = 1e18;
+    // std::cout << "p_min: " << p_min.x << " " << p_min.y <<  " " << p_min.z << "\n";
+    // std::cout << "p_min: " << p_min.x << " " << p_min.y <<  " " << p_min.z << "\n";
 
     for (int axis = 0; axis < 3; axis++) {
         // const interval& ax = axis_interval(axis);
         const float  ax1 = p_min[axis];
         const float  ax2 = p_max[axis];
-        const double adinv = 1.0 / ray_dir[axis];
+        double adinv;
+        if(ray_dir[axis] == 0){
+            adinv = 1e18;
+        }
+        else{
+            adinv = 1.0 / ray_dir[axis];
+        }
 
         auto t0 = (ax1 - ray_orig[axis]) * adinv;
         auto t1 = (ax2 - ray_orig[axis]) * adinv;
+
 
         if (t0 < t1) {
             if (t0 > *hit1) *hit1 = t0;
@@ -51,6 +62,7 @@ bool Bounds3f::intersect_p( const Ray &ray, float *hit1, float *hit2 ) const {
         if (*hit2 <= *hit1)
             return false;
     }
+
     return true;
 }
 

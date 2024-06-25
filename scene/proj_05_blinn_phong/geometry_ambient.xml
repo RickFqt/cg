@@ -2,6 +2,7 @@
     <lookat look_from="-3 5.5 -10" look_at="0 2 1" up="0 1 0" />
     <camera type="perspective" fovy="45" />
     <integrator type="blinn_phong" depth="2" />
+    <accelerator type="bvh" split_method="middle" max_prims_per_node="4" />
 
     <!-- The Scene -->
     <world_begin/>

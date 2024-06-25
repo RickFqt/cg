@@ -121,7 +121,7 @@ Bounds3f Triangle::world_bounds(){
     max_y = std::max(std::max(p0.y, p1.y) , p2.y);
     max_z = std::max(std::max(p0.z, p1.z) , p2.z);
 
-    return Bounds3f({min_x - 2, min_y - 2, min_z - 2}, {max_x + 2, max_y + 2, max_z + 2});
+    return Bounds3f({min_x, min_y, min_z}, {max_x, max_y, max_z});
 }
 
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,

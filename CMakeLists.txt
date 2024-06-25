@@ -46,6 +46,7 @@ add_executable(basic_rt3 ${RT3_SOURCE_DIR}/backgrounds/background.cpp
                          ${RT3_SOURCE_DIR}/lights/spot_light.cpp
                          ${RT3_SOURCE_DIR}/materials/material.cpp
                          ${RT3_SOURCE_DIR}/primitives/bounds.cpp
+                         ${RT3_SOURCE_DIR}/primitives/BVHAccel.cpp
                          ${RT3_SOURCE_DIR}/primitives/primitive.cpp
                          ${RT3_SOURCE_DIR}/primitives/primlist.cpp
                          ${RT3_SOURCE_DIR}/shapes/plane.cpp
