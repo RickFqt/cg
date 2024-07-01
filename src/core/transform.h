@@ -26,7 +26,7 @@ public:
     Transform(const glm::mat4 &m, const glm::mat4 &mInv) 
         : m(m), mInv(mInv) {
     }
-    void Print(FILE *f) const;
+    // void Print(FILE *f) const;
     friend Transform Inverse(const Transform &t) {
         return Transform(t.mInv, t.m);
     }
@@ -60,7 +60,7 @@ public:
     const glm::mat4 &getMatrix() const { return m; }
     const glm::mat4 &getInverseMatrix() const { return mInv; }
     bool HasScale() const;
-    Point3f operator()(const Point3f &p) const { return p; }; // TODO: Investigar como é que isso funciona e ajeitar o retorno
+    Point3f operator()(const Point3f &p, const int &vec_type) const; // TODO: Investigar como é que isso funciona e ajeitar o retorno
     // Vector3f operator()(const Vector3f &v) const;
     // Normal3f operator()(const Normal3f &) const;
     // void operator()(const Normal3f &, Normal3f *nt) const;
@@ -87,6 +87,7 @@ public:
     Transform RotateX(float theta);
     Transform RotateY(float theta);
     Transform RotateZ(float theta);
+    Transform lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up);
 
 private:
     glm::mat4 m, mInv;
