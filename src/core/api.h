@@ -12,6 +12,7 @@
 #include "../shapes/triangle.h"
 #include "../primitives/BVHAccel.h"
 #include "../primitives/primlist.h"
+#include "transform.h"
 
 //=== API Macro definitions
 
@@ -74,7 +75,11 @@ struct RenderOptions {
 /// Collection of data related to a Graphics state, such as current material,
 /// lib of material, etc.
 struct GraphicsState {
-  // Not necessary in Project 01 through Project 07.
+  std::shared_ptr< Material > curr_material;  //!< Current material that globally affects all objects.
+	bool flip_normals{false};              //!< When true, we flip the normals
+	using DictOfMat = Dictionary< string, std::shared_ptr<Material> >;
+	std::shared_ptr< DictOfMat > mats_lib;      //!< Library of materials.
+	bool mats_lib_cloned{false};           //!< We only actually clone the library if a new material is added to it.
 };
 
 /// Static class that manages the render process
@@ -101,12 +106,35 @@ private:
   /// Unique infrastructure to render a scene (camera, integrator, etc.).
   static std::unique_ptr<RenderOptions> render_opt;
   static std::unique_ptr<Integrator> m_the_integrator;
-  // [NOT NECESSARY IN THIS PROJECT]
-  // /// The current GraphicsState
-  // static GraphicsState curr_GS;
   /// Pointer to the scene. We keep it as parte of the API because it may be
   // reused later [1] Create the integrator.
   static std::unique_ptr< Scene > m_the_scene;
+
+  /// The Current Transformation Matrix
+	static Transform curr_TM;
+	/// Named coordinate systems dictionary
+	static Dictionary< string, Transform > named_coord_system;
+	/// The current GraphicsState
+	static GraphicsState curr_GS;
+	/// The stack of GraphicsState, activate by the tags `<pushGS/>...<popGS/>`
+	static std::stack< GraphicsState > saved_GS; // Recall that the GS includes the curent transformation.
+	/// The stack of transformations, activate by the tags `<pushTM/>...<popTM/>`
+	static std::stack< Transform > saved_TM;
+
+  /* --------------------------------------------------------------------------------
+	* The matrix lookup is unique map (hash table) of transformation matrices.
+	* Every new transformation that is created in `API::transform()`
+	* should be stored in this map.
+	* So, whenever we generate a transformation matrix (either defined
+	* directly in the scene file or as a result of composition of other
+	* matrices), we do the following: we look it up in the dictionary;
+	* if it's there, we return the shared pointer stored in the map;
+	* if it's NOT there yet, we store it in the dictionary and return
+	* the shared pointer stored in the map.
+	* -------------------------------------------------------------------------------- */
+	/// The Dictionary of instantiated transformation matrix.
+	static Dictionary< string, std::shared_ptr< const Transform > > transformation_cache;
+
 
   // === Helper functions.
   ///
