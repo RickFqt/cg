@@ -3,6 +3,8 @@
 
 #include "rt3.h"
 #include "ray.h"
+#include "../primitives/bounds.h"
+#include "surfel.h"
 
 namespace rt3 {
 
@@ -69,7 +71,7 @@ public:
     Bounds3f operator()(const Bounds3f &b) const;
     Transform operator*(const Transform &t2) const;
     bool SwapsHandedness() const;
-    // SurfaceInteraction operator()(const SurfaceInteraction &si) const;
+    Surfel operator()(const Surfel &si) const;
     Point3f operator()(const Point3f &pt, Vector3f *absError) const;
     Point3f
     operator()(const Point3f &p, const Vector3f &pError,

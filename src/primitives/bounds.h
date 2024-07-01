@@ -19,6 +19,9 @@ public:
     p_min{l}, p_max{h}
     { /* empty */ } 
     Bounds3f(const Bounds3f & b1, const Bounds3f& b2);
+    Bounds3f(const Point3f& p) : p_min{p}, p_max{p}
+    { /* empty */ }
+    Bounds3f(const Bounds3f & b1, const Point3f& p);
 	bool intersect_p(const Ray &ray, float *hit1, float *hit2) const;
     int largest_extent();
 

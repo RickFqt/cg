@@ -2,6 +2,10 @@
 
 namespace rt3{
 
+// ======================== =================================== =====================================
+// ======================== Methods that transform other things =====================================
+// ======================== =================================== =====================================
+
 Point3f Transform::operator()(const Point3f &p, const int &vec_type) const {
     float x = p.x, y = p.y, z = p.z;
     if(vec_type == 0) { // É um point
@@ -41,10 +45,50 @@ inline Ray Transform::operator()(const Ray &r) const {
     return Ray(o, d, r.get_t_min(), r.get_t_max());
 }
 
+Bounds3f Transform::operator()(const Bounds3f &b) const {
+    const Transform &M = *this;
+    Bounds3f ret(M(Point3f(b.get_p_min().x, b.get_p_min().y, b.get_p_min().z)));    
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_min().y, b.get_p_min().z)));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_max().y, b.get_p_min().z)));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_min().y, b.get_p_max().z)));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_max().y, b.get_p_max().z)));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_max().y, b.get_p_min().z)));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_min().y, b.get_p_max().z)));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_max().y, b.get_p_max().z)));
+    return ret;
+}
+
+Surfel Transform::operator()(const Surfel &si) const {
+    Surfel ret;
+    ret.p =  (*this)(si.p, 0);
+    ret.wo = (*this)(si.wo, 1);
+    ret.n =  (*this)(si.n, 2);
+    // TODO: uv coordnates
+    ret.uv = si.uv;
+
+    // TODO: Check if primitive is correct
+    ret.primitive = si.primitive;
+
+    return ret;
+}
+
+
+// ======================== =================================== =====================================
+// ======================== =================================== =====================================
+// ======================== =================================== =====================================
+
 Transform Transform::operator*(const Transform &t2) const {
 
-    return Transform( m * t2.getMatrix() );
+    return Transform( m * t2.getMatrix(), t2.getInverseMatrix() * mInv );
 
+}
+
+bool Transform::SwapsHandedness() const {
+    float det = 
+        m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+        m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+        m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+    return det < 0;
 }
 
 bool Transform::HasScale() const {

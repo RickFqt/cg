@@ -16,6 +16,20 @@ Bounds3f::Bounds3f(const Bounds3f & b1, const Bounds3f& b2){
     p_max = {max_x, max_y, max_z};
 }
 
+Bounds3f::Bounds3f(const Bounds3f & b1, const Point3f& p) {
+    p_min = {
+        std::min(b1.get_p_min().x, p.x),
+        std::min(b1.get_p_min().y, p.y),
+        std::min(b1.get_p_min().z, p.z)
+    };
+
+    p_max = {
+        std::max(b1.get_p_max().x, p.x),
+        std::max(b1.get_p_max().y, p.y),
+        std::max(b1.get_p_max().z, p.z)
+    };
+}
+
 int Bounds3f::largest_extent(){
     Vector3f retorno = {0,0,0};
     for (int axis = 0; axis < 3; axis++){
