@@ -13,7 +13,8 @@ RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Integrator> API::m_the_integrator;
 std::unique_ptr<Scene> API::m_the_scene;
-// GraphicsState API::curr_GS;
+GraphicsState API::curr_GS;
+Transform API::curr_TM;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
 // ˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇ
@@ -335,6 +336,86 @@ void API::reset_engine() {
   render_opt = std::make_unique<RenderOptions>();
 }
 
+//== CTM functions
+
+void API::identity() {
+  std::cout << ">>> Inside API::identity()\n";
+  VERIFY_WORLD_BLOCK("API::identity");
+  curr_TM = Transform();
+}
+
+void API::translate(const ParamSet& ps) {
+  std::cout << ">>> Inside API::translate()\n";
+  VERIFY_WORLD_BLOCK("API::translate");
+
+  Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
+  curr_TM = curr_TM * Translate(v);
+}
+
+void API::scale(const ParamSet& ps) {
+  std::cout << ">>> Inside API::scale()\n";
+  VERIFY_WORLD_BLOCK("API::scale");
+
+  Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
+  curr_TM = curr_TM * Scale(v.x, v.y, v.z);
+}
+
+void API::rotate(const ParamSet& ps) {
+  std::cout << ">>> Inside API::rotate()\n";
+  VERIFY_WORLD_BLOCK("API::rotate");
+
+  real_type angle = retrieve(ps, "angle", 0.);
+  Vector3f axis = retrieve(ps, "axis", Vector3f{ 1,0,0 });
+  curr_TM = curr_TM * Rotate(angle, axis);
+}
+
+void API::save_coord_system(const ParamSet& ps) {
+  std::cout << ">>> Inside API::save_coord_system()\n";
+  VERIFY_WORLD_BLOCK("API::save_coord_system");
+
+  string name = retrieve(ps, "name", string{"default"});
+
+  // TODO: Faz algo aqui
+}
+
+void API::restore_coord_system(const ParamSet& ps) {
+  std::cout << ">>> Inside API::restore_coord_system()\n";
+  VERIFY_WORLD_BLOCK("API::restore_coord_system");
+
+  string name = retrieve(ps, "name", string{"default"});
+
+  // TODO: Faz algo aqui
+}
+
+// === CTM & GS Stack functions
+void API::push_CTM() {
+  std::cout << ">>> Inside API::push_CTM()\n";
+  VERIFY_WORLD_BLOCK("API::push_CTM");
+
+  // TODO: Faz algo aqui
+}
+
+void API::pop_CTM() {
+  std::cout << ">>> Inside API::pop_CTM()\n";
+  VERIFY_WORLD_BLOCK("API::pop_CTM");
+
+  // TODO: Faz algo aqui
+}
+
+void API::push_GS() {
+  std::cout << ">>> Inside API::push_GS()\n";
+  VERIFY_WORLD_BLOCK("API::push_GS");
+
+  // TODO: Faz algo aqui
+}
+
+void API::pop_GS() {
+  std::cout << ">>> Inside API::pop_GS()\n";
+  VERIFY_WORLD_BLOCK("API::pop_GS");
+
+  // TODO: Faz algo aqui
+}
+
 void API::background(const ParamSet& ps) {
   std::cout << ">>> Inside API::background()\n";
   VERIFY_WORLD_BLOCK("API::background");
@@ -369,8 +450,15 @@ void API::look_at(const ParamSet& ps) {
   std::cout << ">>> Inside API::look_at()\n";
   VERIFY_SETUP_BLOCK("API::look_at");
 
+  // TODO: Ver se vai precisar mudar algo aqui
   // Store current look_at object.
   render_opt->look_at_ps = ps;
+
+  Point3f look_from = retrieve(ps, "look_from", Point3f{0,0,1});
+  Point3f look_at = retrieve(ps, "look_at", Point3f{0,1,0});
+  Vector3f up = retrieve(ps, "up", Vector3f{1,0,0});
+
+  curr_TM = curr_TM * lookAt(look_from, look_at, up);
 }
 
 void API::film(const ParamSet& ps) {

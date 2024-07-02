@@ -74,10 +74,10 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
         // Legacy parameters BEGINS.
         // In this legacy version, we specify the cameras location
         // manually, instead of defining a transformation matrix.
-        { param_type_e::POINT3F, "look_from" },
-        { param_type_e::POINT3F, "look_at" },
-        { param_type_e::VEC3F, "up" },
-        { param_type_e::ARR_REAL, "vpdim" },  // The viewport dimensions defined by the scene
+        // { param_type_e::POINT3F, "look_from" },
+        // { param_type_e::POINT3F, "look_at" },
+        // { param_type_e::VEC3F, "up" },
+        // { param_type_e::ARR_REAL, "vpdim" },  // The viewport dimensions defined by the scene
         // Legacy parameters ENDS.
         { param_type_e::REAL, "fovy" },
         { param_type_e::REAL, "focal_distance" },
@@ -229,7 +229,53 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
     } else if (tag_name == "render_again") {
       API::world_begin();
       API::world_end();
-    }else if (tag_name == "world_begin") {
+    } else if (tag_name == "identity") {
+      API::identity();
+    } else if (tag_name == "translate") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::VEC3F, "value" },   // Value to be translated
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::translate(ps);
+    } else if (tag_name == "scale") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::VEC3F, "value" },   // Value to be scaled
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::scale(ps);
+    } else if (tag_name == "rotate") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::REAL, "angle" },    // Angle to be rotated
+        { param_type_e::VEC3F, "axis" },    // Axis to be rotated around
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::rotate(ps);
+    } else if (tag_name == "save_coord_system") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "name" },    // Name to associate the CTM with
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::save_coord_system(ps);
+    } else if (tag_name == "restore_coord_system") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "name" },    // Name to search for a previously saved CTM
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::restore_coord_system(ps);
+    } else if (tag_name == "push_CTM") {
+      API::push_CTM();
+    } else if (tag_name == "pop_CTM") {
+      API::pop_CTM();
+    } else if (tag_name == "push_GS") {
+      API::push_GS();
+    } else if (tag_name == "pop_GS") {
+      API::pop_GS();
+    } else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<
       // std::endl;
       //  We should get only one `world` tag per scene file.

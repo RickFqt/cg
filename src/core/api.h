@@ -118,7 +118,7 @@ private:
 	static GraphicsState curr_GS;
 	/// The stack of GraphicsState, activate by the tags `<pushGS/>...<popGS/>`
 	static std::stack< GraphicsState > saved_GS; // Recall that the GS includes the curent transformation.
-	/// The stack of transformations, activate by the tags `<pushTM/>...<popTM/>`
+	/// The stack of transformations, activate by the tags `<pushCTM/>...<popCTM/>`
 	static std::stack< Transform > saved_TM;
 
   /* --------------------------------------------------------------------------------
@@ -157,6 +157,20 @@ public:
   static void run();
   static void clean_up();
   static void reset_engine();
+  
+  //=== CTM functions.
+  static void identity();
+  static void translate(const ParamSet &ps);
+  static void scale(const ParamSet &ps);
+  static void rotate(const ParamSet &ps);
+  static void save_coord_system(const ParamSet &ps);
+  static void restore_coord_system(const ParamSet &ps);
+
+  // === CTM & GS Stack functions
+  static void push_CTM();
+  static void pop_CTM();
+  static void push_GS();
+  static void pop_GS();
 
   static void film(const ParamSet &ps);
   static void camera(const ParamSet &ps);

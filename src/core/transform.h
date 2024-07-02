@@ -84,12 +84,6 @@ public:
                             const Vector3f &dErrorIn, Vector3f *oErrorOut,
                             Vector3f *dErrorOut) const;
 
-    Transform Translate(const Vector3f &delta);
-    Transform Scale(float x, float y, float z);
-    Transform RotateX(float theta);
-    Transform RotateY(float theta);
-    Transform RotateZ(float theta);
-    Transform lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up);
 
 private:
     glm::mat4 m, mInv;
@@ -97,6 +91,21 @@ private:
     friend struct Quaternion;
 
 };
+
+Transform Translate(const Vector3f &delta);
+
+Transform Scale(float x, float y, float z);
+
+Transform RotateX(float theta);
+
+Transform RotateY(float theta);
+
+
+Transform RotateZ(float theta);
+
+Transform Rotate(float theta, const Vector3f &axis);
+
+Transform lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up);
 
 } // namespace rt3
 

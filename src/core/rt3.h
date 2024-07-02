@@ -84,6 +84,7 @@ class Scene;
 class PrimList;
 class GeometricPrimitive;
 class AggregatePrimitive;
+class Transform;
 
 //=== aliases
 using real_type = float;

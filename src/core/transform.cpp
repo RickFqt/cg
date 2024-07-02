@@ -103,7 +103,7 @@ bool Transform::HasScale() const {
 #undef NOT_ONE
 }
 
-Transform Transform::Translate(const Vector3f &delta) {
+Transform Translate(const Vector3f &delta) {
     glm::mat4 m(1, 0, 0, delta.x,
                 0, 1, 0, delta.y,
                 0, 0, 1, delta.z, 
@@ -115,7 +115,7 @@ Transform Transform::Translate(const Vector3f &delta) {
     return Transform(m, minv);
 }
 
-Transform Transform::Scale(float x, float y, float z) {
+Transform Scale(float x, float y, float z) {
     glm::mat4 m(x, 0, 0, 0,
                 0, y, 0, 0,
                 0, 0, z, 0,
@@ -127,7 +127,7 @@ Transform Transform::Scale(float x, float y, float z) {
     return Transform(m, minv);
 }
 
-Transform Transform::RotateX(float theta) {
+Transform RotateX(float theta) {
     float sinTheta = std::sin(Radians(theta));
     float cosTheta = std::cos(Radians(theta));
     glm::mat4 m(1,        0,         0, 0, 
@@ -137,7 +137,7 @@ Transform Transform::RotateX(float theta) {
     return Transform(m, glm::transpose(m));
 }
 
-Transform Transform::RotateY(float theta) {
+Transform RotateY(float theta) {
     float sinTheta = std::sin(Radians(theta));
     float cosTheta = std::cos(Radians(theta));
     glm::mat4 m( cosTheta, 0, sinTheta, 0, 
@@ -148,7 +148,7 @@ Transform Transform::RotateY(float theta) {
 }
 
 
-Transform Transform::RotateZ(float theta) {
+Transform RotateZ(float theta) {
     float sinTheta = std::sin(Radians(theta));
     float cosTheta = std::cos(Radians(theta));
     glm::mat4 m(cosTheta, -sinTheta, 0, 0, 
@@ -158,7 +158,38 @@ Transform Transform::RotateZ(float theta) {
     return Transform(m, glm::transpose(m));
 }
 
-Transform Transform::lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up) {
+Transform Rotate(float theta, const Vector3f &axis) {
+    Vector3f a = glm::normalize(axis);
+    float sinTheta = std::sin(Radians(theta));
+    float cosTheta = std::cos(Radians(theta));
+    glm::mat4 m;
+    // <<Compute rotation of first basis vector>> 
+    m[0][0] = a.x * a.x + (1 - a.x * a.x) * cosTheta;
+    m[0][1] = a.x * a.y * (1 - cosTheta) - a.z * sinTheta;
+    m[0][2] = a.x * a.z * (1 - cosTheta) + a.y * sinTheta;
+    m[0][3] = 0;
+
+    // <<Compute rotations of second and third basis vectors>> 
+    m[1][0] = a.x * a.y * (1 - cosTheta) + a.z * sinTheta;
+    m[1][1] = a.y * a.y + (1 - a.y * a.y) * cosTheta;
+    m[1][2] = a.y * a.z * (1 - cosTheta) - a.x * sinTheta;
+    m[1][3] = 0;
+    
+    m[2][0] = a.x * a.z * (1 - cosTheta) - a.y * sinTheta;
+    m[2][1] = a.y * a.z * (1 - cosTheta) + a.x * sinTheta;
+    m[2][2] = a.z * a.z + (1 - a.z * a.z) * cosTheta;
+    m[2][3] = 0;
+
+    // Fill the last line
+    m[3][0] = 0;
+    m[3][1] = 0;
+    m[3][2] = 0;
+    m[3][3] = 1;
+
+    return Transform(m, glm::transpose(m));
+}
+
+Transform lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up) {
     glm::mat4 cameraToWorld;
     cameraToWorld[0][3] = pos.x;
     cameraToWorld[1][3] = pos.y;
