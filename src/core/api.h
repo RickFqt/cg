@@ -76,8 +76,11 @@ struct RenderOptions {
 /// lib of material, etc.
 struct GraphicsState {
   std::shared_ptr< Material > curr_material;  //!< Current material that globally affects all objects.
+  // ParamSet curr_material;
+
 	bool flip_normals{false};              //!< When true, we flip the normals
 	using DictOfMat = Dictionary< string, std::shared_ptr<Material> >;
+  // using DictOfMat = Dictionary< string, ParamsSet >;
 	std::shared_ptr< DictOfMat > mats_lib;      //!< Library of materials.
 	bool mats_lib_cloned{false};           //!< We only actually clone the library if a new material is added to it.
 };

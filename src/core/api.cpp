@@ -241,7 +241,9 @@ void API::init_engine(const RunningOptions& opt) {
   // Preprare render infrastructure for a new scene.
   render_opt = std::make_unique<RenderOptions>();
   // Create a new initial GS
-  // curr_GS = GraphicsState();
+  curr_GS = GraphicsState();
+  // Create a new initial CTM
+  curr_TM = Transform();
   RT3_MESSAGE("[1] Rendering engine initiated.\n");
 }
 
@@ -392,28 +394,36 @@ void API::push_CTM() {
   std::cout << ">>> Inside API::push_CTM()\n";
   VERIFY_WORLD_BLOCK("API::push_CTM");
 
-  // TODO: Faz algo aqui
+  saved_TM.push(curr_TM);
 }
 
 void API::pop_CTM() {
   std::cout << ">>> Inside API::pop_CTM()\n";
   VERIFY_WORLD_BLOCK("API::pop_CTM");
 
-  // TODO: Faz algo aqui
+  if(saved_TM.empty()){
+    RT3_ERROR("Trying to pop empty TM stack!");
+  }
+  curr_TM = saved_TM.top();
+  saved_TM.pop();
 }
 
 void API::push_GS() {
   std::cout << ">>> Inside API::push_GS()\n";
   VERIFY_WORLD_BLOCK("API::push_GS");
 
-  // TODO: Faz algo aqui
+  saved_GS.push(curr_GS);
 }
 
 void API::pop_GS() {
   std::cout << ">>> Inside API::pop_GS()\n";
   VERIFY_WORLD_BLOCK("API::pop_GS");
 
-  // TODO: Faz algo aqui
+  if(saved_GS.empty()){
+    RT3_ERROR("Trying to pop empty GS stack!");
+  }
+  curr_GS = saved_GS.top();
+  saved_GS.pop();
 }
 
 void API::background(const ParamSet& ps) {
@@ -483,6 +493,20 @@ void API::make_named_material(const ParamSet &ps){
   VERIFY_WORLD_BLOCK("API::make_named_material");
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  if(curr_GS.mats_lib->count(name) > 0){
+    (*(curr_GS.mats_lib))[name] = curr_GS.curr_material;
+  }
+  else{
+    if(!curr_GS.mats_lib_cloned) {
+      curr_GS.mats_lib_cloned = true;
+      // TODO: Clone????
+      (*(curr_GS.mats_lib))[name] = curr_GS.curr_material;
+    }
+    else {
+      (*(curr_GS.mats_lib))[name] = curr_GS.curr_material;
+    }
+  }
 
   // Add the new named material into the library
   render_opt->material_library[name] = ps;
