@@ -70,6 +70,8 @@ struct RenderOptions {
   ParamSet curr_material;
   /// the list of Lights
   std::vector<ParamSet> list_lights_ps;
+  /// the map to each object instance
+  std::map<string, std::vector<std::shared_ptr<Primitive>>> object_instances;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
@@ -101,6 +103,8 @@ public:
 private:
   /// Current API state
   static APIState curr_state;
+  /// Check whether the object instance is active.
+  static bool m_object_instance;
   /*
    * The unique pointer below is useful to support various calls to
    * init()-run()-clean-up(), in case we want to process several input files in
@@ -175,6 +179,9 @@ public:
   static void push_GS();
   static void pop_GS();
 
+  // === API functions
+  static void object_instance_begin(const ParamSet &ps);
+  static void object_instance_end();
   static void film(const ParamSet &ps);
   static void camera(const ParamSet &ps);
   static void look_at(const ParamSet &ps);

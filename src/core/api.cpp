@@ -9,6 +9,7 @@ namespace rt3 {
 
 //=== API's static members declaration and initialization.
 API::APIState API::curr_state = APIState::Uninitialized;
+bool API::m_object_instance = false;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Integrator> API::m_the_integrator;
@@ -273,6 +274,11 @@ void API::world_begin() {
 
 void API::world_end() {
   VERIFY_WORLD_BLOCK("API::world_end");
+
+  if(m_object_instance){
+    RT3_ERROR("Object instance not ended!");
+  }
+
   // The scene has been properly set up and the scene has
   // already been parsed. It's time to render the scene.
 
@@ -377,7 +383,8 @@ void API::save_coord_system(const ParamSet& ps) {
 
   string name = retrieve(ps, "name", string{"default"});
 
-  // TODO: Faz algo aqui
+  named_coord_system[name] = curr_TM;
+
 }
 
 void API::restore_coord_system(const ParamSet& ps) {
@@ -386,7 +393,11 @@ void API::restore_coord_system(const ParamSet& ps) {
 
   string name = retrieve(ps, "name", string{"default"});
 
-  // TODO: Faz algo aqui
+  if(named_coord_system.count(name) < 1){
+    RT3_ERROR("Trying to restore a non-existing coord system!");
+  }
+
+  curr_TM = named_coord_system[name];
 }
 
 // === CTM & GS Stack functions
@@ -413,6 +424,7 @@ void API::push_GS() {
   VERIFY_WORLD_BLOCK("API::push_GS");
 
   saved_GS.push(curr_GS);
+  saved_TM.push(curr_TM);
 }
 
 void API::pop_GS() {
@@ -424,6 +436,12 @@ void API::pop_GS() {
   }
   curr_GS = saved_GS.top();
   saved_GS.pop();
+
+  if(saved_TM.empty()){
+    RT3_ERROR("Trying to pop empty TM stack!");
+  }
+  curr_TM = saved_TM.top();
+  saved_TM.pop();
 }
 
 void API::background(const ParamSet& ps) {
@@ -440,6 +458,8 @@ void API::background(const ParamSet& ps) {
 void API::object(const ParamSet& ps) {
   std::cout << ">>> Inside API::object()\n";
   VERIFY_WORLD_BLOCK("API::object");
+
+
 
   // Store current object into the list of objects.
   render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
@@ -471,6 +491,38 @@ void API::look_at(const ParamSet& ps) {
   curr_TM = curr_TM * lookAt(look_from, look_at, up);
 }
 
+void API::object_instance_begin(const ParamSet& ps) {
+  std::cout << ">>> Inside API::object_instance_begin()\n";
+  VERIFY_WORLD_BLOCK("API::object_instance_begin");
+
+  if(m_object_instance){
+    RT3_ERROR("Trying to start object instance without ending the previous one!");
+  }
+
+  m_object_instance = true;
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  if(render_opt->object_instances.count(name) >= 1){
+    RT3_ERROR("Object instance with the same name already exists!");
+  }
+
+  render_opt->object_instances[name] = ps;
+}
+
+void API::object_instance_end() {
+  std::cout << ">>> Inside API::object_instance_end()\n";
+  VERIFY_WORLD_BLOCK("API::object_instance_end");
+
+  if(!m_object_instance){
+    RT3_ERROR("Trying to end object instance without starting one!");
+  }
+
+  m_object_instance = false;
+
+  curr_state = APIState::WorldBlock;
+}
+
 void API::film(const ParamSet& ps) {
   std::cout << ">>> Inside API::film()\n";
   VERIFY_SETUP_BLOCK("API::film");
@@ -494,22 +546,11 @@ void API::make_named_material(const ParamSet &ps){
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
-  if(curr_GS.mats_lib->count(name) > 0){
-    (*(curr_GS.mats_lib))[name] = curr_GS.curr_material;
-  }
-  else{
-    if(!curr_GS.mats_lib_cloned) {
-      curr_GS.mats_lib_cloned = true;
-      // TODO: Clone????
-      (*(curr_GS.mats_lib))[name] = curr_GS.curr_material;
-    }
-    else {
-      (*(curr_GS.mats_lib))[name] = curr_GS.curr_material;
-    }
-  }
+  std::shared_ptr<Material> material{make_material(ps)};
+  (*(curr_GS.mats_lib))[name] = material;
 
   // Add the new named material into the library
-  render_opt->material_library[name] = ps;
+  // render_opt->material_library[name] = ps;
 }
 
 void API::named_material(const ParamSet &ps){
@@ -518,16 +559,14 @@ void API::named_material(const ParamSet &ps){
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
+
+
   // If there is no already created material, we create one
   if(render_opt->material_library.count(name) < 1){
-    std::cout << "Named material not found! Using default material...\n";
-    // TODO: Check if this works
-    render_opt->curr_material = ParamSet();
+    std::cout << "Named material not found!\n";
   }
-  else{
-    // Set the current material to the one specified (named)
-    render_opt->curr_material = render_opt->material_library[name];
-  }
+
+  curr_GS.curr_material = (*(curr_GS.mats_lib))[name];
 
 }
 
@@ -536,7 +575,10 @@ void API::material(const ParamSet &ps){
   VERIFY_WORLD_BLOCK("API::material");
 
   // Set the current material to the one specified (anonymous)
-  render_opt->curr_material = ps;
+  std::shared_ptr<Material> material{make_material(ps)};
+  curr_GS.curr_material = material;
+
+  // render_opt->curr_material = ps;
 }
 
 void API::integrator(const ParamSet &ps) {

@@ -11,10 +11,7 @@ namespace rt3 {
 class Transform {
 public:
     Transform() { 
-        m =   glm::mat4(1, 0, 0, 0,
-                        0, 1, 0, 0,
-                        0, 0, 1, 0,
-                        0, 0, 0, 1);
+        m =   glm::mat4(1);
         mInv = glm::inverse(m);
     }
     Transform(const real_type mat[4][4]) {
