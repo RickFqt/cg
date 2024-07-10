@@ -20,9 +20,9 @@ public:
     virtual bool intersect_p( const Ray& r ) const = 0;
 
     // === Shape Public Data
+    const bool flip_normals;
     const Transform * obj_to_world; //!< Object to World transformation (scene specified).
     const Transform * world_to_obj; //!< World to Object trasformation (deduced base on O2W).
-    const bool flip_normals;
     
 };
 

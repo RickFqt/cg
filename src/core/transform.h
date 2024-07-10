@@ -63,7 +63,7 @@ public:
     // Vector3f operator()(const Vector3f &v) const;
     // Normal3f operator()(const Normal3f &) const;
     // void operator()(const Normal3f &, Normal3f *nt) const;
-    inline Ray operator()(const Ray &r) const;
+    Ray operator()(const Ray &r) const;
     // inline RayDifferential operator()(const RayDifferential &r) const;
     Bounds3f operator()(const Bounds3f &b) const;
     Transform operator*(const Transform &t2) const;

@@ -10,6 +10,8 @@ namespace rt3{
 using rt3::Point3f;
 using rt3::Vector3f;
 
+class Transform;
+
 /*
     This is a sphere :D (it has a center and radius)
 */

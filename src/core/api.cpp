@@ -15,7 +15,7 @@ std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Integrator> API::m_the_integrator;
 std::unique_ptr<Scene> API::m_the_scene;
 GraphicsState API::curr_GS;
-Transform API::curr_TM;
+Transform API::curr_TM = Transform();
 std::stack< GraphicsState > API::saved_GS;
 std::stack< Transform > API::saved_TM;
 Dictionary< string, Transform > API::named_coord_system;
