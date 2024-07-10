@@ -2,12 +2,12 @@
 
 namespace rt3 {
 
-SimpleTriangle::SimpleTriangle(const bool& flip_n, const Point3f& p0, const Point3f& p1, const Point3f& p2, const Vector3f& n):
-Shape(flip_n), p0{p0}, p1{p1}, p2{p2}, norm{n}
+SimpleTriangle::SimpleTriangle(const bool& flip_n, const Point3f& p0, const Point3f& p1, const Point3f& p2, const Vector3f& n, const Transform & obj_to_world):
+Shape(flip_n, obj_to_world), p0{p0}, p1{p1}, p2{p2}, norm{n}
 {}
 
-SimpleTriangle::SimpleTriangle(const bool& flip_n, const Point3f& po0, const Point3f& po1, const Point3f& po2):
-Shape(flip_n), p0{po0}, p1{po1}, p2{po2}, norm{glm::normalize( glm::cross(po1 - po0, po2 - po0))}
+SimpleTriangle::SimpleTriangle(const bool& flip_n, const Point3f& po0, const Point3f& po1, const Point3f& po2, const Transform & obj_to_world):
+Shape(flip_n, obj_to_world), p0{po0}, p1{po1}, p2{po2}, norm{glm::normalize( glm::cross(po1 - po0, po2 - po0))}
 {}
 
 bool SimpleTriangle::intersect_p( const Ray& r ) const{
@@ -126,11 +126,11 @@ SimpleTriangle* create_simple_triangle(const ParamSet &ps, const Transform & obj
 
     if(ps.count("normal") >= 1){
         Vector3f norm = retrieve(ps, "normal", Vector3f{0,0,1});
-        return new SimpleTriangle(false, p0, p1, p2, norm);
+        return new SimpleTriangle(false, p0, p1, p2, norm, obj2world);
     }
 
     // TODO: Add flip_normals
-    return new SimpleTriangle(false, p0, p1, p2);
+    return new SimpleTriangle(false, p0, p1, p2, obj2world);
 }
 
 

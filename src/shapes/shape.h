@@ -14,7 +14,7 @@ namespace rt3{
 class Shape {
 public:
     // TODO: Change constructor to update Tranforms
-    Shape(bool flip_n);
+    Shape(bool flip_n, const Transform & obj_to_world);
     virtual Bounds3f world_bounds() = 0;
     virtual bool intersect(const Ray& r, float *t_hit, Surfel *isect) const = 0;
     virtual bool intersect_p( const Ray& r ) const = 0;

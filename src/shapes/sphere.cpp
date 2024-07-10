@@ -2,8 +2,8 @@
 
 namespace rt3 {
 
-Sphere::Sphere(const bool& flip_n, const float& r, const Point3f& c):
-Shape(flip_n), radius{r}, center{c}
+Sphere::Sphere(const bool& flip_n, const float& r, const Point3f& c, const Transform & obj_to_world):
+Shape(flip_n, obj_to_world), radius{r}, center{c}
 {}
 
 bool Sphere::intersect_p( const Ray& r ) const{
@@ -83,7 +83,7 @@ Sphere* create_sphere(const ParamSet &ps, const Transform & obj2world){
     Point3f center = retrieve(ps, "center", Point3f{0,0,0});
 
     // TODO: Add flip_normals
-    return new Sphere(false, radius, center);
+    return new Sphere(false, radius, center, obj2world);
 }
 
 

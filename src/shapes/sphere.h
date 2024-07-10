@@ -18,7 +18,7 @@ private:
     float radius;
     Point3f center;
 public:
-    Sphere(const bool& flip_n, const float& r, const Point3f& c);
+    Sphere(const bool& flip_n, const float& r, const Point3f& c, const Transform & obj_to_world);
     Bounds3f world_bounds();
 
     bool intersect_p( const Ray& r ) const;

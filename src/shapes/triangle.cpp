@@ -163,17 +163,17 @@ std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals
     }
 
 
-    return create_triangle_mesh(mesh, backface_cull, flip_normals );
+    return create_triangle_mesh(mesh, backface_cull, flip_normals, obj2world );
 }
 
-std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn){
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn, const Transform & obj_to_world){
     
     std::vector<std::shared_ptr<Shape>> shapes;
     std::shared_ptr<Shape> shape;
     int n_triangles = mesh->n_triangles;
     for(int i = 0; i < n_triangles; ++i){
 
-        shape = std::shared_ptr<Shape>(new Triangle(mesh, i, bfc, fn));
+        shape = std::shared_ptr<Shape>(new Triangle(mesh, obj_to_world, i, bfc, fn));
         shapes.push_back(shape);
     }
     return shapes;
