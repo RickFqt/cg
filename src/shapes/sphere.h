@@ -4,6 +4,7 @@
 #include "../core/rt3.h"
 #include "../primitives/primitive.h"
 #include "../core/paramset.h"
+#include "../core/transform.h"
 
 namespace rt3{
 

@@ -48,7 +48,7 @@ Material* API::make_material(const ParamSet& ps) {
   }
 
   // std::cout << "???" << std::endl;
-  std::cout << "Chomsky" << std::endl;
+  // std::cout << "Chomsky" << std::endl;
 
   // Return the newly created material.
   return material;
@@ -61,6 +61,14 @@ Shape* API::make_shape(const ParamSet &ps) {
 
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
+  // auto m = curr_TM.getMatrix();
+  // std::cout << "Printando matriz m:" << std::endl;
+  // for(int i = 0; i < 4; i++){
+  //   for(int j = 0; j < 4; j++){
+  //     std::cout << m[i][j] << " ";
+  //   }
+  //   std::cout << std::endl;
+  // }
   if(type == "sphere"){
     shape = create_sphere(ps, curr_TM);
   }
@@ -147,8 +155,8 @@ Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>&
 
   if(accel_ps.count("type") >= 1){
 
-    std::cout << "Entrei aqui o\n";
-    std::cout << primitives.size() << "\n";
+    // std::cout << "Entrei aqui o\n";
+    // std::cout << primitives.size() << "\n";
 
     std::string type = retrieve(accel_ps, "type", string{ "bvh" });
 
@@ -259,6 +267,17 @@ void API::init_engine(const RunningOptions& opt) {
   curr_GS = GraphicsState();
   // Create a new initial CTM
   curr_TM = Transform();
+
+  // std::cout << "INICIALIZEI CURR_TM:" << std::endl;
+  // auto m = curr_TM.getMatrix();
+  // for(int i = 0; i < 4; i++){
+  //   for(int j = 0; j < 4; j++){
+  //     std::cout << m[i][j] << " ";
+  //   }
+  //   std::cout << std::endl;
+  // }
+  
+
   RT3_MESSAGE("[1] Rendering engine initiated.\n");
 }
 
@@ -482,8 +501,8 @@ void API::object(const ParamSet& ps) {
     // Store current object into the list of objects.
     render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
 
-    std::cout << ">>>>>>>>>>>> Algumca coisa" << std::endl;
-    std::cout << ">>>>>>>>>>>> Dei push em:" << std::endl;
+    // std::cout << ">>>>>>>>>>>> Algumca coisa" << std::endl;
+    // std::cout << ">>>>>>>>>>>> Dei push em:" << std::endl;
 
   }
 
@@ -508,11 +527,11 @@ void API::look_at(const ParamSet& ps) {
   // Store current look_at object.
   render_opt->look_at_ps = ps;
 
-  Point3f look_from = retrieve(ps, "look_from", Point3f{0,0,1});
-  Point3f look_at = retrieve(ps, "look_at", Point3f{0,1,0});
-  Vector3f up = retrieve(ps, "up", Vector3f{1,0,0});
+  // Point3f look_from = retrieve(ps, "look_from", Point3f{0,0,1});
+  // Point3f look_at = retrieve(ps, "look_at", Point3f{0,1,0});
+  // Vector3f up = retrieve(ps, "up", Vector3f{1,0,0});
 
-  curr_TM = curr_TM * lookAt(look_from, look_at, up);
+  // curr_TM = curr_TM * lookAt(look_from, look_at, up);
 }
 
 void API::object_instance_begin(const ParamSet& ps) {
@@ -572,7 +591,7 @@ void API::make_named_material(const ParamSet &ps){
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
   std::shared_ptr<Material> material{make_material(ps)};
-  std::cout << "Chomsky" << std::endl;
+  // std::cout << "Chomsky" << std::endl;
   
   // Checks if mats_lib is initialized
   if(curr_GS.mats_lib == nullptr){
@@ -580,7 +599,7 @@ void API::make_named_material(const ParamSet &ps){
   }
 
   (*(curr_GS.mats_lib))[name] = material;
-  std::cout << "Chomsky2" << std::endl;
+  // std::cout << "Chomsky2" << std::endl;
 
   // Add the new named material into the library
   render_opt->material_library[name] = ps;

@@ -8,7 +8,9 @@ Shape(flip_n, obj_to_world), radius{r}, center{c}
 
 bool Sphere::intersect_p( const Ray& r ) const{
 
+    // std::cout << "Antes do transform: " << r << std::endl;
     Ray transformed_ray = (* world_to_obj)(r);
+    // std::cout << "Depois do transform: " << transformed_ray << std::endl;
 
     Vector3f d = transformed_ray.get_direction();
     Vector3f oc = transformed_ray.get_origin() - center;

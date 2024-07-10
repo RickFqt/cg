@@ -12,9 +12,7 @@ Point3f Transform::operator()(const Point3f &p, const int &vec_type) const {
     float xp = m[0][0]*x + m[0][1]*y + m[0][2]*z + m[0][3];
     float yp = m[1][0]*x + m[1][1]*y + m[1][2]*z + m[1][3];
     float zp = m[2][0]*x + m[2][1]*y + m[2][2]*z + m[2][3];
-    float wp = m[3][0]*x + m[3][1]*y + m[3][2]*z + m[3][3];
-    if (wp == 1) return Point3f(xp, yp, zp);
-    else         return Point3f(xp, yp, zp) / wp;
+    return Point3f(xp, yp, zp);
     } 
     else if(vec_type == 1) { // É um vector
         return Vector3f(m[0][0]*x + m[0][1]*y + m[0][2]*z,
@@ -28,11 +26,27 @@ Point3f Transform::operator()(const Point3f &p, const int &vec_type) const {
     }   
 }
 
-inline Ray Transform::operator()(const Ray &r) const { 
+Ray Transform::operator()(const Ray &r) const { 
     // TODO: Ver esse erro ai
     // Vector3f oError;
+    // std::cout << "Vou transformar um raio!" << std::endl;
+    // std::cout << "O raio é: " << r << std::endl;
+    // std::cout << "Aplicarei a transformação:"
+    //             << "\n" << m[0][0] << " " << m[0][1] << " " << m[0][2] << " " << m[0][3]
+    //             << "\n" << m[1][0] << " " << m[1][1] << " " << m[1][2] << " " << m[1][3]
+    //             << "\n" << m[2][0] << " " << m[2][1] << " " << m[2][2] << " " << m[2][3]
+    //             << "\n" << m[3][0] << " " << m[3][1] << " " << m[3][2] << " " << m[3][3] << std::endl;
+    
+    // std::cout << "O inverso da transformação é:"
+    //             << "\n" << mInv[0][0] << " " << mInv[0][1] << " " << mInv[0][2] << " " << mInv[0][3]
+    //             << "\n" << mInv[1][0] << " " << mInv[1][1] << " " << mInv[1][2] << " " << mInv[1][3]
+    //             << "\n" << mInv[2][0] << " " << mInv[2][1] << " " << mInv[2][2] << " " << mInv[2][3]
+    //             << "\n" << mInv[3][0] << " " << mInv[3][1] << " " << mInv[3][2] << " " << mInv[3][3] << std::endl;
     Point3f o = (*this)(r.get_origin(), 0 /*, &oError*/);
     Vector3f d = (*this)(r.get_direction(), 1);
+    // std::cout << "Tá pronto o sorvetinho!" << std::endl;
+    Ray transformedRay(o, d, r.get_t_min(), r.get_t_max());
+    // std::cout << "O raio transformado é: " << transformedRay << std::endl;
     // <<Offset ray origin to edge of error bounds and compute tMax>> 
     // float lengthSquared = d.LengthSquared();
     // float tMax = r.tMax;

@@ -11,8 +11,19 @@ namespace rt3 {
 class Transform {
 public:
     Transform() { 
-        m =   glm::mat4(1);
+        m =   glm::mat4(1.0);
         mInv = glm::inverse(m);
+
+        std::cout << "Transform default constructor" << std::endl;
+        std::cout << "m: " << m[0][0] << " " << m[0][1] << " " << m[0][2] << " " << m[0][3] << std::endl;
+        std::cout << "    " << m[1][0] << " " << m[1][1] << " " << m[1][2] << " " << m[1][3] << std::endl;
+        std::cout << "    " << m[2][0] << " " << m[2][1] << " " << m[2][2] << " " << m[2][3] << std::endl;
+        std::cout << "    " << m[3][0] << " " << m[3][1] << " " << m[3][2] << " " << m[3][3] << std::endl;
+        std::cout << "mInv: " << mInv[0][0] << " " << mInv[0][1] << " " << mInv[0][2] << " " << mInv[0][3] << std::endl;
+        std::cout << "    " << mInv[1][0] << " " << mInv[1][1] << " " << mInv[1][2] << " " << mInv[1][3] << std::endl;
+        std::cout << "    " << mInv[2][0] << " " << mInv[2][1] << " " << mInv[2][2] << " " << mInv[2][3] << std::endl;
+        std::cout << "    " << mInv[3][0] << " " << mInv[3][1] << " " << mInv[3][2] << " " << mInv[3][3] << std::endl;
+        
     }
     Transform(const real_type mat[4][4]) {
         m = glm::mat4(mat[0][0], mat[0][1], mat[0][2], mat[0][3],
