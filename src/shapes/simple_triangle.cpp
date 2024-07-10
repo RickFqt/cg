@@ -118,7 +118,7 @@ Bounds3f SimpleTriangle::world_bounds(){
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Triangle object.
-SimpleTriangle* create_simple_triangle(const ParamSet &ps){
+SimpleTriangle* create_simple_triangle(const ParamSet &ps, const Transform & obj2world){
     
     Point3f p0 = retrieve(ps, "p0", Point3f{1,0,0});
     Point3f p1 = retrieve(ps, "p1", Point3f{0,1,0});

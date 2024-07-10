@@ -16,6 +16,10 @@ std::unique_ptr<Integrator> API::m_the_integrator;
 std::unique_ptr<Scene> API::m_the_scene;
 GraphicsState API::curr_GS;
 Transform API::curr_TM;
+std::stack< GraphicsState > API::saved_GS;
+std::stack< Transform > API::saved_TM;
+Dictionary< string, Transform > API::named_coord_system;
+std::string API::m_object_instance_name;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
 // ˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇ
@@ -44,6 +48,7 @@ Material* API::make_material(const ParamSet& ps) {
   }
 
   // std::cout << "???" << std::endl;
+  std::cout << "Chomsky" << std::endl;
 
   // Return the newly created material.
   return material;
@@ -57,10 +62,10 @@ Shape* API::make_shape(const ParamSet &ps) {
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
   if(type == "sphere"){
-    shape = create_sphere(ps);
+    shape = create_sphere(ps, curr_TM);
   }
   else if(type == "triangle"){
-    shape = create_simple_triangle(ps);
+    shape = create_simple_triangle(ps, curr_TM);
   }
   // TODO: Add new types here!
 
@@ -75,7 +80,7 @@ std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps) {
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
   if(type == "trianglemesh"){
-    shapes = create_triangle_mesh_shape(false, ps); // TODO: Fix flip_normals
+    shapes = create_triangle_mesh_shape(false, ps, curr_TM); // TODO: Fix flip_normals
   }
 
   return shapes;
@@ -91,6 +96,15 @@ Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
 
 
   return new GeometricPrimitive(shape, material);
+}
+
+Primitive* API::make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat) {
+  
+  std::cout << ">>> Inside API::make_object()\n";
+
+  std::shared_ptr<Shape> shape{make_shape(ps_obj)};
+
+  return new GeometricPrimitive(shape, mat);
 }
 
 std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat) {
@@ -460,9 +474,19 @@ void API::object(const ParamSet& ps) {
   VERIFY_WORLD_BLOCK("API::object");
 
 
+  if(m_object_instance){
+    // Store current object into the object instance
+    render_opt->object_instances[m_object_instance_name].push_back( std::shared_ptr<Primitive>(make_object(ps, curr_GS.curr_material)) );
+  }
+  else{
+    // Store current object into the list of objects.
+    render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
 
-  // Store current object into the list of objects.
-  render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
+    std::cout << ">>>>>>>>>>>> Algumca coisa" << std::endl;
+    std::cout << ">>>>>>>>>>>> Dei push em:" << std::endl;
+
+  }
+
 }
 
 void API::camera(const ParamSet& ps) {
@@ -507,7 +531,8 @@ void API::object_instance_begin(const ParamSet& ps) {
     RT3_ERROR("Object instance with the same name already exists!");
   }
 
-  render_opt->object_instances[name] = ps;
+  render_opt->object_instances[name] = std::vector<std::shared_ptr<Primitive>>{};
+  m_object_instance_name = name;
 }
 
 void API::object_instance_end() {
@@ -547,10 +572,18 @@ void API::make_named_material(const ParamSet &ps){
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
   std::shared_ptr<Material> material{make_material(ps)};
+  std::cout << "Chomsky" << std::endl;
+  
+  // Checks if mats_lib is initialized
+  if(curr_GS.mats_lib == nullptr){
+    curr_GS.mats_lib = std::make_shared< std::map< string, std::shared_ptr<Material> > >();
+  }
+
   (*(curr_GS.mats_lib))[name] = material;
+  std::cout << "Chomsky2" << std::endl;
 
   // Add the new named material into the library
-  // render_opt->material_library[name] = ps;
+  render_opt->material_library[name] = ps;
 }
 
 void API::named_material(const ParamSet &ps){
@@ -560,13 +593,22 @@ void API::named_material(const ParamSet &ps){
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
 
-
   // If there is no already created material, we create one
-  if(render_opt->material_library.count(name) < 1){
+  if((*(curr_GS.mats_lib)).count(name) < 1){
     std::cout << "Named material not found!\n";
   }
 
   curr_GS.curr_material = (*(curr_GS.mats_lib))[name];
+
+  // If there is no already created material, we create one
+  if(render_opt->material_library.count(name) < 1){
+    std::cout << "Named material not found! Using default material...\n";
+    render_opt->curr_material = ParamSet();
+  }
+  else{
+    // Set the current material to the one specified (named)
+    render_opt->curr_material = render_opt->material_library[name];
+  }
 
 }
 
@@ -578,7 +620,7 @@ void API::material(const ParamSet &ps){
   std::shared_ptr<Material> material{make_material(ps)};
   curr_GS.curr_material = material;
 
-  // render_opt->curr_material = ps;
+  render_opt->curr_material = ps;
 }
 
 void API::integrator(const ParamSet &ps) {

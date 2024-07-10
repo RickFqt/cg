@@ -125,7 +125,7 @@ Bounds3f Triangle::world_bounds(){
 }
 
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
-                                                     const ParamSet &ps){
+                                                     const ParamSet &ps, const Transform & obj2world){
     std::shared_ptr<TriangleMesh> mesh = std::make_shared<TriangleMesh>();
     
     //TODO: These parameters aren't supported yet

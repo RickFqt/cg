@@ -87,7 +87,7 @@ public:
 /// This is the entry point for the client. This function begins the process of
 /// reading a triangle mesh.
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
-                                                     const ParamSet &ps);
+                                                     const ParamSet &ps, const Transform &obj2world);
 
 /// This is the function that actually creates the mesh database and the
 /// triangles, ans store them in a Shape list.

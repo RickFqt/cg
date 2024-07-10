@@ -30,7 +30,7 @@ public:
 
 //-------------------------------------------------------------------------------
 // Factory pattern. It's not part of this class.
-Sphere* create_sphere(const ParamSet &ps);
+Sphere* create_sphere(const ParamSet &ps, const Transform & obj2world);
 } // namespace rt3
 
 #endif

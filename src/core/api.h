@@ -105,6 +105,8 @@ private:
   static APIState curr_state;
   /// Check whether the object instance is active.
   static bool m_object_instance;
+  /// The current object instance name.
+  static std::string m_object_instance_name;
   /*
    * The unique pointer below is useful to support various calls to
    * init()-run()-clean-up(), in case we want to process several input files in
@@ -149,6 +151,7 @@ private:
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
   static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat);
+  static Primitive *make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat);
   static std::vector<std::shared_ptr<Primitive>> make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat);
   static Shape *make_shape(const ParamSet &ps);
   static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps);

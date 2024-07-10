@@ -31,7 +31,7 @@ public:
 
 //-------------------------------------------------------------------------------
 // Factory pattern. It's not part of this class.
-SimpleTriangle* create_simple_triangle(const ParamSet &ps);
+SimpleTriangle* create_simple_triangle(const ParamSet &ps, const Transform & obj2world);
 } // namespace rt3
 
 #endif

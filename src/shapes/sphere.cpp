@@ -77,7 +77,7 @@ Bounds3f Sphere::world_bounds(){
 // Factory function pattern.
 // This is the function that retrieves from the ParamSet object
 // all the information we need to create a Sphere object.
-Sphere* create_sphere(const ParamSet &ps){
+Sphere* create_sphere(const ParamSet &ps, const Transform & obj2world){
     
     real_type radius = retrieve(ps, "radius", real_type{0.5});
     Point3f center = retrieve(ps, "center", Point3f{0,0,0});
