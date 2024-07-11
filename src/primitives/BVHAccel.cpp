@@ -27,25 +27,26 @@ namespace rt3{
 
         // Build the bounding box of the span of source objects.
         Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
-        std::shared_ptr<Primitive> p;
+        // std::shared_ptr<Primitive> p;
         for(int i = l; i < r; ++i){
-            p = objects[i];
+            // p = objects[i];
             // Save the primitives
-            primitives.push_back(p);
+            primitives.push_back(objects[i]);
             // std::cout << "Explodiu " << std::endl;
             // std::cout << "Explodiu 2" << std::endl;
-            global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
+            // global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
         }
         // for (std::shared_ptr<Primitive> p : objects)
         //     global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
 
-        bbox = global_bounding_box;
+        // bbox = global_bounding_box;
 
         if(r - l == 1){ // TODO: Ver qual é o ponto de parada certo lido do parser
+            bbox = primitives[0]->world_bounds();
             return;
         }
 
-        int axis = bbox.largest_extent();
+        int axis = 0;
 
         if(axis == 0){
             std::sort(primitives.begin(), primitives.end(), box_x_compare);
@@ -58,6 +59,8 @@ namespace rt3{
         int mid = (l + r)/2;
         left = ((std::shared_ptr<BVHAccel>) new BVHAccel(l, mid, objects, max_prims));
         right = ((std::shared_ptr<BVHAccel>) new BVHAccel(mid, r, objects, max_prims));
+
+        bbox = Bounds3f(left->bbox, right->bbox);
 
 
     }

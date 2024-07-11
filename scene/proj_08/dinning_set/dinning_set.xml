@@ -3,7 +3,7 @@
     <camera type="perspective" fovy="75" /> 
     <accelerator type="bvh" split_method="middle" max_prims_per_node="4" />
     <integrator type="blinn_phong" depth="3" />
-    <film type="image" x_res="640" y_res="480" filename="images/dinning_set_persp.png" img_type="png" />
+    <film type="image" x_res="1600" y_res="1200" filename="images/dinning_set_persp.png" img_type="png" />
 
     <include filename="scene/proj_08/dinning_set/dinning_set_geometry.xml" />
 

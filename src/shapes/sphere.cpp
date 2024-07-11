@@ -101,7 +101,7 @@ Bounds3f Sphere::world_bounds(){
     // std::cout << "batata" << std::endl;
     // std::cout << "batata2" << std::endl;
 
-    return (* obj_to_world)(Bounds3f(center - radius - 20, center + radius + 20));
+    return (* obj_to_world)(Bounds3f(center - radius - 1, center + radius + 1));
 }
 
 // Bounds3f Sphere::world_bounds(){

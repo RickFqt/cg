@@ -61,7 +61,7 @@ bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
     // sf->uv = Point2f(u, v);
 
     // Transform the surfel back to world
-    // *sf = (* obj_to_world)(*sf);
+    *sf = (* obj_to_world)(*sf);
 
     return true;
   }
@@ -130,7 +130,7 @@ Bounds3f Triangle::world_bounds(){
   max_y = std::max(std::max(p0.y, p1.y) , p2.y);
   max_z = std::max(std::max(p0.z, p1.z) , p2.z);
 
-  return (* obj_to_world)(Bounds3f({min_x-0.01, min_y-0.01, min_z-0.01}, {max_x+0.01, max_y+0.01, max_z+0.01}));
+  return (* obj_to_world)(Bounds3f({min_x-0.0001, min_y-0.0001, min_z-0.0001}, {max_x+0.0001, max_y+0.0001, max_z+0.0001}));
 }
 
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,

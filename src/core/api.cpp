@@ -641,7 +641,7 @@ void API::object_instance_call(const ParamSet &ps) {
     RT3_ERROR("Object instance not found!");
   }
 
-  for(auto &pair_ps : render_opt->object_instances[name]){
+  for(auto pair_ps : render_opt->object_instances[name]){
     pair_ps.second = pair_ps.second * curr_TM;
     render_opt->list_objects_with_materials.push_back(pair_ps);
   }

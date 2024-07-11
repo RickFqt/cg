@@ -4,7 +4,7 @@
     <accelerator type="bvh" split_method="equal" max_prims_per_node="4" />
     <!-- <accelerator type="list"/> -->
     <integrator type="blinn_phong" depth="3" />
-    <film type="image" x_res="1600" y_res="1200" filename="images/02_teapot_scaled_persp.png" img_type="png" />
+    <film type="image" x_res="640" y_res="480" filename="images/02_teapot_scaled_persp.png" img_type="png" />
 
     <!-- The Scene -->
     <include filename="scene/proj_08/teapot/teapot_scaled_geometry.xml" />
@@ -13,7 +13,7 @@
     <camera type="orthographic" screen_window="-26.5 26.5 -20 20" />
     <accelerator type="bvh" split_method="equal" max_prims_per_node="4" />
     <integrator type="blinn_phong" depth="3" />
-    <film type="image" x_res="1600" y_res="1200" filename="images/02_teapot_scaled_ortho.png" img_type="png" />
+    <film type="image" x_res="640" y_res="480" filename="images/02_teapot_scaled_ortho.png" img_type="png" />
 
     <!-- The Scene -->
     <include filename="scene/proj_08/teapot/teapot_scaled_geometry.xml" />
