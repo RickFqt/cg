@@ -33,6 +33,24 @@ bool Sphere::intersect_p( const Ray& r ) const{
 }
 
 bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
+
+    // std::cout << "Qual a transformacao world to obj: " << std::endl;
+    // auto m = world_to_obj->getMatrix();
+    // for(int i = 0; i < 4; i++){
+    //     for(int j = 0; j < 4; j++){
+    //         std::cout << m[i][j] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    // m = obj_to_world->getMatrix();
+    // for(int i = 0; i < 4; i++){
+    //     for(int j = 0; j < 4; j++){
+    //         std::cout << m[i][j] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
     Ray transformed_ray = (* world_to_obj)(r);
 
     Vector3f d = transformed_ray.get_direction();

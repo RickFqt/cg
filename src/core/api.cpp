@@ -401,15 +401,40 @@ void API::scale(const ParamSet& ps) {
   std::cout << ">>> Inside API::scale()\n";
   VERIFY_WORLD_BLOCK("API::scale");
 
+  std::cout << "Vou aplicar um scale" << std::endl;
+
   Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
+
+  std::cout << "O valor do vetor de scale é: " << v.x << " " << v.y << " " << v.z << std::endl;
+
+  std::cout << "Como estava curr_TM antes: " << std::endl;
+  auto m = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << m[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+
+
   curr_TM = Scale(v.x, v.y, v.z) * curr_TM ;
+
+  std::cout << "Como ficou curr_TM depois: " << std::endl;
+  auto mii = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << mii[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
 }
 
 void API::rotate(const ParamSet& ps) {
   std::cout << ">>> Inside API::rotate()\n";
   VERIFY_WORLD_BLOCK("API::rotate");
   real_type angle = retrieve(ps, "angle", 0.F);
-  angle = rt3::Radians(angle);
   Vector3f axis = retrieve(ps, "axis", Vector3f{ 1,0,0 });
   curr_TM = Rotate(angle, axis) * curr_TM ;
 }

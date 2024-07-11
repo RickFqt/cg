@@ -43,7 +43,7 @@
         <!-- Earth and the moon, down into X- -->
         <push_GS/>
             <material type="blinn" diffuse="0.0 0.5 1.0" specular="0.7 0.7 0.7" />
-            <scale value="0.6 0.6 0.6"/>
+            <!-- <scale value="0.6 0.6 0.6"/> -->
             <rotate axis="0 1 0" angle="40"/> <!-- Earth -->
             <translate value="-3 0 0"/>
             <object type="sphere" radius="0.5"/>
