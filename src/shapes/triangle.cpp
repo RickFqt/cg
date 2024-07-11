@@ -8,175 +8,184 @@ namespace rt3 {
 
 bool Triangle::intersect(const Ray &r, float *t_hit, Surfel *sf) const{
 
-    // This is how we retrieve the information associated with this particular triangle.
-    const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
-    const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
-    const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
-    // Let us retrieve the normals in the same way.
-    const Normal3f &n0 = mesh->normals[n[0]]; // Retrieve the normal at vertex 0.
-    const Normal3f &n1 = mesh->normals[n[1]]; // Retrieve the normal at vertex 1.
-    const Normal3f &n2 = mesh->normals[n[2]]; // Retrieve the normal at vertex 2.
+  Ray transformed_ray = (* world_to_obj)(r);
 
-    //TODO: This isn't used yet
-    // Same goes for the UV coords.
-    const Point2f &uv0 = mesh->uvcoords[uv[0]]; // Retrieve the uv coord at vertex 0.
-    const Point2f &uv1 = mesh->uvcoords[uv[1]]; // Retrieve the uv coord at vertex 1.
-    const Point2f &uv2 = mesh->uvcoords[uv[2]]; // Retrieve the uv coord at vertex 2.
+  // This is how we retrieve the information associated with this particular triangle.
+  const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
+  const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
+  const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
+  // Let us retrieve the normals in the same way.
+  const Normal3f &n0 = mesh->normals[n[0]]; // Retrieve the normal at vertex 0.
+  const Normal3f &n1 = mesh->normals[n[1]]; // Retrieve the normal at vertex 1.
+  const Normal3f &n2 = mesh->normals[n[2]]; // Retrieve the normal at vertex 2.
 
-    constexpr float epsilon = std::numeric_limits<float>::epsilon();
+  //TODO: This isn't used yet
+  // Same goes for the UV coords.
+  // const Point2f &uv0 = mesh->uvcoords[uv[0]]; // Retrieve the uv coord at vertex 0.
+  // const Point2f &uv1 = mesh->uvcoords[uv[1]]; // Retrieve the uv coord at vertex 1.
+  // const Point2f &uv2 = mesh->uvcoords[uv[2]]; // Retrieve the uv coord at vertex 2.
 
-    Vector3f edge1 = p1 - p0;
-    Vector3f edge2 = p2 - p0;
-    Vector3f ray_cross_e2 = glm::cross(r.get_direction(), edge2);
-    float det = glm::dot(edge1, ray_cross_e2);
+  constexpr float epsilon = std::numeric_limits<float>::epsilon();
 
-    if (det > -epsilon && det < epsilon)
-        return false;    // This ray is parallel to this triangle.
+  Vector3f edge1 = p1 - p0;
+  Vector3f edge2 = p2 - p0;
+  Vector3f ray_cross_e2 = glm::cross(transformed_ray.get_direction(), edge2);
+  float det = glm::dot(edge1, ray_cross_e2);
 
-    float inv_det = 1.0 / det;
-    Vector3f s = r.get_origin() - p0;
-    float u = inv_det * dot(s, ray_cross_e2);
+  if (det > -epsilon && det < epsilon)
+      return false;    // This ray is parallel to this triangle.
 
-    if (u < 0 || u > 1)
-        return false;
+  float inv_det = 1.0 / det;
+  Vector3f s = transformed_ray.get_origin() - p0;
+  float u = inv_det * dot(s, ray_cross_e2);
 
-    Vector3f s_cross_e1 = glm::cross(s, edge1);
-    float v = inv_det * glm::dot(r.get_direction(), s_cross_e1);
+  if (u < 0 || u > 1)
+      return false;
 
-    if (v < 0 || u + v > 1)
-        return false;
+  Vector3f s_cross_e1 = glm::cross(s, edge1);
+  float v = inv_det * glm::dot(transformed_ray.get_direction(), s_cross_e1);
 
-    // At this stage we can compute t to find out where the intersection point is on the line.
-    float t = inv_det * dot(edge2, s_cross_e1);
+  if (v < 0 || u + v > 1)
+      return false;
 
-    if (t > epsilon && r.get_t_min() < t && t < r.get_t_max()) // ray intersection
-    {
-        *t_hit = t;
-        sf->p = r(t);
-        sf->wo = glm::normalize(-r.get_direction());
-        // Update the surface normal (which is normally normalized)
-        sf->n = rt3::Lerp(v,rt3::Lerp(u, n0, n1),n2); // TODO: Check if this works
-        sf->uv = Point2f(u, v);
-        return true;
-    }
-    // This means that there is a line intersection but not a ray intersection.
-    return false;
+  // At this stage we can compute t to find out where the intersection point is on the line.
+  float t = inv_det * dot(edge2, s_cross_e1);
+
+  if (t > epsilon && transformed_ray.get_t_min() < t && t < transformed_ray.get_t_max()) // ray intersection
+  {
+    *t_hit = t;
+    sf->p = transformed_ray(t);
+    sf->wo = glm::normalize(-transformed_ray.get_direction());
+    // Update the surface normal (which is normally normalized)
+    sf->n = glm::normalize(rt3::Lerp(v,rt3::Lerp(u, n0, n1),n2)); // TODO: Check if this works
+    // sf->uv = Point2f(u, v);
+
+    // Transform the surfel back to world
+    // *sf = (* obj_to_world)(*sf);
+
+    return true;
+  }
+  // This means that there is a line intersection but not a ray intersection.
+  return false;
 
 }
 bool Triangle::intersect_p(const Ray &r) const{
-    constexpr float epsilon = std::numeric_limits<float>::epsilon();
 
-    // This is how we retrieve the information associated with this particular triangle.
-    const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
-    const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
-    const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
+  Ray transformed_ray = (* world_to_obj)(r);
 
-    Vector3f edge1 = p1 - p0;
-    Vector3f edge2 = p2 - p0;
-    Vector3f ray_cross_e2 = glm::cross(r.get_direction(), edge2);
-    float det = glm::dot(edge1, ray_cross_e2);
+  constexpr float epsilon = std::numeric_limits<float>::epsilon();
 
-    if (det > -epsilon && det < epsilon)
-        return false;    // This ray is parallel to this triangle.
+  // This is how we retrieve the information associated with this particular triangle.
+  const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
+  const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
+  const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
 
-    float inv_det = 1.0 / det;
-    Vector3f s = r.get_origin() - p0;
-    float u = inv_det * dot(s, ray_cross_e2);
+  Vector3f edge1 = p1 - p0;
+  Vector3f edge2 = p2 - p0;
+  Vector3f ray_cross_e2 = glm::cross(transformed_ray.get_direction(), edge2);
+  float det = glm::dot(edge1, ray_cross_e2);
 
-    if (u < 0 || u > 1)
-        return false;
+  if (det > -epsilon && det < epsilon)
+      return false;    // This ray is parallel to this triangle.
 
-    Vector3f s_cross_e1 = glm::cross(s, edge1);
-    float v = inv_det * glm::dot(r.get_direction(), s_cross_e1);
+  float inv_det = 1.0 / det;
+  Vector3f s = transformed_ray.get_origin() - p0;
+  float u = inv_det * dot(s, ray_cross_e2);
 
-    if (v < 0 || u + v > 1)
-        return false;
+  if (u < 0 || u > 1)
+      return false;
 
-    // At this stage we can compute t to find out where the intersection point is on the line.
-    float t = inv_det * dot(edge2, s_cross_e1);
+  Vector3f s_cross_e1 = glm::cross(s, edge1);
+  float v = inv_det * glm::dot(transformed_ray.get_direction(), s_cross_e1);
 
-    if (t > epsilon && r.get_t_min() < t && t < r.get_t_max()) // ray intersection
-    {
-        return true;
-    }
-    else // This means that there is a line intersection but not a ray intersection.
-        return false;
+  if (v < 0 || u + v > 1)
+      return false;
 
-    return false;
+  // At this stage we can compute t to find out where the intersection point is on the line.
+  float t = inv_det * dot(edge2, s_cross_e1);
+
+  if (t > epsilon && transformed_ray.get_t_min() < t && t < transformed_ray.get_t_max()) // ray intersection
+  {
+      return true;
+  }
+  else // This means that there is a line intersection but not a ray intersection.
+      return false;
+
+  return false;
 }
 
 Bounds3f Triangle::world_bounds(){
 
-    const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
-    const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
-    const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
+  const Point3f &p0 = mesh->vertices[v[0]]; // Get the 3D coordinate of the 0-vertex of this triangle.
+  const Point3f &p1 = mesh->vertices[v[1]]; // Same for the 1-vertex.
+  const Point3f &p2 = mesh->vertices[v[2]]; // Same for the 2-vertex.
 
-    real_type min_x, min_y, min_z, max_x, max_y, max_z;
+  real_type min_x, min_y, min_z, max_x, max_y, max_z;
 
-    min_x = std::min(std::min(p0.x, p1.x) , p2.x);
-    min_y = std::min(std::min(p0.y, p1.y) , p2.y);
-    min_z = std::min(std::min(p0.z, p1.z) , p2.z);
+  min_x = std::min(std::min(p0.x, p1.x) , p2.x);
+  min_y = std::min(std::min(p0.y, p1.y) , p2.y);
+  min_z = std::min(std::min(p0.z, p1.z) , p2.z);
 
-    max_x = std::max(std::max(p0.x, p1.x) , p2.x);
-    max_y = std::max(std::max(p0.y, p1.y) , p2.y);
-    max_z = std::max(std::max(p0.z, p1.z) , p2.z);
+  max_x = std::max(std::max(p0.x, p1.x) , p2.x);
+  max_y = std::max(std::max(p0.y, p1.y) , p2.y);
+  max_z = std::max(std::max(p0.z, p1.z) , p2.z);
 
-    return Bounds3f({min_x, min_y, min_z}, {max_x, max_y, max_z});
+  return (* obj_to_world)(Bounds3f({min_x-0.01, min_y-0.01, min_z-0.01}, {max_x+0.01, max_y+0.01, max_z+0.01}));
 }
 
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
                                                      const ParamSet &ps, const Transform & obj2world){
-    std::shared_ptr<TriangleMesh> mesh = std::make_shared<TriangleMesh>();
-    
-    //TODO: These parameters aren't supported yet
-    bool reverse_vertex_order = retrieve(ps, "reverse_vertex_order", false);
-    bool compute_normals = retrieve(ps, "compute_normals", false);
-    bool backface_cull = retrieve(ps, "backface_cull", false);
-    if(ps.count("filename") >= 1){
-        std::string filename = retrieve(ps, "filename", std::string("default.obj"));
+  std::shared_ptr<TriangleMesh> mesh = std::make_shared<TriangleMesh>();
+  
+  //TODO: These parameters aren't supported yet
+  bool reverse_vertex_order = retrieve(ps, "reverse_vertex_order", false);
+  bool compute_normals = retrieve(ps, "compute_normals", false);
+  bool backface_cull = retrieve(ps, "backface_cull", false);
+  if(ps.count("filename") >= 1){
+      std::string filename = retrieve(ps, "filename", std::string("default.obj"));
 
-        // Call our auxiliary function that interfaces with tinyobjloader API.
-        if (load_mesh_data(filename, reverse_vertex_order, compute_normals,
-                        flip_normals, mesh)) {
-        std::cout << ">>> Mesh data successfuly loaded!\n";
-        } else {
-        std::cout << ">>> Mesh data loading failed!\n";
-        }
-    }
-    else{
+      // Call our auxiliary function that interfaces with tinyobjloader API.
+      if (load_mesh_data(filename, reverse_vertex_order, compute_normals,
+                      flip_normals, mesh)) {
+      std::cout << ">>> Mesh data successfuly loaded!\n";
+      } else {
+      std::cout << ">>> Mesh data loading failed!\n";
+      }
+  }
+  else{
 
-        int n_triangles = retrieve(ps, "ntriangles", 1);
-        std::vector<int> indices = retrieve(ps, "indices", std::vector<int>{0,1,2});
-        std::vector<Vector3f> vertices = retrieve(ps, "vertices", std::vector<Vector3f>({{-3, -0.5, -3}, {3, -0.5, -3}, {3, -0.5, 3}}));
-        std::vector<Vector3f> normals = retrieve(ps, "normals", std::vector<Vector3f>({{0, 1, 0}, {0, 1, 0}, {0, 1, 0}}));
-        std::vector<Point2f> uv = retrieve(ps, "uv", std::vector<Point2f>({{0, 0}, {0, 1}, {1, 0}}));
-        
+      int n_triangles = retrieve(ps, "ntriangles", 1);
+      std::vector<int> indices = retrieve(ps, "indices", std::vector<int>{0,1,2});
+      std::vector<Vector3f> vertices = retrieve(ps, "vertices", std::vector<Vector3f>({{-3, -0.5, -3}, {3, -0.5, -3}, {3, -0.5, 3}}));
+      std::vector<Vector3f> normals = retrieve(ps, "normals", std::vector<Vector3f>({{0, 1, 0}, {0, 1, 0}, {0, 1, 0}}));
+      std::vector<Point2f> uv = retrieve(ps, "uv", std::vector<Point2f>({{0, 0}, {0, 1}, {1, 0}}));
+      
 
-        mesh->n_triangles = n_triangles;
-        mesh->vertices = vertices;
-        mesh->normals = normals;
-        mesh->uvcoords = uv;
-        mesh->normal_indices = indices;
-        mesh->vertex_indices = indices;
-        mesh->uvcoord_indices = indices;
+      mesh->n_triangles = n_triangles;
+      mesh->vertices = vertices;
+      mesh->normals = normals;
+      mesh->uvcoords = uv;
+      mesh->normal_indices = indices;
+      mesh->vertex_indices = indices;
+      mesh->uvcoord_indices = indices;
 
-    }
+  }
 
 
-    return create_triangle_mesh(mesh, backface_cull, flip_normals, obj2world );
+  return create_triangle_mesh(mesh, backface_cull, flip_normals, obj2world );
 }
 
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn, const Transform & obj_to_world){
     
-    std::vector<std::shared_ptr<Shape>> shapes;
-    std::shared_ptr<Shape> shape;
-    int n_triangles = mesh->n_triangles;
-    for(int i = 0; i < n_triangles; ++i){
+  std::vector<std::shared_ptr<Shape>> shapes;
+  std::shared_ptr<Shape> shape;
+  int n_triangles = mesh->n_triangles;
+  for(int i = 0; i < n_triangles; ++i){
 
-        shape = std::shared_ptr<Shape>(new Triangle(mesh, obj_to_world, i, bfc, fn));
-        shapes.push_back(shape);
-    }
-    return shapes;
+      shape = std::shared_ptr<Shape>(new Triangle(mesh, obj_to_world, i, bfc, fn));
+      shapes.push_back(shape);
+  }
+  return shapes;
 }
 
 /// This function calls the basic tinyobjloader loading function and stores all

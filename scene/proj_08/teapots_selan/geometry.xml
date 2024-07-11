@@ -23,14 +23,16 @@
             backface_cull ="on"/>
 
         <object_instance_begin name="teapot_body"/>
-            <!-- <material type="blinn" diffuse="0.95 0.95 0.95"  specular="1 1 1" mirror="0.39 0.39 0.39" glossiness="0" /> -->
-            <!-- <material type="blinn" diffuse="0.95 0.05 0.05"  specular="1 1 1" mirror="0.39 0.39 0.39" glossiness="0" /> -->
-            <named_material name="red"/>
-            <!-- <material type="blinn" name="gold"  diffuse="0 0.65 0.29" specular="0.8 0.8 0.8" mirror="0.1 0.1 0.1" glossiness="128"/> -->
-            <rotate axis="0 1 0" angle="90.001"/>
-            <scale value="0.2 0.2 0.2 "/>
-            <object type="trianglemesh" filename="../models/new_teapot/body.obj" reverse_vertex_order="false" backface_cull ="true"/>
-            <object type="trianglemesh" filename="../models/new_teapot/lid.obj" reverse_vertex_order="false" backface_cull ="true"/>
+            <push_GS/>
+                <!-- <material type="blinn" diffuse="0.95 0.95 0.95"  specular="1 1 1" mirror="0.39 0.39 0.39" glossiness="0" /> -->
+                <!-- <material type="blinn" diffuse="0.95 0.05 0.05"  specular="1 1 1" mirror="0.39 0.39 0.39" glossiness="0" /> -->
+                <named_material name="red"/>
+                <!-- <material type="blinn" name="gold"  diffuse="0 0.65 0.29" specular="0.8 0.8 0.8" mirror="0.1 0.1 0.1" glossiness="128"/> -->
+                <rotate axis="0 1 0" angle="90.001"/>
+                <scale value="0.2 0.2 0.2 "/>
+                <object type="trianglemesh" filename="scene/proj_08/models/body.obj" reverse_vertex_order="false" backface_cull ="true"/>
+                <object type="trianglemesh" filename="scene/proj_08/models/lid.obj" reverse_vertex_order="false" backface_cull ="true"/>
+            <pop_GS/>
         <object_instance_end/>
 
         <!-- back row -->

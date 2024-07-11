@@ -233,7 +233,14 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       API::object_instance_begin(ps);
     } else if (tag_name == "object_instance_end") {
       API::object_instance_end();
-    } else if (tag_name == "include") {
+    } else if (tag_name == "object_instance_call") {
+      ParamSet ps;
+      vector<std::pair<param_type_e, string>> param_list{
+        { param_type_e::STRING, "name" }            // Name of object to be instanced.
+      };
+      parse_parameters(p_element, param_list, /* out */ &ps);
+      API::object_instance_call(ps);
+    }else if (tag_name == "include") {
       parse(p_element->Attribute("filename"));
     } else if (tag_name == "render_again") {
       API::world_begin();

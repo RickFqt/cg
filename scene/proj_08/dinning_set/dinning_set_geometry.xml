@@ -21,43 +21,43 @@
             <!-- The table -->
             <push_CTM/>
                 <translate value="0 4.1 0" />
-                <include filename="../test_scene/transformations/03_dinning_table.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_table.xml" />
             <pop_CTM/>
             <!-- Chair #1, at the head of the table -->
             <push_CTM/>
                 <translate value="0 0 -11.2" />
                 <rotate axis="0 1 0" angle="35.0"/>
-                <include filename="../test_scene/transformations/03_dinning_chair.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_chair.xml" />
             <pop_CTM/>
             <!-- Chair #2, at the tail end of the table -->
             <push_CTM/>
                 <rotate axis="0 1 0" angle="180.0"/>
                 <translate value="0 0 -8.2" />
-                <include filename="../test_scene/transformations/03_dinning_chair.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_chair.xml" />
             <pop_CTM/>
             <!-- Chair #3, first chair on the right, next to the head of the table -->
             <push_CTM/>
                 <rotate axis="0 1 0" angle="-90.0"/>
                 <translate value="-4.5 0 -5.2" />
-                <include filename="../test_scene/transformations/03_dinning_chair.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_chair.xml" />
             <pop_CTM/>
             <!-- Chair #4, second chair on the right, next to the tail end of the table -->
             <push_CTM/>
                 <rotate axis="0 1 0" angle="-90.0"/>
                 <translate value="4.5 0 -5.2" />
-                <include filename="../test_scene/transformations/03_dinning_chair.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_chair.xml" />
             <pop_CTM/>
             <!-- Chair #5, first chair on the left, next to the head of the table -->
             <push_CTM/>
                 <rotate axis="0 1 0" angle="90.0"/>
                 <translate value="4.5 0 -5.2" />
-                <include filename="../test_scene/transformations/03_dinning_chair.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_chair.xml" />
             <pop_CTM/>
             <!-- Chair #6, second chair on the left, next to the tail end of the table -->
             <push_CTM/>
                 <rotate axis="0 1 0" angle="90.0"/>
                 <translate value="-4.5 0 -5.2" />
-                <include filename="../test_scene/transformations/03_dinning_chair.xml" />
+                <include filename="scene/proj_08/dinning_set/dinning_chair.xml" />
             <pop_CTM/>
         <object_instance_end/>
 

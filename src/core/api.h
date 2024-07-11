@@ -72,17 +72,17 @@ struct RenderOptions {
   /// the list of Lights
   std::vector<ParamSet> list_lights_ps;
   /// the map to each object instance
-  std::map<string, std::vector<std::shared_ptr<Primitive>>> object_instances;
+  std::map<string, std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>> object_instances;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
 /// lib of material, etc.
 struct GraphicsState {
-  std::shared_ptr< Material > curr_material;  //!< Current material that globally affects all objects.
+  ParamSet curr_material;  //!< Current material that globally affects all objects.
   // ParamSet curr_material;
 
 	bool flip_normals{false};              //!< When true, we flip the normals
-	using DictOfMat = Dictionary< string, std::shared_ptr<Material> >;
+	using DictOfMat = Dictionary< string, ParamSet >;
   // using DictOfMat = Dictionary< string, ParamsSet >;
 	std::shared_ptr< DictOfMat > mats_lib;      //!< Library of materials.
 	bool mats_lib_cloned{false};           //!< We only actually clone the library if a new material is added to it.
@@ -186,6 +186,7 @@ public:
   // === API functions
   static void object_instance_begin(const ParamSet &ps);
   static void object_instance_end();
+  static void object_instance_call(const ParamSet &ps);
   static void film(const ParamSet &ps);
   static void camera(const ParamSet &ps);
   static void look_at(const ParamSet &ps);

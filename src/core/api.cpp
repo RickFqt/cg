@@ -124,6 +124,7 @@ std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj
   std::shared_ptr<Material> material{make_material(ps_mat)};
 
   for(std::shared_ptr<Shape> shape : shapes){
+    // std::cout << ">>> Inside API::make_objects() - Inside for loop\n";
     objects.push_back( std::shared_ptr<Primitive>(new GeometricPrimitive(shape, material)) );
   }
 
@@ -324,6 +325,8 @@ void API::world_end() {
   std::shared_ptr<Background> the_background{ make_background(render_opt->bkg_ps) };
 
   std::shared_ptr<Primitive> aggregate{ make_aggregate(render_opt->list_objects_with_materials, render_opt->accelerator_ps)};
+
+  std::cout << "A lista é vazia? " << render_opt->list_objects_with_materials.size() << std::endl;
 
   // Same with the film, that later on will belong to a camera object.
   std::unique_ptr<Film> the_film = std::unique_ptr<Film>( make_film(render_opt->film_ps) );
@@ -556,11 +559,11 @@ void API::object(const ParamSet& ps) {
 
   if(m_object_instance){
     // Store current object into the object instance
-    render_opt->object_instances[m_object_instance_name].push_back( std::shared_ptr<Primitive>(make_object(ps, curr_GS.curr_material, curr_TM)) );
+    render_opt->object_instances[m_object_instance_name].push_back( {{ps, curr_GS.curr_material}, curr_TM} );
   }
   else{
     // Store current object into the list of objects.
-    render_opt->list_objects_with_materials.push_back({{ps, render_opt->curr_material}, curr_TM});
+    render_opt->list_objects_with_materials.push_back({{ps, curr_GS.curr_material}, curr_TM});
 
     // std::cout << ">>>>>>>>>>>> Algumca coisa" << std::endl;
     // std::cout << ">>>>>>>>>>>> Dei push em:" << std::endl;
@@ -611,7 +614,7 @@ void API::object_instance_begin(const ParamSet& ps) {
     RT3_ERROR("Object instance with the same name already exists!");
   }
 
-  render_opt->object_instances[name] = std::vector<std::shared_ptr<Primitive>>{};
+  render_opt->object_instances[name] = std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>();
   m_object_instance_name = name;
 }
 
@@ -626,6 +629,24 @@ void API::object_instance_end() {
   m_object_instance = false;
 
   curr_state = APIState::WorldBlock;
+}
+
+void API::object_instance_call(const ParamSet &ps) {
+  std::cout << ">>> Inside API::object_instance_call()\n";
+  VERIFY_WORLD_BLOCK("API::object_instance_call");
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  if(render_opt->object_instances.count(name) < 1){
+    RT3_ERROR("Object instance not found!");
+  }
+
+  for(auto &pair_ps : render_opt->object_instances[name]){
+    pair_ps.second = pair_ps.second * curr_TM;
+    render_opt->list_objects_with_materials.push_back(pair_ps);
+  }
+
+
 }
 
 void API::film(const ParamSet& ps) {
@@ -651,15 +672,15 @@ void API::make_named_material(const ParamSet &ps){
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
-  std::shared_ptr<Material> material{make_material(ps)};
+  // std::shared_ptr<Material> material{make_material(ps)};
   // std::cout << "Chomsky" << std::endl;
   
   // Checks if mats_lib is initialized
   if(curr_GS.mats_lib == nullptr){
-    curr_GS.mats_lib = std::make_shared< std::map< string, std::shared_ptr<Material> > >();
+    curr_GS.mats_lib = std::make_shared< GraphicsState::DictOfMat >();
   }
 
-  (*(curr_GS.mats_lib))[name] = material;
+  (*(curr_GS.mats_lib))[name] = ps;
   // std::cout << "Chomsky2" << std::endl;
 
   // Add the new named material into the library
@@ -697,8 +718,8 @@ void API::material(const ParamSet &ps){
   VERIFY_WORLD_BLOCK("API::material");
 
   // Set the current material to the one specified (anonymous)
-  std::shared_ptr<Material> material{make_material(ps)};
-  curr_GS.curr_material = material;
+  // std::shared_ptr<Material> material{make_material(ps)};
+  curr_GS.curr_material = ps;
 
   render_opt->curr_material = ps;
 }
