@@ -59,7 +59,8 @@ struct RenderOptions {
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
   /// the Objects with its associated materials
-  std::vector<std::pair<ParamSet, ParamSet>> list_objects_with_materials;
+  std::pair<int, std::pair<int, int>> d;
+  std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>> list_objects_with_materials;
   /// the Integrator
   ParamSet integrator_ps;
   /// the Accelerator Structure
@@ -150,14 +151,14 @@ private:
   static Film *make_film(const ParamSet &ps);
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
-  static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat);
-  static Primitive *make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat);
-  static std::vector<std::shared_ptr<Primitive>> make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat);
-  static Shape *make_shape(const ParamSet &ps);
-  static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps);
+  static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t);
+  static Primitive *make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat, const Transform &t);
+  static std::vector<std::shared_ptr<Primitive>> make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t);
+  static Shape *make_shape(const ParamSet &ps, const Transform &t);
+  static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps, const Transform &t);
   static Material *make_material(const ParamSet &ps);
   static Light *make_light(const ParamSet &ps);
-  static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat, const ParamSet &accel_ps);
+  static Primitive *make_aggregate(const std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>& vet_ps_obj_mat, const ParamSet &accel_ps);
   static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
   static Scene *make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg, std::vector<ParamSet> l_ps);
 

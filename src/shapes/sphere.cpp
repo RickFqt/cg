@@ -48,9 +48,9 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
             *t_hit = t1;
 
             // Update the contact point
-            sf->p = r(t1);
+            sf->p = transformed_ray(t1);
             // Update the surface normal (which is normally normalized)
-            sf->n = glm::normalize(r(t1) - center);
+            sf->n = glm::normalize(transformed_ray(t1) - center);
             sf->wo = glm::normalize(-transformed_ray.get_direction());
 
             // Transform the surface point to world coordinates
@@ -62,10 +62,14 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
             *t_hit = t2;
 
             // Update the contact point
-            sf->p = r(t2);
+            sf->p = transformed_ray(t2);
             sf->wo = glm::normalize(-transformed_ray.get_direction());
             // Update the surface normal (which is normally normalized)
-            sf->n = glm::normalize(r(t2) - center);
+            sf->n = glm::normalize(transformed_ray(t2) - center);
+
+            // Transform the surface point to world coordinates
+            *sf = (* obj_to_world)(*sf);
+
             return true;
         }
     }
@@ -76,7 +80,10 @@ bool Sphere::intersect( const Ray& r, float *t_hit, Surfel *sf ) const{
 
 Bounds3f Sphere::world_bounds(){
 
-    return Bounds3f(center - radius - 2, center + radius + 2);
+    // std::cout << "batata" << std::endl;
+    // std::cout << "batata2" << std::endl;
+
+    return (* obj_to_world)(Bounds3f(center - radius - 2, center + radius + 2));
 }
 
 // Bounds3f Sphere::world_bounds(){

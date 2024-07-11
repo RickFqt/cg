@@ -32,6 +32,8 @@ namespace rt3{
             p = objects[i];
             // Save the primitives
             primitives.push_back(p);
+            // std::cout << "Explodiu " << std::endl;
+            // std::cout << "Explodiu 2" << std::endl;
             global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
         }
         // for (std::shared_ptr<Primitive> p : objects)

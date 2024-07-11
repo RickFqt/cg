@@ -22,6 +22,8 @@ bool GeometricPrimitive::intersect( const Ray& r, Surfel *sf ) const{
 
 Bounds3f GeometricPrimitive::world_bounds(){
 
+    // std::cout << "cenoura" << std::endl;
+
     return shape->world_bounds();
 }
 

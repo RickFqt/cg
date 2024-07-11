@@ -276,13 +276,14 @@ void parse_tags(tinyxml2::XMLElement* p_element, int level) {
       };
       parse_parameters(p_element, param_list, /* out */ &ps);
       API::restore_coord_system(ps);
-    } else if (tag_name == "push_CTM") {
+    } else if (tag_name == "push_ctm") {
       API::push_CTM();
-    } else if (tag_name == "pop_CTM") {
+    } else if (tag_name == "pop_ctm") {
       API::pop_CTM();
-    } else if (tag_name == "push_GS") {
+    } else if (tag_name == "push_gs") {
+      std::cout << "Jorge\n";
       API::push_GS();
-    } else if (tag_name == "pop_GS") {
+    } else if (tag_name == "pop_gs") {
       API::pop_GS();
     } else if (tag_name == "world_begin") {
       // std::clog << ">>> Entering WorldBegin, at level " << level+1 <<

@@ -54,7 +54,7 @@ Material* API::make_material(const ParamSet& ps) {
   return material;
 }
 
-Shape* API::make_shape(const ParamSet &ps) {
+Shape* API::make_shape(const ParamSet &ps, const Transform &t) {
 
   std::cout << ">>> Inside API::make_shape()\n";
   Shape* shape{ nullptr };
@@ -70,17 +70,17 @@ Shape* API::make_shape(const ParamSet &ps) {
   //   std::cout << std::endl;
   // }
   if(type == "sphere"){
-    shape = create_sphere(ps, curr_TM);
+    shape = create_sphere(ps, t);
   }
   else if(type == "triangle"){
-    shape = create_simple_triangle(ps, curr_TM);
+    shape = create_simple_triangle(ps, t);
   }
   // TODO: Add new types here!
 
   return shape;
 }
 
-std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps) {
+std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps, const Transform &t) {
 
   std::cout << ">>> Inside API::make_shapes()\n";
   std::vector<std::shared_ptr<Shape>> shapes;
@@ -88,39 +88,39 @@ std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps) {
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
   if(type == "trianglemesh"){
-    shapes = create_triangle_mesh_shape(false, ps, curr_TM); // TODO: Fix flip_normals
+    shapes = create_triangle_mesh_shape(false, ps, t); // TODO: Fix flip_normals
   }
 
   return shapes;
   
 }
 
-Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t) {
 
   std::cout << ">>> Inside API::make_object()\n";
 
-  std::shared_ptr<Shape> shape{make_shape(ps_obj)};
+  std::shared_ptr<Shape> shape{make_shape(ps_obj, t)};
   std::shared_ptr<Material> material{make_material(ps_mat)};
 
 
   return new GeometricPrimitive(shape, material);
 }
 
-Primitive* API::make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat) {
+Primitive* API::make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat, const Transform &t) {
   
   std::cout << ">>> Inside API::make_object()\n";
 
-  std::shared_ptr<Shape> shape{make_shape(ps_obj)};
+  std::shared_ptr<Shape> shape{make_shape(ps_obj, t)};
 
   return new GeometricPrimitive(shape, mat);
 }
 
-std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t) {
 
   std::cout << ">>> Inside API::make_objects()\n";
   std::vector<std::shared_ptr<Primitive>> objects;
 
-  std::vector<std::shared_ptr<Shape>> shapes{make_shapes(ps_obj)};
+  std::vector<std::shared_ptr<Shape>> shapes{make_shapes(ps_obj, t)};
   std::shared_ptr<Material> material{make_material(ps_mat)};
 
   for(std::shared_ptr<Shape> shape : shapes){
@@ -130,7 +130,7 @@ std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj
   return objects;
 }
 
-Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat, const ParamSet& accel_ps){
+Primitive* API::make_aggregate(const std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>& vet_ps_obj_mat, const ParamSet& accel_ps){
 
   std::cout << ">>> Inside API::make_aggregate()\n";
   
@@ -139,24 +139,24 @@ Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>&
   std::vector<std::shared_ptr<Primitive>> prims;
 
   for(auto pair_ps : vet_ps_obj_mat){
-    std::string type = retrieve(pair_ps.first, "type", string{ "sphere" });
+    std::string type = retrieve(pair_ps.first.first, "type", string{ "sphere" });
     // Check if our object is a triangle_mesh. If so, several shapes will be created
     if(type == "trianglemesh"){
-      prims = make_objects(pair_ps.first, pair_ps.second);
+      prims = make_objects(pair_ps.first.first, pair_ps.first.second, pair_ps.second);
       for(std::shared_ptr<Primitive> p : prims){
         primitives.push_back(p);
       }
     }
     else{
-      prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
+      prim = std::shared_ptr<Primitive>( make_object(pair_ps.first.first, pair_ps.first.second, pair_ps.second) );
       primitives.push_back(prim);
     }
   }
 
   if(accel_ps.count("type") >= 1){
 
-    // std::cout << "Entrei aqui o\n";
-    // std::cout << primitives.size() << "\n";
+    std::cout << "Entrei aqui o\n";
+    std::cout << primitives.size() << "\n";
 
     std::string type = retrieve(accel_ps, "type", string{ "bvh" });
 
@@ -267,6 +267,10 @@ void API::init_engine(const RunningOptions& opt) {
   curr_GS = GraphicsState();
   // Create a new initial CTM
   curr_TM = Transform();
+
+  saved_GS = std::stack< GraphicsState >();
+  saved_TM = std::stack< Transform >();
+  m_object_instance = false;
 
   // std::cout << "INICIALIZEI CURR_TM:" << std::endl;
   // auto m = curr_TM.getMatrix();
@@ -390,7 +394,7 @@ void API::translate(const ParamSet& ps) {
   VERIFY_WORLD_BLOCK("API::translate");
 
   Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
-  curr_TM = curr_TM * Translate(v);
+  curr_TM = Translate(v) * curr_TM ;
 }
 
 void API::scale(const ParamSet& ps) {
@@ -398,16 +402,16 @@ void API::scale(const ParamSet& ps) {
   VERIFY_WORLD_BLOCK("API::scale");
 
   Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
-  curr_TM = curr_TM * Scale(v.x, v.y, v.z);
+  curr_TM = Scale(v.x, v.y, v.z) * curr_TM ;
 }
 
 void API::rotate(const ParamSet& ps) {
   std::cout << ">>> Inside API::rotate()\n";
   VERIFY_WORLD_BLOCK("API::rotate");
-
-  real_type angle = retrieve(ps, "angle", 0.);
+  real_type angle = retrieve(ps, "angle", 0.F);
+  angle = rt3::Radians(angle);
   Vector3f axis = retrieve(ps, "axis", Vector3f{ 1,0,0 });
-  curr_TM = curr_TM * Rotate(angle, axis);
+  curr_TM = Rotate(angle, axis) * curr_TM ;
 }
 
 void API::save_coord_system(const ParamSet& ps) {
@@ -456,6 +460,18 @@ void API::push_GS() {
   std::cout << ">>> Inside API::push_GS()\n";
   VERIFY_WORLD_BLOCK("API::push_GS");
 
+  std::cout << "Vou dar push no GS e TM\n";
+  // std::cout << "GS: " << curr_GS.curr_material << std::endl;
+  std::cout << "TM: " << std::endl;
+  auto m = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << m[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+
   saved_GS.push(curr_GS);
   saved_TM.push(curr_TM);
 }
@@ -463,6 +479,17 @@ void API::push_GS() {
 void API::pop_GS() {
   std::cout << ">>> Inside API::pop_GS()\n";
   VERIFY_WORLD_BLOCK("API::pop_GS");
+
+  std::cout << "Vou dar pop no GS e TM\n";
+  // std::cout << "GS: " << curr_GS.curr_material << std::endl;
+  std::cout << "TM anterior: " << std::endl;
+  auto m = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << m[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
 
   if(saved_GS.empty()){
     RT3_ERROR("Trying to pop empty GS stack!");
@@ -475,6 +502,15 @@ void API::pop_GS() {
   }
   curr_TM = saved_TM.top();
   saved_TM.pop();
+
+  std::cout << "TM novo antigo: " << std::endl;
+  auto mii = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << mii[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
 }
 
 void API::background(const ParamSet& ps) {
@@ -495,11 +531,11 @@ void API::object(const ParamSet& ps) {
 
   if(m_object_instance){
     // Store current object into the object instance
-    render_opt->object_instances[m_object_instance_name].push_back( std::shared_ptr<Primitive>(make_object(ps, curr_GS.curr_material)) );
+    render_opt->object_instances[m_object_instance_name].push_back( std::shared_ptr<Primitive>(make_object(ps, curr_GS.curr_material, curr_TM)) );
   }
   else{
     // Store current object into the list of objects.
-    render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
+    render_opt->list_objects_with_materials.push_back({{ps, render_opt->curr_material}, curr_TM});
 
     // std::cout << ">>>>>>>>>>>> Algumca coisa" << std::endl;
     // std::cout << ">>>>>>>>>>>> Dei push em:" << std::endl;

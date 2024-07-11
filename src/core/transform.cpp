@@ -45,7 +45,6 @@ Ray Transform::operator()(const Ray &r) const {
     Point3f o = (*this)(r.get_origin(), 0 /*, &oError*/);
     Vector3f d = (*this)(r.get_direction(), 1);
     // std::cout << "Tá pronto o sorvetinho!" << std::endl;
-    Ray transformedRay(o, d, r.get_t_min(), r.get_t_max());
     // std::cout << "O raio transformado é: " << transformedRay << std::endl;
     // <<Offset ray origin to edge of error bounds and compute tMax>> 
     // float lengthSquared = d.LengthSquared();
@@ -61,14 +60,17 @@ Ray Transform::operator()(const Ray &r) const {
 
 Bounds3f Transform::operator()(const Bounds3f &b) const {
     const Transform &M = *this;
-    Bounds3f ret(M(Point3f(b.get_p_min().x, b.get_p_min().y, b.get_p_min().z)));    
-    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_min().y, b.get_p_min().z)));
-    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_max().y, b.get_p_min().z)));
-    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_min().y, b.get_p_max().z)));
-    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_max().y, b.get_p_max().z)));
-    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_max().y, b.get_p_min().z)));
-    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_min().y, b.get_p_max().z)));
-    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_max().y, b.get_p_max().z)));
+
+    // std::cout << "iooperoa1" << std::endl;
+    Bounds3f ret( M( Point3f(b.get_p_min().x, b.get_p_min().y, b.get_p_min().z), 0 ) );    
+    // std::cout << "iooperoa2" << std::endl;
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_min().y, b.get_p_min().z), 0));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_max().y, b.get_p_min().z), 0));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_min().y, b.get_p_max().z), 0));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_min().x, b.get_p_max().y, b.get_p_max().z), 0));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_max().y, b.get_p_min().z), 0));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_min().y, b.get_p_max().z), 0));
+    ret = Bounds3f(ret, M(Point3f(b.get_p_max().x, b.get_p_max().y, b.get_p_max().z), 0));
     return ret;
 }
 
@@ -134,9 +136,9 @@ Transform Scale(float x, float y, float z) {
                 0, y, 0, 0,
                 0, 0, z, 0,
                 0, 0, 0, 1);
-    glm::mat4 minv(1/x,   0,   0, 0,
-                    0,   1/y,   0, 0,
-                    0,     0, 1/z, 0,
+    glm::mat4 minv(1.0/x,   0,   0, 0,
+                    0,   1.0/y,   0, 0,
+                    0,     0, 1.0/z, 0,
                     0,     0,   0, 1);
     return Transform(m, minv);
 }
@@ -148,7 +150,7 @@ Transform RotateX(float theta) {
                 0, cosTheta, -sinTheta, 0,
                 0, sinTheta,  cosTheta, 0,
                 0,        0,         0, 1);
-    return Transform(m, glm::transpose(m));
+    return Transform(m);
 }
 
 Transform RotateY(float theta) {
@@ -158,7 +160,7 @@ Transform RotateY(float theta) {
                         0, 1,        0, 0,
                 -sinTheta, 0, cosTheta, 0,
                         0, 0,        0, 1);
-    return Transform(m, glm::transpose(m));
+    return Transform(m);
 }
 
 
@@ -169,7 +171,7 @@ Transform RotateZ(float theta) {
                 sinTheta,  cosTheta, 0, 0,
                        0,         0, 1, 0,
                        0,         0, 0, 1);
-    return Transform(m, glm::transpose(m));
+    return Transform(m);
 }
 
 Transform Rotate(float theta, const Vector3f &axis) {
@@ -200,7 +202,7 @@ Transform Rotate(float theta, const Vector3f &axis) {
     m[3][2] = 0;
     m[3][3] = 1;
 
-    return Transform(m, glm::transpose(m));
+    return Transform(m);
 }
 
 Transform lookAt(const Point3f &pos, const Point3f &look, const Vector3f &up) {
