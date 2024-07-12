@@ -13,7 +13,7 @@ private:
     std::shared_ptr<BVHAccel> right = nullptr;
     Bounds3f bbox;
 public:
-    BVHAccel(const int& l, const int& r, const std::vector<std::shared_ptr<Primitive>>& objects, const int& max_prims);
+    BVHAccel(const int& l, const int& r, std::vector<std::shared_ptr<Primitive>>& objects, const int& max_prims);
 
     bool intersect_p(const Ray& r) const;
     bool intersect( const Ray& r, Surfel *sf ) const;

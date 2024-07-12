@@ -2,59 +2,70 @@
 
 namespace rt3{
 
-    static bool box_compare(
-        const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b, int axis_index
-    ) {
-        float a_axis_interval = a->world_bounds().get_p_min()[axis_index];
-        float b_axis_interval = b->world_bounds().get_p_min()[axis_index];
-        return a_axis_interval < b_axis_interval;
-    }
+    // static bool box_compare(
+    //     const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b, int axis_index
+    // ) {
+    //     float a_axis_interval = a->world_bounds().get_p_min()[axis_index];
+    //     float b_axis_interval = b->world_bounds().get_p_min()[axis_index];
+    //     return a_axis_interval < b_axis_interval;
+    // }
 
-    static bool box_x_compare (const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b) {
-        return box_compare(a, b, 0);
-    }
+    // static bool box_x_compare (const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b) {
+    //     return box_compare(a, b, 0);
+    // }
 
-    static bool box_y_compare (const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b) {
-        return box_compare(a, b, 1);
-    }
+    // static bool box_y_compare (const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b) {
+    //     return box_compare(a, b, 1);
+    // }
 
-    static bool box_z_compare (const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b) {
-        return box_compare(a, b, 2);
-    }
+    // static bool box_z_compare (const std::shared_ptr<Primitive> a, const std::shared_ptr<Primitive> b) {
+    //     return box_compare(a, b, 2);
+    // }
 
-    BVHAccel::BVHAccel(const int& l, const int& r, const std::vector<std::shared_ptr<Primitive>>& objects, const int& max_prims)
+    BVHAccel::BVHAccel(const int& l, const int& r, std::vector<std::shared_ptr<Primitive>>& objects, const int& max_prims)
     : max_prims_per_node{max_prims}{
 
         // Build the bounding box of the span of source objects.
-        Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
+        // Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
         // std::shared_ptr<Primitive> p;
-        for(int i = l; i < r; ++i){
-            // p = objects[i];
-            // Save the primitives
-            primitives.push_back(objects[i]);
-            // std::cout << "Explodiu " << std::endl;
-            // std::cout << "Explodiu 2" << std::endl;
-            // global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
-        }
+        // for(int i = l; i < r; ++i){
+        //     // p = objects[i];
+        //     // Save the primitives
+        //     primitives.push_back(objects[i]);
+        //     // std::cout << "Explodiu " << std::endl;
+        //     // std::cout << "Explodiu 2" << std::endl;
+        //     // global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
+        // }
         // for (std::shared_ptr<Primitive> p : objects)
         //     global_bounding_box = Bounds3f(global_bounding_box, p->world_bounds());
 
         // bbox = global_bounding_box;
 
+        // if(r - l <= max_prims_per_node){ // TODO: Ver qual é o ponto de parada certo lido do parser
+        //     Bounds3f global_bounding_box({FLT_MAX, FLT_MAX, FLT_MAX}, {FLT_MIN, FLT_MIN, FLT_MIN});
+        //     for(int i = l; i < r; ++i){
+        //         primitives.push_back(objects[i]);
+        //         bbox = Bounds3f(bbox, objects[i]->world_bounds());
+        //     }
+        //     bbox = primitives[0]->world_bounds();
+        //     return;
+        // }
+
         if(r - l == 1){ // TODO: Ver qual é o ponto de parada certo lido do parser
+            primitives.push_back(objects[l]);
             bbox = primitives[0]->world_bounds();
             return;
         }
 
-        int axis = 0;
+        // int axis = 0;
 
-        if(axis == 0){
-            std::sort(primitives.begin(), primitives.end(), box_x_compare);
-        }else if(axis == 1){
-            std::sort(primitives.begin(), primitives.end(), box_y_compare);
-        }else{
-            std::sort(primitives.begin(), primitives.end(), box_z_compare);
-        }
+        // if(axis == 0){
+        //     std::sort(objects.begin() + l , objects.begin() + r, box_x_compare);
+        // }else if(axis == 1){
+        //     std::sort(objects.begin() + l, objects.begin() + r, box_y_compare);
+        // }else{
+        //     std::sort(objects.begin() + l, objects.begin() + r, box_z_compare);
+        // }
 
         int mid = (l + r)/2;
         left = ((std::shared_ptr<BVHAccel>) new BVHAccel(l, mid, objects, max_prims));
