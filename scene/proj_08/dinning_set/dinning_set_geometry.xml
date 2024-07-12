@@ -6,6 +6,8 @@
         <!-- Lights -->
         <light_source type="directional" L="0.6 0.6 0.6" from="40 30 -30"/>
         <light_source type="directional" L="0.2 0.2 0.2" from="-30 5 -15"/>
+        <!-- <light_source type="point" I="0.6 0.6 0.6" scale="1 1 1" from="40000 30000 -30000" />
+        <light_source type="point" I="0.2 0.2 0.2" scale="1 1 1" from="-30000 5000 -15000" /> -->
 
         <make_named_material type="blinn" name="white" diffuse="0.95 0.95 0.95"  specular="1 1 1" mirror="0.09 0.09 0.09" glossiness="0" />
         <make_named_material type="blinn" name="gold" diffuse ="1 0.65 0.0"  specular ="0.8 0.6 0.2" mirror ="0.4 0.4 0.4" glossiness ="512"/>

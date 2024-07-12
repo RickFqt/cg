@@ -16,7 +16,7 @@ Spectrum DirectionalLight::sample_Li( const Surfel& hit /*in*/, Vector3f *wi /*o
     *wi = glm::normalize(-direction);
 
     Surfel light_surfel;
-    light_surfel.p = hit.p + (*wi)* max_distance;
+    light_surfel.p = hit.p + (*wi)* 100000;
     *vis = VisibilityTester(hit, light_surfel);
 
 

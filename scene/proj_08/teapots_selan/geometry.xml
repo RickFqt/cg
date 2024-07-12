@@ -2,11 +2,13 @@
     <world_begin/>
         <!-- <background type="colors" bl="0.6 0.8 1.0" tl="0.04 0.04 0.04" tr="0.04 0.04 0.04" br="0.6 0.8 1.0" /> -->
         <background type="colors" bl="0.1411 0.2313 0.333" tl="0.0078 0.1176 0.1882" tr="0.0978 0.1176 0.1882" br="0.1411 0.2313  0.333" />
-        <light_source type="point" I="0.8 0.8 0.7" scale="1 1 1" from="0 6 0" />
+        <!-- <light_source type="point" I="0.8 0.8 0.7" scale="1 1 1" from="0 6 0" /> -->
         <light_source type="directional" L="0.6 0.6 0.6" scale="1 1 1"  from="40 30 -30"/>
-        <light_source type="directional" L="0.8 0.8 0.8" from="5 5 -10"/>
+        <!-- <light_source type="point" I="0.6 0.6 0.6" scale="1 1 1" from="40000 30000 -30000" /> -->
+        <!-- <light_source type="directional" L="0.8 0.8 0.8" from="5 5 -10"/> -->
         <light_source type="directional" L="0.2 0.2 0.2" from="-30 5 -15"/>
-        <light_source type="directional" L="0.7 0.7 0.7" scale="1 1 1" from="-7 5 -3" />
+        <!-- <light_source type="point" I="0.2 0.2 0.2" scale="1 1 1" from="-30000 5000 -15000" /> -->
+        <!-- <light_source type="directional" L="0.7 0.7 0.7" scale="1 1 1" from="-7 5 -3" /> -->
 
         <!-- Ground -->
         <make_named_material type="blinn" name="gold" diffuse ="1 0.65 0.0"  specular ="0.8 0.6 0.2"
