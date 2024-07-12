@@ -54,7 +54,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
     real_type glossiness = fm->get_glossiness();
     Vector3f l; // light direction
     Vector3f n = glm::normalize(isect.n); // surface normal
-    Vector3f v = isect.wo; // view vector
+    Vector3f v = glm::normalize(isect.wo); // view vector
     Vector3f h;
     VisibilityTester vis;
     real_type n_dot_l, n_dot_h;

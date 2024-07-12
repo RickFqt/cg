@@ -50,8 +50,8 @@ Bounds3f Transform::operator()(const Bounds3f &b) const {
 Surfel Transform::operator()(const Surfel &si) const {
     Surfel ret;
     ret.p =  (*this)(si.p, 0);
-    ret.wo = (*this)(si.wo, 1);
-    ret.n =  (*this)(si.n, 2);
+    ret.wo = glm::normalize((*this)(si.wo, 1));
+    ret.n =  glm::normalize((*this)(si.n, 2));
     // TODO: uv coordnates
     ret.uv = si.uv;
 

@@ -156,4 +156,16 @@ inline float Radians(float deg) { return ((float)M_PI / 180.F) * deg; }
 inline float Degrees(float rad) { return (180.F / (float)M_PI) * rad; }
 }  // namespace rt3
 
+inline string MatToString(const glm::mat4x4& m) {
+  string s = "";
+  for (int i = 0; i < 4; i++) {
+    // s += "[ ";
+    for (int j = 0; j < 4; j++) {
+      s += std::to_string(m[i][j]) + ",";
+    }
+    // s += "]\n";
+  }
+  return s;
+}
+
 #endif  // RT3_H

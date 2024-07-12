@@ -19,6 +19,7 @@ Transform API::curr_TM = Transform();
 std::stack< GraphicsState > API::saved_GS;
 std::stack< Transform > API::saved_TM;
 Dictionary< string, Transform > API::named_coord_system;
+Dictionary< string, std::shared_ptr< const Transform > > API::transformation_cache;
 std::string API::m_object_instance_name;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
@@ -86,6 +87,35 @@ std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps, const T
   std::vector<std::shared_ptr<Shape>> shapes;
 
   std::string type = retrieve(ps, "type", string{ "sphere" });
+
+  std::shared_ptr <const Transform> t_ptr;
+  std::shared_ptr <const Transform> t_inv_ptr;
+  // Check if t is already stored in the transformation cache
+
+  // Transform the transformation matrix into string
+  glm::mat4x4 m = t.getMatrix();
+  std::string t_str = MatToString(m);
+
+  if(transformation_cache.count(t_str)){
+    t_ptr = transformation_cache[t_str];
+  }
+  else{
+    t_ptr = std::make_shared< const Transform >(t);
+    transformation_cache[t_str] = t_ptr;
+  }
+
+  // Same for Inverse Matrix
+  glm::mat4x4 m_inv = t.getInverseMatrix();
+  std::string t_inv_str = MatToString(m_inv);
+
+  // if(transformation_cache.count(t_inv_str)){
+  //   t_inv_ptr = transformation_cache[t_inv_str];
+  // }
+  // else{
+  //   t_inv_ptr = std::make_shared< const Transform >( new Transform(m_inv) );
+  //   transformation_cache[t_inv_str] = t_inv_ptr;
+  // }
+
 
   if(type == "trianglemesh"){
     shapes = create_triangle_mesh_shape(false, ps, t); // TODO: Fix flip_normals
