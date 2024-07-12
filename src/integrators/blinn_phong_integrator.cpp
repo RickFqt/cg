@@ -32,12 +32,15 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
 	// [1] FIND CLOSEST RAY INTERSECTION OR RETURN BACKGROUND RADIANCE
     Surfel isect; // Intersection information.
     if (!scene.intersect(ray, &isect)) {
+        // std::cout << "nao deu nada" << std::endl;
         return {}; // empty far color.
     }
+    // std::cout << "deu alguma coisa" << std::endl;
 	// [2] SPECIAL SITUATION: IF THE RAY HITS THE SURFACE FROM "BEHIND" (INSIDE), WE DO NOT COLOR.
 
     // If cos between wo and n negative, the ray hits from behind
     if(glm::dot(glm::normalize(isect.wo), isect.n) < 0) {
+        // std::cout << "The ray hits from behind" << std::endl;
         return Spectrum{0,0,0};
     }
 	// [3] GET THE MATERIAL ASSOCIATED WITH THE HIT SURFACE
@@ -50,7 +53,7 @@ std::optional<Spectrum> BlinnPhongIntegrator::Li( const Ray &ray, const Scene &s
     Spectrum km = fm->get_kr();
     real_type glossiness = fm->get_glossiness();
     Vector3f l; // light direction
-    Vector3f n = isect.n; // surface normal
+    Vector3f n = glm::normalize(isect.n); // surface normal
     Vector3f v = isect.wo; // view vector
     Vector3f h;
     VisibilityTester vis;

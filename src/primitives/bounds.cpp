@@ -3,14 +3,19 @@
 namespace rt3 {
 
 Bounds3f::Bounds3f(const Bounds3f & b1, const Bounds3f& b2){
+
+    // std::cout << "chequei aqui" << std::endl;
     real_type min_x, min_y, min_z, max_x, max_y, max_z;
     min_x = std::min(b1.get_p_min().x, b2.get_p_min().x);
     min_y = std::min(b1.get_p_min().y, b2.get_p_min().y);
     min_z = std::min(b1.get_p_min().z, b2.get_p_min().z);
+    // std::cout << "chequei aqui2" << std::endl;
 
     max_x = std::max(b1.get_p_max().x, b2.get_p_max().x);
     max_y = std::max(b1.get_p_max().y, b2.get_p_max().y);
     max_z = std::max(b1.get_p_max().z, b2.get_p_max().z);
+
+    // std::cout << "chequei aqui3" << std::endl;
 
     p_min = {min_x, min_y, min_z};
     p_max = {max_x, max_y, max_z};

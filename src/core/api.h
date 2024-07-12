@@ -59,7 +59,8 @@ struct RenderOptions {
   string bkg_type{"solid"}; // "image", "interpolated"
   ParamSet bkg_ps;
   /// the Objects with its associated materials
-  std::vector<std::pair<ParamSet, ParamSet>> list_objects_with_materials;
+  std::pair<int, std::pair<int, int>> d;
+  std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>> list_objects_with_materials;
   /// the Integrator
   ParamSet integrator_ps;
   /// the Accelerator Structure
@@ -70,14 +71,19 @@ struct RenderOptions {
   ParamSet curr_material;
   /// the list of Lights
   std::vector<ParamSet> list_lights_ps;
+  /// the map to each object instance
+  std::map<string, std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>> object_instances;
 };
 
 /// Collection of data related to a Graphics state, such as current material,
 /// lib of material, etc.
 struct GraphicsState {
-  std::shared_ptr< Material > curr_material;  //!< Current material that globally affects all objects.
+  ParamSet curr_material;  //!< Current material that globally affects all objects.
+  // ParamSet curr_material;
+
 	bool flip_normals{false};              //!< When true, we flip the normals
-	using DictOfMat = Dictionary< string, std::shared_ptr<Material> >;
+	using DictOfMat = Dictionary< string, ParamSet >;
+  // using DictOfMat = Dictionary< string, ParamsSet >;
 	std::shared_ptr< DictOfMat > mats_lib;      //!< Library of materials.
 	bool mats_lib_cloned{false};           //!< We only actually clone the library if a new material is added to it.
 };
@@ -98,6 +104,10 @@ public:
 private:
   /// Current API state
   static APIState curr_state;
+  /// Check whether the object instance is active.
+  static bool m_object_instance;
+  /// The current object instance name.
+  static std::string m_object_instance_name;
   /*
    * The unique pointer below is useful to support various calls to
    * init()-run()-clean-up(), in case we want to process several input files in
@@ -118,7 +128,7 @@ private:
 	static GraphicsState curr_GS;
 	/// The stack of GraphicsState, activate by the tags `<pushGS/>...<popGS/>`
 	static std::stack< GraphicsState > saved_GS; // Recall that the GS includes the curent transformation.
-	/// The stack of transformations, activate by the tags `<pushTM/>...<popTM/>`
+	/// The stack of transformations, activate by the tags `<pushCTM/>...<popCTM/>`
 	static std::stack< Transform > saved_TM;
 
   /* --------------------------------------------------------------------------------
@@ -141,13 +151,14 @@ private:
   static Film *make_film(const ParamSet &ps);
   static Background *make_background(const ParamSet &ps);
   static Camera *make_camera(const ParamSet &cps, const ParamSet &lps, std::unique_ptr<Film>&& fml);
-  static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat);
-  static std::vector<std::shared_ptr<Primitive>> make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat);
-  static Shape *make_shape(const ParamSet &ps);
-  static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps);
+  static Primitive *make_object(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t);
+  static Primitive *make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat, const Transform &t);
+  static std::vector<std::shared_ptr<Primitive>> make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t);
+  static Shape *make_shape(const ParamSet &ps, const Transform &t);
+  static std::vector<std::shared_ptr<Shape>> make_shapes(const ParamSet &ps, const Transform &t);
   static Material *make_material(const ParamSet &ps);
   static Light *make_light(const ParamSet &ps);
-  static Primitive *make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat, const ParamSet &accel_ps);
+  static Primitive *make_aggregate(const std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>& vet_ps_obj_mat, const ParamSet &accel_ps);
   static Integrator *make_integrator(const ParamSet &ps, std::shared_ptr<const Camera> camera);
   static Scene *make_scene(std::shared_ptr< Background > bkg, std::shared_ptr<Primitive> agg, std::vector<ParamSet> l_ps);
 
@@ -157,7 +168,25 @@ public:
   static void run();
   static void clean_up();
   static void reset_engine();
+  
+  //=== CTM functions.
+  static void identity();
+  static void translate(const ParamSet &ps);
+  static void scale(const ParamSet &ps);
+  static void rotate(const ParamSet &ps);
+  static void save_coord_system(const ParamSet &ps);
+  static void restore_coord_system(const ParamSet &ps);
 
+  // === CTM & GS Stack functions
+  static void push_CTM();
+  static void pop_CTM();
+  static void push_GS();
+  static void pop_GS();
+
+  // === API functions
+  static void object_instance_begin(const ParamSet &ps);
+  static void object_instance_end();
+  static void object_instance_call(const ParamSet &ps);
   static void film(const ParamSet &ps);
   static void camera(const ParamSet &ps);
   static void look_at(const ParamSet &ps);

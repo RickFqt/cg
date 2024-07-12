@@ -9,11 +9,17 @@ namespace rt3 {
 
 //=== API's static members declaration and initialization.
 API::APIState API::curr_state = APIState::Uninitialized;
+bool API::m_object_instance = false;
 RunningOptions API::curr_run_opt;
 std::unique_ptr<RenderOptions> API::render_opt;
 std::unique_ptr<Integrator> API::m_the_integrator;
 std::unique_ptr<Scene> API::m_the_scene;
-// GraphicsState API::curr_GS;
+GraphicsState API::curr_GS;
+Transform API::curr_TM = Transform();
+std::stack< GraphicsState > API::saved_GS;
+std::stack< Transform > API::saved_TM;
+Dictionary< string, Transform > API::named_coord_system;
+std::string API::m_object_instance_name;
 
 // THESE FUNCTIONS ARE NEEDED ONLY IN THIS SOURCE FILE (NO HEADER NECESSARY)
 // ˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇˇ
@@ -42,30 +48,39 @@ Material* API::make_material(const ParamSet& ps) {
   }
 
   // std::cout << "???" << std::endl;
+  // std::cout << "Chomsky" << std::endl;
 
   // Return the newly created material.
   return material;
 }
 
-Shape* API::make_shape(const ParamSet &ps) {
+Shape* API::make_shape(const ParamSet &ps, const Transform &t) {
 
   std::cout << ">>> Inside API::make_shape()\n";
   Shape* shape{ nullptr };
 
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
+  // auto m = curr_TM.getMatrix();
+  // std::cout << "Printando matriz m:" << std::endl;
+  // for(int i = 0; i < 4; i++){
+  //   for(int j = 0; j < 4; j++){
+  //     std::cout << m[i][j] << " ";
+  //   }
+  //   std::cout << std::endl;
+  // }
   if(type == "sphere"){
-    shape = create_sphere(ps);
+    shape = create_sphere(ps, t);
   }
   else if(type == "triangle"){
-    shape = create_simple_triangle(ps);
+    shape = create_simple_triangle(ps, t);
   }
   // TODO: Add new types here!
 
   return shape;
 }
 
-std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps) {
+std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps, const Transform &t) {
 
   std::cout << ">>> Inside API::make_shapes()\n";
   std::vector<std::shared_ptr<Shape>> shapes;
@@ -73,40 +88,50 @@ std::vector<std::shared_ptr<Shape>> API::make_shapes(const ParamSet &ps) {
   std::string type = retrieve(ps, "type", string{ "sphere" });
 
   if(type == "trianglemesh"){
-    shapes = create_triangle_mesh_shape(false, ps); // TODO: Fix flip_normals
+    shapes = create_triangle_mesh_shape(false, ps, t); // TODO: Fix flip_normals
   }
 
   return shapes;
   
 }
 
-Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+Primitive* API::make_object(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t) {
 
   std::cout << ">>> Inside API::make_object()\n";
 
-  std::shared_ptr<Shape> shape{make_shape(ps_obj)};
+  std::shared_ptr<Shape> shape{make_shape(ps_obj, t)};
   std::shared_ptr<Material> material{make_material(ps_mat)};
 
 
   return new GeometricPrimitive(shape, material);
 }
 
-std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat) {
+Primitive* API::make_object(const ParamSet &ps_obj, const std::shared_ptr<Material> &mat, const Transform &t) {
+  
+  std::cout << ">>> Inside API::make_object()\n";
+
+  std::shared_ptr<Shape> shape{make_shape(ps_obj, t)};
+
+  return new GeometricPrimitive(shape, mat);
+}
+
+std::vector<std::shared_ptr<Primitive>> API::make_objects(const ParamSet &ps_obj, const ParamSet &ps_mat, const Transform &t) {
 
   std::cout << ">>> Inside API::make_objects()\n";
   std::vector<std::shared_ptr<Primitive>> objects;
 
-  std::vector<std::shared_ptr<Shape>> shapes{make_shapes(ps_obj)};
+  std::vector<std::shared_ptr<Shape>> shapes{make_shapes(ps_obj, t)};
   std::shared_ptr<Material> material{make_material(ps_mat)};
 
   for(std::shared_ptr<Shape> shape : shapes){
+    // std::cout << ">>> Inside API::make_objects() - Inside for loop\n";
     objects.push_back( std::shared_ptr<Primitive>(new GeometricPrimitive(shape, material)) );
   }
 
   return objects;
 }
 
-Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>& vet_ps_obj_mat, const ParamSet& accel_ps){
+Primitive* API::make_aggregate(const std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>& vet_ps_obj_mat, const ParamSet& accel_ps){
 
   std::cout << ">>> Inside API::make_aggregate()\n";
   
@@ -115,16 +140,16 @@ Primitive* API::make_aggregate(const std::vector<std::pair<ParamSet, ParamSet>>&
   std::vector<std::shared_ptr<Primitive>> prims;
 
   for(auto pair_ps : vet_ps_obj_mat){
-    std::string type = retrieve(pair_ps.first, "type", string{ "sphere" });
+    std::string type = retrieve(pair_ps.first.first, "type", string{ "sphere" });
     // Check if our object is a triangle_mesh. If so, several shapes will be created
     if(type == "trianglemesh"){
-      prims = make_objects(pair_ps.first, pair_ps.second);
+      prims = make_objects(pair_ps.first.first, pair_ps.first.second, pair_ps.second);
       for(std::shared_ptr<Primitive> p : prims){
         primitives.push_back(p);
       }
     }
     else{
-      prim = std::shared_ptr<Primitive>( make_object(pair_ps.first, pair_ps.second) );
+      prim = std::shared_ptr<Primitive>( make_object(pair_ps.first.first, pair_ps.first.second, pair_ps.second) );
       primitives.push_back(prim);
     }
   }
@@ -240,7 +265,24 @@ void API::init_engine(const RunningOptions& opt) {
   // Preprare render infrastructure for a new scene.
   render_opt = std::make_unique<RenderOptions>();
   // Create a new initial GS
-  // curr_GS = GraphicsState();
+  curr_GS = GraphicsState();
+  // Create a new initial CTM
+  curr_TM = Transform();
+
+  saved_GS = std::stack< GraphicsState >();
+  saved_TM = std::stack< Transform >();
+  m_object_instance = false;
+
+  // std::cout << "INICIALIZEI CURR_TM:" << std::endl;
+  // auto m = curr_TM.getMatrix();
+  // for(int i = 0; i < 4; i++){
+  //   for(int j = 0; j < 4; j++){
+  //     std::cout << m[i][j] << " ";
+  //   }
+  //   std::cout << std::endl;
+  // }
+  
+
   RT3_MESSAGE("[1] Rendering engine initiated.\n");
 }
 
@@ -270,6 +312,11 @@ void API::world_begin() {
 
 void API::world_end() {
   VERIFY_WORLD_BLOCK("API::world_end");
+
+  if(m_object_instance){
+    RT3_ERROR("Object instance not ended!");
+  }
+
   // The scene has been properly set up and the scene has
   // already been parsed. It's time to render the scene.
 
@@ -278,6 +325,8 @@ void API::world_end() {
   std::shared_ptr<Background> the_background{ make_background(render_opt->bkg_ps) };
 
   std::shared_ptr<Primitive> aggregate{ make_aggregate(render_opt->list_objects_with_materials, render_opt->accelerator_ps)};
+
+  std::cout << "A lista é vazia? " << render_opt->list_objects_with_materials.size() << std::endl;
 
   // Same with the film, that later on will belong to a camera object.
   std::unique_ptr<Film> the_film = std::unique_ptr<Film>( make_film(render_opt->film_ps) );
@@ -335,6 +384,163 @@ void API::reset_engine() {
   render_opt = std::make_unique<RenderOptions>();
 }
 
+//== CTM functions
+
+void API::identity() {
+  std::cout << ">>> Inside API::identity()\n";
+  VERIFY_WORLD_BLOCK("API::identity");
+  curr_TM = Transform();
+}
+
+void API::translate(const ParamSet& ps) {
+  std::cout << ">>> Inside API::translate()\n";
+  VERIFY_WORLD_BLOCK("API::translate");
+
+  Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
+  curr_TM = Translate(v) * curr_TM ;
+}
+
+void API::scale(const ParamSet& ps) {
+  std::cout << ">>> Inside API::scale()\n";
+  VERIFY_WORLD_BLOCK("API::scale");
+
+  std::cout << "Vou aplicar um scale" << std::endl;
+
+  Vector3f v = retrieve(ps, "value", Vector3f{ 0,0,0 });
+
+  std::cout << "O valor do vetor de scale é: " << v.x << " " << v.y << " " << v.z << std::endl;
+
+  std::cout << "Como estava curr_TM antes: " << std::endl;
+  auto m = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << m[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+
+
+  curr_TM = Scale(v.x, v.y, v.z) * curr_TM ;
+
+  std::cout << "Como ficou curr_TM depois: " << std::endl;
+  auto mii = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << mii[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  
+}
+
+void API::rotate(const ParamSet& ps) {
+  std::cout << ">>> Inside API::rotate()\n";
+  VERIFY_WORLD_BLOCK("API::rotate");
+  real_type angle = retrieve(ps, "angle", 0.F);
+  Vector3f axis = retrieve(ps, "axis", Vector3f{ 1,0,0 });
+  curr_TM = Rotate(angle, axis) * curr_TM ;
+}
+
+void API::save_coord_system(const ParamSet& ps) {
+  std::cout << ">>> Inside API::save_coord_system()\n";
+  VERIFY_WORLD_BLOCK("API::save_coord_system");
+
+  string name = retrieve(ps, "name", string{"default"});
+
+  named_coord_system[name] = curr_TM;
+
+}
+
+void API::restore_coord_system(const ParamSet& ps) {
+  std::cout << ">>> Inside API::restore_coord_system()\n";
+  VERIFY_WORLD_BLOCK("API::restore_coord_system");
+
+  string name = retrieve(ps, "name", string{"default"});
+
+  if(named_coord_system.count(name) < 1){
+    RT3_ERROR("Trying to restore a non-existing coord system!");
+  }
+
+  curr_TM = named_coord_system[name];
+}
+
+// === CTM & GS Stack functions
+void API::push_CTM() {
+  std::cout << ">>> Inside API::push_CTM()\n";
+  VERIFY_WORLD_BLOCK("API::push_CTM");
+
+  saved_TM.push(curr_TM);
+}
+
+void API::pop_CTM() {
+  std::cout << ">>> Inside API::pop_CTM()\n";
+  VERIFY_WORLD_BLOCK("API::pop_CTM");
+
+  if(saved_TM.empty()){
+    RT3_ERROR("Trying to pop empty TM stack!");
+  }
+  curr_TM = saved_TM.top();
+  saved_TM.pop();
+}
+
+void API::push_GS() {
+  std::cout << ">>> Inside API::push_GS()\n";
+  VERIFY_WORLD_BLOCK("API::push_GS");
+
+  std::cout << "Vou dar push no GS e TM\n";
+  // std::cout << "GS: " << curr_GS.curr_material << std::endl;
+  std::cout << "TM: " << std::endl;
+  auto m = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << m[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+
+  saved_GS.push(curr_GS);
+  saved_TM.push(curr_TM);
+}
+
+void API::pop_GS() {
+  std::cout << ">>> Inside API::pop_GS()\n";
+  VERIFY_WORLD_BLOCK("API::pop_GS");
+
+  std::cout << "Vou dar pop no GS e TM\n";
+  // std::cout << "GS: " << curr_GS.curr_material << std::endl;
+  std::cout << "TM anterior: " << std::endl;
+  auto m = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << m[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  if(saved_GS.empty()){
+    RT3_ERROR("Trying to pop empty GS stack!");
+  }
+  curr_GS = saved_GS.top();
+  saved_GS.pop();
+
+  if(saved_TM.empty()){
+    RT3_ERROR("Trying to pop empty TM stack!");
+  }
+  curr_TM = saved_TM.top();
+  saved_TM.pop();
+
+  std::cout << "TM novo antigo: " << std::endl;
+  auto mii = curr_TM.getMatrix();
+  for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+      std::cout << mii[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
+
 void API::background(const ParamSet& ps) {
   std::cout << ">>> Inside API::background()\n";
   VERIFY_WORLD_BLOCK("API::background");
@@ -350,8 +556,20 @@ void API::object(const ParamSet& ps) {
   std::cout << ">>> Inside API::object()\n";
   VERIFY_WORLD_BLOCK("API::object");
 
-  // Store current object into the list of objects.
-  render_opt->list_objects_with_materials.push_back({ps, render_opt->curr_material});
+
+  if(m_object_instance){
+    // Store current object into the object instance
+    render_opt->object_instances[m_object_instance_name].push_back( {{ps, curr_GS.curr_material}, curr_TM} );
+  }
+  else{
+    // Store current object into the list of objects.
+    render_opt->list_objects_with_materials.push_back({{ps, curr_GS.curr_material}, curr_TM});
+
+    // std::cout << ">>>>>>>>>>>> Algumca coisa" << std::endl;
+    // std::cout << ">>>>>>>>>>>> Dei push em:" << std::endl;
+
+  }
+
 }
 
 void API::camera(const ParamSet& ps) {
@@ -369,8 +587,66 @@ void API::look_at(const ParamSet& ps) {
   std::cout << ">>> Inside API::look_at()\n";
   VERIFY_SETUP_BLOCK("API::look_at");
 
+  // TODO: Ver se vai precisar mudar algo aqui
   // Store current look_at object.
   render_opt->look_at_ps = ps;
+
+  // Point3f look_from = retrieve(ps, "look_from", Point3f{0,0,1});
+  // Point3f look_at = retrieve(ps, "look_at", Point3f{0,1,0});
+  // Vector3f up = retrieve(ps, "up", Vector3f{1,0,0});
+
+  // curr_TM = curr_TM * lookAt(look_from, look_at, up);
+}
+
+void API::object_instance_begin(const ParamSet& ps) {
+  std::cout << ">>> Inside API::object_instance_begin()\n";
+  VERIFY_WORLD_BLOCK("API::object_instance_begin");
+
+  if(m_object_instance){
+    RT3_ERROR("Trying to start object instance without ending the previous one!");
+  }
+
+  m_object_instance = true;
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  if(render_opt->object_instances.count(name) >= 1){
+    RT3_ERROR("Object instance with the same name already exists!");
+  }
+
+  render_opt->object_instances[name] = std::vector<std::pair<std::pair<ParamSet, ParamSet>, Transform>>();
+  m_object_instance_name = name;
+}
+
+void API::object_instance_end() {
+  std::cout << ">>> Inside API::object_instance_end()\n";
+  VERIFY_WORLD_BLOCK("API::object_instance_end");
+
+  if(!m_object_instance){
+    RT3_ERROR("Trying to end object instance without starting one!");
+  }
+
+  m_object_instance = false;
+
+  curr_state = APIState::WorldBlock;
+}
+
+void API::object_instance_call(const ParamSet &ps) {
+  std::cout << ">>> Inside API::object_instance_call()\n";
+  VERIFY_WORLD_BLOCK("API::object_instance_call");
+
+  std::string name = retrieve(ps, "name", string{ "unknown" });
+
+  if(render_opt->object_instances.count(name) < 1){
+    RT3_ERROR("Object instance not found!");
+  }
+
+  for(auto pair_ps : render_opt->object_instances[name]){
+    pair_ps.second = pair_ps.second * curr_TM;
+    render_opt->list_objects_with_materials.push_back(pair_ps);
+  }
+
+
 }
 
 void API::film(const ParamSet& ps) {
@@ -396,6 +672,17 @@ void API::make_named_material(const ParamSet &ps){
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
+  // std::shared_ptr<Material> material{make_material(ps)};
+  // std::cout << "Chomsky" << std::endl;
+  
+  // Checks if mats_lib is initialized
+  if(curr_GS.mats_lib == nullptr){
+    curr_GS.mats_lib = std::make_shared< GraphicsState::DictOfMat >();
+  }
+
+  (*(curr_GS.mats_lib))[name] = ps;
+  // std::cout << "Chomsky2" << std::endl;
+
   // Add the new named material into the library
   render_opt->material_library[name] = ps;
 }
@@ -406,10 +693,17 @@ void API::named_material(const ParamSet &ps){
 
   std::string name = retrieve(ps, "name", string{ "unknown" });
 
+
+  // If there is no already created material, we create one
+  if((*(curr_GS.mats_lib)).count(name) < 1){
+    std::cout << "Named material not found!\n";
+  }
+
+  curr_GS.curr_material = (*(curr_GS.mats_lib))[name];
+
   // If there is no already created material, we create one
   if(render_opt->material_library.count(name) < 1){
     std::cout << "Named material not found! Using default material...\n";
-    // TODO: Check if this works
     render_opt->curr_material = ParamSet();
   }
   else{
@@ -424,6 +718,9 @@ void API::material(const ParamSet &ps){
   VERIFY_WORLD_BLOCK("API::material");
 
   // Set the current material to the one specified (anonymous)
+  // std::shared_ptr<Material> material{make_material(ps)};
+  curr_GS.curr_material = ps;
+
   render_opt->curr_material = ps;
 }
 

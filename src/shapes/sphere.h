@@ -4,11 +4,14 @@
 #include "../core/rt3.h"
 #include "../primitives/primitive.h"
 #include "../core/paramset.h"
+#include "../core/transform.h"
 
 namespace rt3{
 
 using rt3::Point3f;
 using rt3::Vector3f;
+
+class Transform;
 
 /*
     This is a sphere :D (it has a center and radius)
@@ -18,7 +21,7 @@ private:
     float radius;
     Point3f center;
 public:
-    Sphere(const bool& flip_n, const float& r, const Point3f& c);
+    Sphere(const bool& flip_n, const float& r, const Point3f& c, const Transform & obj_to_world);
     Bounds3f world_bounds();
 
     bool intersect_p( const Ray& r ) const;
@@ -30,7 +33,7 @@ public:
 
 //-------------------------------------------------------------------------------
 // Factory pattern. It's not part of this class.
-Sphere* create_sphere(const ParamSet &ps);
+Sphere* create_sphere(const ParamSet &ps, const Transform & obj2world);
 } // namespace rt3
 
 #endif

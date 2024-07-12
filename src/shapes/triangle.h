@@ -66,8 +66,8 @@ private:
 public:
   // The single constructor, that receives the mesh, this triangle id, and an
   // indication for backface culling.
-  Triangle(std::shared_ptr<TriangleMesh> mesh, int tri_id, bool bfc = true, bool fn = false)
-      : Shape(fn), mesh{mesh}, backface_cull{bfc} {
+  Triangle(std::shared_ptr<TriangleMesh> mesh, const Transform & obj_to_world ,int tri_id, bool bfc = true, bool fn = false)
+      : Shape(fn, obj_to_world), mesh{mesh}, backface_cull{bfc} {
     // This is just a shortcut to access this triangle's data stored in the mesh
     // database.
     v = &mesh->vertex_indices[3 * tri_id];
@@ -87,11 +87,11 @@ public:
 /// This is the entry point for the client. This function begins the process of
 /// reading a triangle mesh.
 std::vector<std::shared_ptr<Shape>> create_triangle_mesh_shape(bool flip_normals,
-                                                     const ParamSet &ps);
+                                                     const ParamSet &ps, const Transform & obj2world);
 
 /// This is the function that actually creates the mesh database and the
 /// triangles, ans store them in a Shape list.
-std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn);
+std::vector<std::shared_ptr<Shape>> create_triangle_mesh(std::shared_ptr<TriangleMesh> mesh, bool bfc, bool fn, const Transform & obj2world);
 
 /// Internal function that calls the tinyobjloader api to read the OBJ data into
 /// memory.

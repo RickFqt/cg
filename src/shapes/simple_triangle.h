@@ -18,8 +18,8 @@ private:
     Point3f p0, p1, p2;
     Vector3f norm;
 public:
-    SimpleTriangle(const bool& flip_n, const Point3f& p0, const Point3f& p1, const Point3f& p2, const Vector3f& n);
-    SimpleTriangle(const bool& flip_n, const Point3f& po0, const Point3f& po1, const Point3f& po2);
+    SimpleTriangle(const bool& flip_n, const Point3f& p0, const Point3f& p1, const Point3f& p2, const Vector3f& n, const Transform & obj_to_world);
+    SimpleTriangle(const bool& flip_n, const Point3f& po0, const Point3f& po1, const Point3f& po2, const Transform & obj_to_world );
     Bounds3f world_bounds();
 
     bool intersect_p( const Ray& r ) const;
@@ -31,7 +31,7 @@ public:
 
 //-------------------------------------------------------------------------------
 // Factory pattern. It's not part of this class.
-SimpleTriangle* create_simple_triangle(const ParamSet &ps);
+SimpleTriangle* create_simple_triangle(const ParamSet &ps, const Transform & obj2world);
 } // namespace rt3
 
 #endif

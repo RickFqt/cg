@@ -20,6 +20,8 @@ Spectrum operator * (Spectrum a, Spectrum b){return Spectrum{a[0]*b[0], a[1]*b[1
 Spectrum operator + (Spectrum a, Spectrum b){return Spectrum{a[0]+b[0], a[1]+b[1], a[2]+b[2]};}
 Spectrum operator * (Spectrum a, float b){return Spectrum{a[0]*b, a[1]*b, a[2]*b};}
 Spectrum operator * (float a, Spectrum b){return Spectrum{a*b[0], a*b[1], a*b[2]};}
+Vector3f operator * (float a, Vector3f b){return Vector3f{a*b.x, a*b.y, a*b.z};};
+Vector3f operator * (Vector3f a, float b){return Vector3f{b*a.x, b*a.y, b*a.z};};
 }
 
 /// Lambda expression that returns a lowercase version of the input string.

@@ -45,6 +45,8 @@ Spectrum operator * (Spectrum a, Spectrum b);
 Spectrum operator + (Spectrum a, Spectrum b);
 Spectrum operator * (Spectrum a, float b);
 Spectrum operator * (float a, Spectrum b);
+Vector3f operator * (float a, Vector3f b);
+Vector3f operator * (Vector3f a, float b);
 using Normal3f = glm::vec3;
 
 // List of points
@@ -84,6 +86,7 @@ class Scene;
 class PrimList;
 class GeometricPrimitive;
 class AggregatePrimitive;
+class Transform;
 
 //=== aliases
 using real_type = float;
